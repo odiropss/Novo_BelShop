@@ -48,7 +48,7 @@ begin
   tgMySqlErro:=TStringList.Create;
   tgMySqlErro.Clear;
   tgMySqlErro.Add('==================================');
-  tgMySqlErro.Add('Processamento INCIO: '+DateTimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor)));
+  tgMySqlErro.Add('Processamento INÍCIO: '+DateTimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor)));
   tgMySqlErro.Add('==================================');
   tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Atual_Saldos_Erros.txt');
 
@@ -60,10 +60,11 @@ procedure TFrmAtualizaSaldos.Bt_AtualizarClick(Sender: TObject);
 Var
   MySql, MySqlErro: String;
 
-  sDtaPesq,
+  sDtaPesq, sDtaExcl,
   sCodLjLinx, sCodLjSidi: String;
 
-  hHrInicio, hHrFim: String;
+  hHrInicio, hHrFim,
+  hHrIniLj, hHrFimLj:String;
 begin
   hHrInicio:='';
   hHrFim:='';
@@ -71,9 +72,14 @@ begin
 
   // Dia Anterior para Processar as Lojas ======================================
   sgDia:=DateToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor)-1);
+
+  // Dia para Pesquisa - 1 Ano a Tras ==========================================
   sDtaPesq:=DateToStr(IncMonth((DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor)-1),-12));
   sDtaPesq:=f_Troca('/','.',f_Troca('-','.',sDtaPesq));
 
+  // Dia para Exclusão - 1 Mes a Tras ==========================================
+  sDtaExcl:=DateToStr(PrimeiroUltimoDia(IncMonth((DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor)-1),-1), 'P'));
+  sDtaExcl:=f_Troca('/','.',f_Troca('-','.',sDtaExcl));
 
   // Processa Saldos do Dia ====================================================
   If DMAtualizaSaldos.SQLC.InTransaction Then
@@ -91,6 +97,8 @@ begin
   DMAtualizaSaldos.CDS_Empresas.DisableControls;
   While Not DMAtualizaSaldos.CDS_Empresas.Eof do
   Begin
+    hHrIniLj:=TimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor));
+
     sCodLjLinx:=DMAtualizaSaldos.CDS_Empresas.FieldByName('Empresa').AsString;
     sCodLjSidi:=DMAtualizaSaldos.CDS_Empresas.FieldByName('Cod_Loja').AsString;
 
@@ -102,11 +110,33 @@ begin
       DateSeparator:='.';
       DecimalSeparator:='.';
 
-      // Exclui Saldo do Dia a Processar =========================================
+      // Exclui Saldo a Mais de Um Mes =========================================
+      MySql:=' DELETE FROM LINX_PRODUTOS_LOJAS lp'+
+             ' WHERE lp.dta_processa<'+QuotedStr(sDtaExcl)+
+             ' AND   lp.cod_loja_linx='+sCodLjLinx;
+      DMAtualizaSaldos.SQLC.Execute(MySql,nil,nil);
+
+      // Atualiza Transacao ====================================================
+      DMAtualizaSaldos.SQLC.Commit(TD);
+
+      // Monta Transacao =======================================================
+      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMAtualizaSaldos.SQLC.StartTransaction(TD);
+
+      // Exclui Saldo do Dia a Processar =======================================
       MySql:=' DELETE FROM LINX_PRODUTOS_LOJAS lp'+
              ' WHERE lp.dta_processa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDia)))+
              ' AND   lp.cod_loja_linx='+sCodLjLinx;
       DMAtualizaSaldos.SQLC.Execute(MySql,nil,nil);
+
+      // Atualiza Transacao ====================================================
+      DMAtualizaSaldos.SQLC.Commit(TD);
+
+      // Monta Transacao =======================================================
+      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMAtualizaSaldos.SQLC.StartTransaction(TD);
 
       //==========================================================================
       // Inclui Produtos das Lojas a Processar ===================================
@@ -115,7 +145,7 @@ begin
       // CD - Se Houve Transferencias de Saída ===================================
       MySql:=' INSERT INTO LINX_PRODUTOS_LOJAS'+
              ' (dta_processa, cod_loja_sidicom, cod_loja_linx, codproduto,'+
-             '  cod_produto, qtd_estoque, ind_curva)'+
+             '  cod_produto, qtd_estoque, ind_curva, cod_fornecedor)'+
 
              ' SELECT DISTINCT '+
              QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDia)))+' DTA_PROCESSA,'+
@@ -123,7 +153,7 @@ begin
              ' m.empresa COD_LOJA_LINX,'+
 
              ' CASE'+
-             '    WHEN CHAR_LENGTH(TRIM(p.cod_auxiliar))=6 THEN'+
+             '    WHEN CHAR_LENGTH(TRIM(COALESCE(p.cod_auxiliar, '''')))=6 THEN'+
              '       TRIM(p.cod_auxiliar)'+
              '    ELSE'+
              '       NULL'+
@@ -131,39 +161,22 @@ begin
 
              ' m.cod_produto COD_PRODUTO,'+
              ' 0 QTD_ESTOQUE,'+
-             ' ''E'' IND_CURVA'+
+             ' ''E'' IND_CURVA,'+
+             ' p.COD_FORNECEDOR'+
 
              ' FROM LINXMOVIMENTO m'+
              '   LEFT JOIN LINXPRODUTOS           p  ON p.cod_produto=m.cod_produto'+
 
-             ' WHERE ( ((m.operacao=''S'') AND  ((m.tipo_transacao=''V'') OR (TRIM(COALESCE(m.tipo_transacao, ''''))='''')))'+ // Vendas
-             '        Or'+
-             '        (m.operacao=''E'' AND m.codigo_cliente=13) )'+ // Entradas do CD
+//             ' WHERE ( ((m.operacao=''S'') AND  ((m.tipo_transacao=''V'') OR (TRIM(COALESCE(m.tipo_transacao, ''''))='''')))'+ // Vendas
+//             '         Or'+
+//             '         (m.operacao=''E'') )'+ // Entradas
+             ' WHERE ( (m.operacao=''S'') Or (m.operacao=''E'') )'+ // Entradas
 
              ' AND   m.cancelado=''N'''+
              ' AND   m.excluido =''N'''+
              // Movimentação a 12 Meses
              ' AND   m.data_lancamento>= CAST('+QuotedStr(sDtaPesq)+'  AS TIMESTAMP)'+
-             ' AND   m.empresa='+sCodLjLinx+
-
-             ' UNION '+
-
-             ' SELECT DISTINCT '+
-             QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDia)))+' DTA_PROCESSA,'+
-             ' cv.cod_loja COD_LOJA_SIDICOM,'+
-             ' em.cod_linx COD_LOJA_LINX,'+
-             ' cv.cod_produto CODPRODUTO,'+
-             ' pr.cod_produto COD_PRODUTO,'+
-             ' 0 QTD_ESTOQUE,'+
-             ' ''E'' IND_CURVA'+
-
-             ' FROM ES_FINAN_CURVA_ABC cv'+
-             '     LEFT JOIN LINXPRODUTOS pr           ON pr.cod_auxiliar=cv.cod_produto'+
-             '     LEFT JOIN EMP_CONEXOES em           ON em.cod_filial=cv.cod_loja'+
-
-             // Estoque Minimo Mairo que 0
-             ' WHERE cv.est_minimo>0'+
-             ' AND   cv.cod_loja='+QuotedStr(sCodLjSidi);
+             ' AND   m.empresa='+sCodLjLinx;
       DMAtualizaSaldos.SQLC.Execute(MySql,nil,nil);
 
       // Atualiza Transacao ======================================================
@@ -196,8 +209,8 @@ begin
       MySql:=' UPDATE LINX_PRODUTOS_LOJAS pl'+
              ' SET pl.ind_curva=(SELECT c.ind_curva'+
              '                   FROM ES_FINAN_CURVA_ABC c'+
-             '                   WHERE c.cod_loja=pl.cod_loja_sidicom'+
-             '                   AND   c.cod_produto=pl.codproduto)'+
+             '                   WHERE c.cod_linx=pl.cod_loja_linx'+
+             '                   AND   c.cod_prod_linx=pl.cod_produto)'+
              ' WHERE pl.dta_processa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDia)))+
              ' AND   pl.cod_loja_linx='+sCodLjLinx;
       DMAtualizaSaldos.SQLC.Execute(MySql,nil,nil);
@@ -220,12 +233,13 @@ begin
       // Atualiza Transacao ======================================================
       DMAtualizaSaldos.SQLC.Commit(TD);
 
+      hHrFimLj:=TimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor));
+
       DateSeparator:='/';
       DecimalSeparator:=',';
 
-      tgMySqlErro.Add('Linx: '+sCodLjLinx+' Sid: '+sCodLjSidi+' - OK');
+      tgMySqlErro.Add('Linx: '+sCodLjLinx+' Sid: '+sCodLjSidi+' - Inicio: '+hHrIniLj+' Fim: '+hHrFimLj+' - TEMPO: '+TimeToStr(StrToTime(hHrFimLj)-StrToTime(hHrIniLj)));
       tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Atual_Saldos_Erros.txt');
-
     Except // Except da Transação
       on e : Exception do
       Begin
@@ -264,6 +278,7 @@ begin
 
   Application.Terminate;
   Close;
+
 end;
 
 end.

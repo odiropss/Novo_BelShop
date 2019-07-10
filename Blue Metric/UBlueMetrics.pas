@@ -1,4 +1,5 @@
 unit UBlueMetrics;
+//OdirRetornar
 
 // ITENS_VENDA - CUSTO_VENDA_ITENS
 // PRODUTOS - SUBGRUPO=LINHA
@@ -51,6 +52,8 @@ type
     Ckb_Estoques: TJvCheckBox;
     Ckb_ItensTrocas: TJvCheckBox;
     Ckb_Pagamentos: TJvCheckBox;
+    Bt_MarcaDesmarca: TJvXPButton;
+    Ckb_ContasApagar: TJvCheckBox;
     procedure DBGrid1KeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -76,11 +79,15 @@ type
     Procedure ItensTrocas;  // Deleta Por Periodo
 
     Procedure Pagamentos;
+
+    Procedure ContasApagar;
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     procedure Ckb_ClientesClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure FormCreate(Sender: TObject);   // Deleta Por Periodo
+    procedure FormCreate(Sender: TObject);
+    procedure Bt_MarcaDesmarcaClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);   // Deleta Por Periodo
 
   private
     { Private declarations }
@@ -92,9 +99,11 @@ var
   FrmBlueMetrics: TFrmBlueMetrics;
 
   sgCodLoja,
-  sgDtaInicio, sgDtaFim
+  sgDtaInicio, sgDtaFim,
+  sgDtaInicioProc
   : String;
 
+  bgAutomatico: Boolean;
   tgMySqlErro: TStringList; // Arquivo de Processamento e Erros
 
 implementation
@@ -122,6 +131,7 @@ Begin
     MySql:=' DELETE FROM CLIENTES';
     DMBlueMetrics.ADOC.Execute(MySql);
 
+    DMBlueMetrics.SQLQ_Clientes.Close;
     DMBlueMetrics.SQLQ_Clientes.Open;
     DMBlueMetrics.SQLQ_Clientes.DisableControls;
     While Not DMBlueMetrics.SQLQ_Clientes.Eof do
@@ -176,6 +186,9 @@ Begin
 
     Ckb_Clientes.Font.Color:=clWindowText;
 
+    tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -212,6 +225,7 @@ Begin
     MySql:=' DELETE FROM EMPRESAS';
     DMBlueMetrics.ADOC.Execute(MySql);
 
+    DMBlueMetrics.SQLQ_Empresas.Close;
     DMBlueMetrics.SQLQ_Empresas.Open;
     DMBlueMetrics.SQLQ_Empresas.DisableControls;
     While Not DMBlueMetrics.SQLQ_Empresas.Eof do
@@ -279,6 +293,9 @@ Begin
 
     Ckb_Empresas.Font.Color:=clWindowText;
 
+    tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -314,6 +331,7 @@ Begin
     MySql:=' DELETE FROM FORNECEDORES';
     DMBlueMetrics.ADOC.Execute(MySql);
 
+    DMBlueMetrics.SQLQ_Fornecedores.Close;
     DMBlueMetrics.SQLQ_Fornecedores.Open;
     DMBlueMetrics.SQLQ_Fornecedores.DisableControls;
     While Not DMBlueMetrics.SQLQ_Fornecedores.Eof do
@@ -350,6 +368,9 @@ Begin
 
     Ckb_Fornecedores.Font.Color:=clWindowText;
 
+    tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -385,6 +406,7 @@ Begin
     MySql:=' DELETE FROM PRODUTOS';
     DMBlueMetrics.ADOC.Execute(MySql);
 
+    DMBlueMetrics.SQLQ_Produtos.Close;
     DMBlueMetrics.SQLQ_Produtos.Open;
     DMBlueMetrics.SQLQ_Produtos.DisableControls;
     While Not DMBlueMetrics.SQLQ_Produtos.Eof do
@@ -420,6 +442,9 @@ Begin
 
     Ckb_Produtos.Font.Color:=clWindowText;
 
+    tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -455,6 +480,7 @@ Begin
     MySql:=' DELETE FROM VENDEDORES';
     DMBlueMetrics.ADOC.Execute(MySql);
 
+    DMBlueMetrics.SQLQ_Vendedores.Close;
     DMBlueMetrics.SQLQ_Vendedores.Open;
     DMBlueMetrics.SQLQ_Vendedores.DisableControls;
     While Not DMBlueMetrics.SQLQ_Vendedores.Eof do
@@ -492,6 +518,9 @@ Begin
 
     Ckb_Vendedores.Font.Color:=clWindowText;
 
+    tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -527,6 +556,7 @@ Begin
     MySql:=' DELETE FROM ESTOQUES';
     DMBlueMetrics.ADOC.Execute(MySql);
 
+    DMBlueMetrics.SQLQ_Estoques.Close;
     DMBlueMetrics.SQLQ_Estoques.Open;
     DMBlueMetrics.SQLQ_Estoques.DisableControls;
     While Not DMBlueMetrics.SQLQ_Estoques.Eof do
@@ -561,6 +591,9 @@ Begin
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
 
+    tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -608,6 +641,7 @@ Begin
     Lb_Tabela.Caption:='EstoquesEntradas';
     Lb_Reg.Caption:='0';
 
+    DMBlueMetrics.SQLQ_EstoquesEntradas.Close;
     DMBlueMetrics.SQLQ_EstoquesEntradas.Open;
     DMBlueMetrics.SQLQ_EstoquesEntradas.DisableControls;
     While Not DMBlueMetrics.SQLQ_EstoquesEntradas.Eof do
@@ -660,6 +694,9 @@ Begin
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
 
+    tgMySqlErro.Add('Tabela: EstoquesEntradas - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -695,6 +732,7 @@ Begin
     Lb_Tabela.Caption:='EstoquesVendas';
     Lb_Reg.Caption:='0';
 
+    DMBlueMetrics.SQLQ_EstoquesVendas.Close;
     DMBlueMetrics.SQLQ_EstoquesVendas.Open;
     DMBlueMetrics.SQLQ_EstoquesVendas.DisableControls;
     While Not DMBlueMetrics.SQLQ_EstoquesVendas.Eof do
@@ -739,6 +777,9 @@ Begin
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
 
+    tgMySqlErro.Add('Tabela: EstoquesVendas - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -778,8 +819,12 @@ Begin
                                         QuotedStr(DateToStr(DtEdt_DataFim.Date));
     DMBlueMetrics.ADOC.Execute(MySql);
 
-    DMBlueMetrics.SQLQ_Vendas.Params.ParamByName('DtaI').AsDate:=DtEdt_DataInicio.Date;
-    DMBlueMetrics.SQLQ_Vendas.Params.ParamByName('DtaF').AsDate:=DtEdt_DataFim.Date;
+    sgDtaInicio:=DateTimeToStr(DtEdt_DataInicio.Date);
+    sgDtaFim   :=DateTimeToStr(DtEdt_DataFim.Date);
+
+    DMBlueMetrics.SQLQ_Vendas.Close;
+    DMBlueMetrics.SQLQ_Vendas.Params.ParamByName('DtaI').AsDate:=StrToDateTime(sgDtaInicio);
+    DMBlueMetrics.SQLQ_Vendas.Params.ParamByName('DtaF').AsDate:=StrToDateTime(sgDtaFim);
     DMBlueMetrics.SQLQ_Vendas.Open;
     DMBlueMetrics.SQLQ_Vendas.DisableControls;
     While Not DMBlueMetrics.SQLQ_Vendas.Eof do
@@ -834,6 +879,9 @@ Begin
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
 
+    tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -876,8 +924,12 @@ Begin
     Lb_Tabela.Caption:='VendasTrocas';
     Lb_Reg.Caption:='0';
 
-    DMBlueMetrics.SQLQ_VendasTrocas.Params.ParamByName('DtaI').AsDate:=DtEdt_DataInicio.Date;
-    DMBlueMetrics.SQLQ_VendasTrocas.Params.ParamByName('DtaF').AsDate:=DtEdt_DataFim.Date;
+    sgDtaInicio:=DateTimeToStr(DtEdt_DataInicio.Date);
+    sgDtaFim   :=DateTimeToStr(DtEdt_DataFim.Date);
+
+    DMBlueMetrics.SQLQ_VendasTrocas.Close;
+    DMBlueMetrics.SQLQ_VendasTrocas.Params.ParamByName('DtaI').AsDate:=StrToDateTime(sgDtaInicio);
+    DMBlueMetrics.SQLQ_VendasTrocas.Params.ParamByName('DtaF').AsDate:=StrToDateTime(sgDtaFim);
     DMBlueMetrics.SQLQ_VendasTrocas.Open;
     DMBlueMetrics.SQLQ_VendasTrocas.DisableControls;
     While Not DMBlueMetrics.SQLQ_VendasTrocas.Eof do
@@ -896,9 +948,10 @@ Begin
 
              ' WHERE codigo_empresa='+QuotedStr(Trim(DMBlueMetrics.SQLQ_VendasTrocasEMPRESA.AsString))+
              ' AND   codigo_venda='+QuotedStr(Trim(DMBlueMetrics.SQLQ_VendasTrocasNOTA_ORIGEM.AsString))+
+             ' AND   serie='+QuotedStr(Trim(DMBlueMetrics.SQLQ_VendasTrocasSERIE.AsString))+
+             ' AND   codigo_cliente='+QuotedStr(Trim(DMBlueMetrics.SQLQ_VendasTrocasCODIGO_CLIENTE.AsString))+
              ' AND   codigo_vendedor='+QuotedStr(Trim(DMBlueMetrics.SQLQ_VendasTrocasCOD_VENDEDOR.AsString));
       DMBlueMetrics.ADOC.Execute(MySql);
-
       Lb_Reg.Caption:=IntToStr(StrToInt(Lb_Reg.Caption)+1);
 
       DMBlueMetrics.SQLQ_VendasTrocas.Next;
@@ -913,6 +966,9 @@ Begin
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
 
+    tgMySqlErro.Add('Tabela: VendasTrocas - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -952,8 +1008,12 @@ Begin
                                   QuotedStr(DateToStr(DtEdt_DataFim.Date));
     DMBlueMetrics.ADOC.Execute(MySql);
 
-    DMBlueMetrics.SQLQ_ItensVendas.Params.ParamByName('DtaI').AsDate:=DtEdt_DataInicio.Date;
-    DMBlueMetrics.SQLQ_ItensVendas.Params.ParamByName('DtaF').AsDate:=DtEdt_DataFim.Date;
+    sgDtaInicio:=DateTimeToStr(DtEdt_DataInicio.Date);
+    sgDtaFim   :=DateTimeToStr(DtEdt_DataFim.Date);
+
+    DMBlueMetrics.SQLQ_ItensVendas.Close;
+    DMBlueMetrics.SQLQ_ItensVendas.Params.ParamByName('DtaI').AsDate:=StrToDateTime(sgDtaInicio);
+    DMBlueMetrics.SQLQ_ItensVendas.Params.ParamByName('DtaF').AsDate:=StrToDateTime(sgDtaFim);
     DMBlueMetrics.SQLQ_ItensVendas.Open;
     DMBlueMetrics.SQLQ_ItensVendas.DisableControls;
     While Not DMBlueMetrics.SQLQ_ItensVendas.Eof do
@@ -1001,6 +1061,10 @@ Begin
     Application.ProcessMessages;
 
     Ckb_ItensVendas.Font.Color:=clWindowText;
+
+    tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -1039,8 +1103,12 @@ Begin
                                   QuotedStr(DateToStr(DtEdt_DataFim.Date));
     DMBlueMetrics.ADOC.Execute(MySql);
 
-    DMBlueMetrics.SQLQ_ItensTrocas.Params.ParamByName('DtaI').AsDate:=DtEdt_DataInicio.Date;
-    DMBlueMetrics.SQLQ_ItensTrocas.Params.ParamByName('DtaF').AsDate:=DtEdt_DataFim.Date;
+    sgDtaInicio:=DateTimeToStr(DtEdt_DataInicio.Date);
+    sgDtaFim   :=DateTimeToStr(DtEdt_DataFim.Date);
+
+    DMBlueMetrics.SQLQ_ItensTrocas.Close;
+    DMBlueMetrics.SQLQ_ItensTrocas.Params.ParamByName('DtaI').AsDate:=StrToDateTime(sgDtaInicio);
+    DMBlueMetrics.SQLQ_ItensTrocas.Params.ParamByName('DtaF').AsDate:=StrToDateTime(sgDtaFim);
     DMBlueMetrics.SQLQ_ItensTrocas.Open;
     DMBlueMetrics.SQLQ_ItensTrocas.DisableControls;
     While Not DMBlueMetrics.SQLQ_ItensTrocas.Eof do
@@ -1084,11 +1152,13 @@ Begin
     End; // While Not DMBlueMetrics.SQLQ_ItensTrocas.Eof do
 
     DMBlueMetrics.ADOC.CommitTrans;
-
     Application.ProcessMessages;
 
     Ckb_ItensTrocas.Font.Color:=clWindowText;
 
+    tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -1127,8 +1197,12 @@ Begin
                                              QuotedStr(DateToStr(DtEdt_DataFim.Date));
     DMBlueMetrics.ADOC.Execute(MySql);
 
-    DMBlueMetrics.SQLQ_Pagamentos.Params.ParamByName('DtaI').AsDate:=DtEdt_DataInicio.Date;
-    DMBlueMetrics.SQLQ_Pagamentos.Params.ParamByName('DtaF').AsDate:=DtEdt_DataFim.Date;
+    sgDtaInicio:=DateTimeToStr(DtEdt_DataInicio.Date);
+    sgDtaFim   :=DateTimeToStr(DtEdt_DataFim.Date);
+
+    DMBlueMetrics.SQLQ_Pagamentos.Close;
+    DMBlueMetrics.SQLQ_Pagamentos.Params.ParamByName('DtaI').AsDate:=StrToDateTime(sgDtaInicio);
+    DMBlueMetrics.SQLQ_Pagamentos.Params.ParamByName('DtaF').AsDate:=StrToDateTime(sgDtaFim);
     DMBlueMetrics.SQLQ_Pagamentos.Open;
     DMBlueMetrics.SQLQ_Pagamentos.DisableControls;
     While Not DMBlueMetrics.SQLQ_Pagamentos.Eof do
@@ -1178,6 +1252,9 @@ Begin
 
     Ckb_Pagamentos.Font.Color:=clWindowText;
 
+    tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -1197,6 +1274,148 @@ Begin
   Screen.Cursor:=crDefault;
 
 End; // Exporta Pagamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Exporta Contas A Pagar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmBlueMetrics.ContasApagar;
+Var
+  MySql: String;
+Begin
+
+  Screen.Cursor:=crAppStart;
+
+  DMBlueMetrics.ADOC.BeginTrans;
+  Try // Try da Transação
+    Lb_Tabela.Caption:='ContasApagar';
+    Lb_Reg.Caption:='0';
+
+    MySql:=' DELETE FROM CONTAS_APAGAR'+
+           ' WHERE DATA_VENCIMENTO >= '+QuotedStr(DateToStr(IncMonth(DtEdt_DataFim.Date, -2)));
+    DMBlueMetrics.ADOC.Execute(MySql);
+
+    sgDtaInicio:=DateTimeToStr(IncMonth(DtEdt_DataFim.Date, -2));
+    // sgDtaFim   :=DateTimeToStr(DtEdt_DataFim.Date);
+
+    DMBlueMetrics.SQLQ_ContasApagar.Close;
+    DMBlueMetrics.SQLQ_ContasApagar.Params.ParamByName('Dta').AsDate:=StrToDateTime(sgDtaInicio);
+    DMBlueMetrics.SQLQ_ContasApagar.Open;
+    DMBlueMetrics.SQLQ_ContasApagar.DisableControls;
+    While Not DMBlueMetrics.SQLQ_ContasApagar.Eof do
+    Begin
+      Application.ProcessMessages;
+
+      // Insere ================================================================
+      MySql:=' INSERT INTO CONTAS_APAGAR'+
+             ' (CODIGO_EMPRESA, NUM_FATURA, DATA_EMISSAO, DATA_VENCIMENTO, DATA_BAIXA,'+
+             '  VALOR_FATURA, VALOR_JUROS, VALOR_DESCONTO, VALOR_PAGO, COD_FORNECEDOR,'+
+             '  DOC_ORIGEM, SERIE_ORIGEM, ECF_ORIGEM, QTDE_PARCELAS, ORDEM_PARCELA,'+
+             '  COD_VENDEDOR, DOC_EXCLUIDO, DOC_CANCELADO, CONTA_CREDITO, CONTA_DEBITO,'+
+             '  CONTA_FLUXO, COD_HISTORICO, COD_FORMA_PGTO, FORMA_PGTO, ORDEM_CARTAO,'+
+             '  BANCO_CODIGO, BANCO_AGENCIA, BANCO_CONTA, BANCO_AUTORIZACAO_GARANTIDORA,'+
+             '  NUMERO_BILHETE_SEGURO, COD_PLANO, DESC_PLANO, TIPO_PLANO, INDICE_PLANO,'+
+             '  CONTA_CENTRAL, TIPO_TRANSACAO, TAXA_FINANCEIRA, OBSERVACAO)'+
+             ' VALUES ('+
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarCODIGO_EMPRESA.AsString))+', '+ // CODIGO_EMPRESA
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarNUM_FATURA.AsString))+', '; // NUM_FATURA
+
+             // DATA_EMISSAO
+             If Trim(DMBlueMetrics.SQLQ_ContasApagarDATA_EMISSAO.AsString)='' Then
+              MySql:=
+               MySql+'NULL, '
+             Else
+              MySql:=
+               MySql+QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarDATA_EMISSAO.AsString))+', ';
+
+             // DATA_VENCIMENTO
+             If Trim(DMBlueMetrics.SQLQ_ContasApagarDATA_VENCIMENTO.AsString)='' Then
+              MySql:=
+               MySql+'NULL, '
+             Else
+              MySql:=
+               MySql+QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarDATA_VENCIMENTO.AsString))+', ';
+
+
+             // DATA_BAIXA
+             If Trim(DMBlueMetrics.SQLQ_ContasApagarDATA_BAIXA.AsString)='' Then
+              MySql:=
+               MySql+'NULL, '
+             Else
+              MySql:=
+               MySql+QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarDATA_BAIXA.AsString))+', ';
+
+      MySql:=
+       MySql+f_Troca(',','.',Trim(DMBlueMetrics.SQLQ_ContasApagarVALOR_FATURA.AsString))+', '+ // VALOR_FATURA
+             f_Troca(',','.',Trim(DMBlueMetrics.SQLQ_ContasApagarVALOR_JUROS.AsString))+', '+ // VALOR_JUROS
+             f_Troca(',','.',Trim(DMBlueMetrics.SQLQ_ContasApagarVALOR_DESCONTO.AsString))+', '+ // VALOR_DESCONTO
+             f_Troca(',','.',Trim(DMBlueMetrics.SQLQ_ContasApagarVALOR_PAGO.AsString))+', '+ // VALOR_PAGO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarCOD_FORNECEDOR.AsString))+', '+ // COD_FORNECEDOR
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarDOC_ORIGEM.AsString))+', '+ // DOC_ORIGEM
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarSERIE_ORIGEM.AsString))+', '+ // SERIE_ORIGEM
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarECF_ORIGEM.AsString))+', '+ // ECF_ORIGEM
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarQTDE_PARCELAS.AsString))+', '+ // QTDE_PARCELAS
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarORDEM_PARCELA.AsString))+', '+ // ORDEM_PARCELA
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarCOD_VENDEDOR.AsString))+', '+ // COD_VENDEDOR
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarDOC_EXCLUIDO.AsString))+', '+ // DOC_EXCLUIDO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarDOC_CANCELADO.AsString))+', '+ // DOC_CANCELADO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarCONTA_CREDITO.AsString))+', '+ // CONTA_CREDITO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarCONTA_DEBITO.AsString))+', '+ // CONTA_DEBITO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarCONTA_FLUXO.AsString))+', '+ // CONTA_FLUXO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarCOD_HISTORICO.AsString))+', '+ // COD_HISTORICO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarCOD_FORMA_PGTO.AsString))+', '+ // COD_FORMA_PGTO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarFORMA_PGTO.AsString))+', '+ // FORMA_PGTO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarORDEM_CARTAO.AsString))+', '+ // ORDEM_CARTAO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarBANCO_CODIGO.AsString))+', '+ // BANCO_CODIGO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarBANCO_AGENCIA.AsString))+', '+ // BANCO_AGENCIA
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarBANCO_CONTA.AsString))+', '+ // BANCO_CONTA
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarBANCO_AUTORIZACAO_GARANTIDORA.AsString))+', '+ // BANCO_AUTORIZACAO_GARANTIDORA
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarNUMERO_BILHETE_SEGURO.AsString))+', '+ // NUMERO_BILHETE_SEGURO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarCOD_PLANO.AsString))+', '+ // COD_PLANO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarDESC_PLANO.AsString))+', '+ // DESC_PLANO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarTIPO_PLANO.AsString))+', '+ // TIPO_PLANO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarINDICE_PLANO.AsString))+', '+ // INDICE_PLANO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarCONTA_CENTRAL.AsString))+', '+ // CONTA_CENTRAL
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarTIPO_TRANSACAO.AsString))+', '+ // TIPO_TRANSACAO
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarTAXA_FINANCEIRA.AsString))+', '+ // TAXA_FINANCEIRA
+             QuotedStr(Trim(DMBlueMetrics.SQLQ_ContasApagarOBSERVACAO.AsString))+')'; // OBSERVACAO
+      DMBlueMetrics.ADOC.Execute(MySql);
+
+      Lb_Reg.Caption:=IntToStr(StrToInt(Lb_Reg.Caption)+1);
+
+      DMBlueMetrics.SQLQ_ContasApagar.Next;
+
+      if StrToInt(Lb_Reg.Caption) mod 3000 = 0 Then
+      Begin
+        DMBlueMetrics.ADOC.CommitTrans;
+        DMBlueMetrics.ADOC.BeginTrans;
+      End; // if StrToInt(Lb_Reg.Caption) mod 3000 = 0 Then
+    End; // While Not DMBlueMetrics.SQLQ_ContasApagar.Eof do
+
+    DMBlueMetrics.ADOC.CommitTrans;
+    Application.ProcessMessages;
+
+    Ckb_Pagamentos.Font.Color:=clWindowText;
+
+    tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      DMBlueMetrics.ADOC.RollbackTrans;
+      MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
+    End;
+  End; // Try da Transação
+  DMBlueMetrics.SQLQ_ContasApagar.EnableControls;
+  DMBlueMetrics.SQLQ_ContasApagar.Close;
+
+  Screen.Cursor:=crDefault;
+
+End; // Exporta Contas A Pagar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // ODIR - FIM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1228,101 +1447,127 @@ begin
 
   DBGrid1.Setfocus;
 
-  If (Ckb_Vendas.Checked) or (Ckb_ItensVendas.Checked) or (Ckb_ItensTrocas.Checked) or (Ckb_Pagamentos.Checked) Then
+  If Not bgAutomatico Then
   Begin
-    If (Trim(DtEdt_DataInicio.Text)<>'') Or (Trim(DtEdt_DataFim.Text)<>'') Then
-     Begin
-       Try
-         StrToDate(DtEdt_DataInicio.Text);
-       Except
-         msg('Data Inicial do Período Inválida !!','A');
-         DtEdt_DataInicio.SetFocus;
-         Exit;
-       End;
+    If (Ckb_Vendas.Checked)     or (Ckb_ItensVendas.Checked)  or (Ckb_ItensTrocas.Checked) or
+       (Ckb_Pagamentos.Checked) or (Ckb_ContasApagar.Checked) Then
+    Begin
+      If (Trim(DtEdt_DataInicio.Text)<>'') Or (Trim(DtEdt_DataFim.Text)<>'') Then
+       Begin
+         Try
+           StrToDate(DtEdt_DataInicio.Text);
+         Except
+           msg('Data Inicial do Período Inválida !!','A');
+           DtEdt_DataInicio.SetFocus;
+           Exit;
+         End;
 
-       Try
-         StrToDate(DtEdt_DataFim.Text);
-       Except
-         msg('Data Final do Período Inválida !!','A');
-         DtEdt_DataFim.SetFocus;
-         Exit;
-       End;
+         Try
+           StrToDate(DtEdt_DataFim.Text);
+         Except
+           msg('Data Final do Período Inválida !!','A');
+           DtEdt_DataFim.SetFocus;
+           Exit;
+         End;
 
-       If DtEdt_DataFim.Date<DtEdt_DataInicio.Date Then
+         If DtEdt_DataFim.Date<DtEdt_DataInicio.Date Then
+         Begin
+           msg('Período Inválido !!','A');
+           DtEdt_DataInicio.SetFocus;
+           Exit;
+         End;
+       End
+      Else // If (Trim(DtEdt_DataInicio.Text)<>'') Or (Trim(DtEdt_DataFim.Text)='') Then
        Begin
          msg('Período Inválido !!','A');
          DtEdt_DataInicio.SetFocus;
          Exit;
-       End;
-     End
-    Else // If (Trim(DtEdt_DataInicio.Text)<>'') Or (Trim(DtEdt_DataFim.Text)='') Then
-     Begin
-       msg('Período Inválido !!','A');
-       DtEdt_DataInicio.SetFocus;
+       End; // If (Trim(DtEdt_DataInicio.Text)<>'') Or (Trim(DtEdt_DataFim.Text)='') Then
+
+      If msg('O Período Informado de '+cr+DtEdt_DataInicio.Text+' a '+DtEdt_DataFim.Text+cr+cr+'Esta CORRETO ??','C')=2 Then
        Exit;
-     End; // If (Trim(DtEdt_DataInicio.Text)<>'') Or (Trim(DtEdt_DataFim.Text)='') Then
 
-    If msg('O Período Informado de '+cr+DtEdt_DataInicio.Text+' a '+DtEdt_DataFim.Text+cr+cr+'Esta CORRETO ??','C')=2 Then
-     Exit;
-
-    sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DataInicio.Date)));
-    sgDtaFim   :=f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DataFim.Date)));
-  End; // If (Ckb_Vendas.Checked) or (Ckb_ItensVendas.Checked) or (Ckb_ItensTrocas.Checked) or (Ckb_Pagamentos.Checked) Then
+      sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DataInicio.Date)));
+      sgDtaFim   :=f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DataFim.Date)));
+    End; // If (Ckb_Vendas.Checked)     or (Ckb_ItensVendas.Checked)  or (Ckb_ItensTrocas.Checked) or...
+  End; // If Not bgAutomatico Then
 
   bUmVez:=False;
   DMBlueMetrics.CDS_Lojas.First;
   While Not DMBlueMetrics.CDS_Lojas.Eof do
   Begin
-
     If Not bUmVez Then
     Begin
       // Clientes - 01
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca));
       If Ckb_Clientes.Checked Then
        Clientes;
 
       // Empresas - 02
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca));
       If Ckb_Empresas.Checked Then
        Empresas;
 
       // Fornecedores - 04
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca));
       If Ckb_Fornecedores.Checked Then
        Fornecedores;
 
       // Produtos - 07
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca));
       If Ckb_Produtos.Checked Then
        Produtos;
 
       // Vendedores - 11
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca));
       If Ckb_Vendedores.Checked Then
        Vendedores;
 
       // Estoques - 03
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca));
       If Ckb_Estoques.Checked Then
        Estoques;
 
       // Vendas - 09 e 10
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca));
       If Ckb_Vendas.Checked Then
        Vendas;
 
       // Itens Vendas - 05
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca));
       If Ckb_ItensVendas.Checked Then
        ItensVendas;
 
       // Itens Trocas - 08
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca));
       If Ckb_ItensTrocas.Checked Then
        ItensTrocas;
 
       // Pagamentos - 06
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca));
       If Ckb_Pagamentos.Checked Then
        Pagamentos;
-   End; // If bUmVez Then
+
+      // ContasApagar
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca));
+      If Ckb_ContasApagar.Checked Then
+       ContasApagar;
+    End; // If bUmVez Then
 
     bUmVez:=True;
     DMBlueMetrics.CDS_Lojas.Next;
   End; // While Not DMBlueMetrics.CDS_Lojas.Eof do
   DMBlueMetrics.CDS_Lojas.First;
 
-  msg('FIM','A');
+  If Not bgAutomatico Then
+   msg('FIM','A');
+
+  If bgAutomatico Then
+  Begin
+    Application.Terminate;
+    Exit;
+  End; // If bgAutomatico Then
+
 end;
 
 procedure TFrmBlueMetrics.Ckb_ClientesClick(Sender: TObject);
@@ -1346,6 +1591,37 @@ begin
   tgMySqlErro:=TStringList.Create;
   tgMySqlErro.Clear;
   tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
+
+  bgAutomatico:=True;
+  If Trim(ParamStr(1))<>'' Then
+   bgAutomatico:=False;
+
+end;
+
+procedure TFrmBlueMetrics.Bt_MarcaDesmarcaClick(Sender: TObject);
+begin
+  Ckb_Clientes.Checked    :=(Not Ckb_Clientes.Checked);
+  Ckb_Empresas.Checked    :=(Not Ckb_Empresas.Checked);
+  Ckb_Fornecedores.Checked:=(Not Ckb_Fornecedores.Checked);
+  Ckb_Produtos.Checked    :=(Not Ckb_Produtos.Checked);
+  Ckb_Vendedores.Checked  :=(Not Ckb_Vendedores.Checked);
+  Ckb_Estoques.Checked    :=(Not Ckb_Estoques.Checked);
+  Ckb_Vendas.Checked      :=(Not Ckb_Vendas.Checked);
+  Ckb_ItensVendas.Checked :=(Not Ckb_ItensVendas.Checked);
+  Ckb_ItensTrocas.Checked :=(Not Ckb_ItensTrocas.Checked);
+  Ckb_Pagamentos.Checked  :=(Not Ckb_Pagamentos.Checked);
+  Ckb_ContasApagar.Checked:=(Not Ckb_ContasApagar.Checked);
+end;
+
+procedure TFrmBlueMetrics.FormShow(Sender: TObject);
+begin
+  If bgAutomatico Then
+  Begin
+    DtEdt_DataInicio.Date:=StrToDate(DateToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca)-8));
+    DtEdt_DataFim.Date   :=StrToDate(DateToStr(DataHoraServidorFI(DMBlueMetrics.SQLQ_Busca)-1));
+    Bt_MarcaDesmarcaClick(Self);
+    Bt_ExportaDadosClick(Self);
+  End;
 
 end;
 

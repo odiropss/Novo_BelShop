@@ -13,8 +13,8 @@ uses
 begin
   Application.Initialize;
   Application.Title := 'Exporta Dados BlueMetrics';
-  Application.CreateForm(TFrmBlueMetrics, FrmBlueMetrics);
   Application.CreateForm(TDMBlueMetrics, DMBlueMetrics);
+  Application.CreateForm(TFrmBlueMetrics, FrmBlueMetrics);
   Application.CreateForm(TFDK_Procs1, FDK_Procs1);
   Application.CreateForm(TJ_001, J_001);
   Application.CreateForm(TJ_002, J_002);

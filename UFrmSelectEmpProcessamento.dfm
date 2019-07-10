@@ -3,8 +3,9 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
   Top = 103
   Width = 961
   Height = 619
+  AutoSize = True
   BorderIcons = []
-  Caption = 'Sele'#231#227'o de Empresa para Processamento'
+  Caption = 'Sele'#231#227'o de Loja(s) para Processamento'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -395,6 +396,7 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   OnKeyUp = FormKeyUp
+  OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -713,7 +715,7 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
       Width = 941
       Height = 542
       Align = alClient
-      Caption = '  Empresas a Selecionar para Processamento '
+      Caption = '  LOJAS a Selecionar para Processamento '
       Ctl3D = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlue
@@ -748,6 +750,9 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_SelectEmpProcDrawColumnCell
         OnDblClick = Dbg_SelectEmpProcDblClick
+        OnEnter = Dbg_SelectEmpProcEnter
+        OnKeyDown = Dbg_SelectEmpProcKeyDown
+        OnTitleClick = Dbg_SelectEmpProcTitleClick
         CorComFoco = 15004403
         SairComEnter = False
         EditDataSetCheck = False
@@ -874,8 +879,15 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             PanelStyle.Alignment = taCenter
             PanelStyle.Color = clSilver
             BiDiMode = bdRightToLeft
+            Fixed = False
             ParentBiDiMode = False
-            Text = '<Duplo Click> Alterar se Seleciona...'
+            Text = '<Duplo Click> Altera SELE'#199#195'O'
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            Fixed = False
+            Text = 'Para Localizar Tecle no T'#237'tulo da Coluna...'
           end>
         PaintStyle = stpsOffice11
         Font.Charset = DEFAULT_CHARSET
@@ -885,5 +897,10 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
         Font.Style = [fsBold]
       end
     end
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    Left = 570
+    Top = 306
   end
 end

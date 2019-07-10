@@ -12,6 +12,7 @@ type
     DSP_Empresas: TDataSetProvider;
     CDS_Empresas: TClientDataSet;
     SDS_DtaHoraServidor: TSQLDataSet;
+    SQLQuery1: TSQLQuery;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================

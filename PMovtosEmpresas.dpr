@@ -12,8 +12,8 @@ uses
 
 {$R *.res}
 
-var
-  Aplicativo : THandle;
+//var
+//  Aplicativo : THandle;
 
 begin
 

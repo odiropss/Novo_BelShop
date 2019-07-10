@@ -29,16 +29,6 @@ type
     DSP_EmpProcessa: TDataSetProvider;
     CDS_EmpProcessa: TClientDataSet;
     CDS_EmpProcessaCOD_FILIAL: TStringField;
-    CDS_EmpProcessaENDERECO_IP: TStringField;
-    CDS_EmpProcessaENDERECO_IP_EXTERNO: TStringField;
-    CDS_EmpProcessaPASTA_BASE_DADOS: TStringField;
-    CDS_EmpProcessaDES_BASE_DADOS: TStringField;
-    CDS_EmpProcessaCOD_EMP: TStringField;
-    CDS_EmpProcessaRAZAO_SOCIAL: TStringField;
-    CDS_EmpProcessaTIP_EMP: TStringField;
-    CDS_EmpProcessaIND_ATIVO: TStringField;
-    CDS_EmpProcessaDATABASE: TStringField;
-    CDS_EmpProcessaTRANSACAO: TStringField;
     IBQ_EstoqueLojaHRA_ATUALIZACAO: TIBStringField;
     IBQ_EstoqueLojaPRINCIPALFOR: TIBStringField;
     IBQ_EstoqueLojaZONAENDERECO: TIntegerField;
@@ -49,19 +39,17 @@ type
     CDS_LojaLinx: TClientDataSet;
     DSP_LojaLinx: TDataSetProvider;
     CDS_EmpProcessaCOD_LINX: TIntegerField;
-    CDS_EmpProcessaDTA_INICIO_LINX: TDateField;
-    CDS_EmpProcessaDTA_INVENTARIO_LINX: TDateField;
     IBQ_EstoqueLojaSALDO_FINAL_SIDICOM: TIBBCDField;
     CDS_BuscaRapida: TClientDataSet;
     DSP_BuscaRapida: TDataSetProvider;
     SQLQ_BuscaRapida: TSQLQuery;
     SQLQuery1: TSQLQuery;
-    CDS_EmpProcessaIND_DOMINGO: TStringField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================
     Procedure ConectaBanco;
-    Procedure MontaConexaoEmpresas;
+    // OdirApagar - Fim do SIDICOM
+    // Procedure MontaConexaoEmpresas;
 
     // Tipo de Conexão
     Procedure BuscaTipoConexao;
@@ -85,6 +73,8 @@ var
   sgTpConexao   : String;
 
   Flags : Cardinal; // Verifica Internet Ativo - Encerra Necessario
+
+  bgCod_Auxiliar: Boolean; // Se Utiliza o SIDICOM
 
 implementation
 
@@ -124,59 +114,60 @@ Begin
   tsArquivo.Free;
 End; // Tipo de Conexão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Monta Empresas a Conectar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TDMAtualizaEstoques.MontaConexaoEmpresas;
-Var
-  s: String;
-  sEndIP: String;
-  i: Integer;
-Begin
-
-  CDS_EmpProcessa.Close;
-  CDS_EmpProcessa.Open;
-
-  // Inicializa Conexoes
-  While Not CDS_EmpProcessa.Eof do
-  Begin
-    For i:=0 to DMConexoes.ComponentCount-1 do
-    Begin
-      If DMConexoes.Components[i] is TIBDatabase Then
-      Begin
-        If (DMConexoes.Components[i] as TIBDatabase).Name=CDS_EmpProcessaDATABASE.AsString Then
-        Begin
-          (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
-
-          sEndIP:=CDS_EmpProcessaENDERECO_IP.AsString;
-
-          //Tipo de Conexão: TCP/IP NetBEUI
-          If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
-           s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+
-                   IncludeTrailingPathDelimiter(CDS_EmpProcessaPASTA_BASE_DADOS.AsString)+
-                                               CDS_EmpProcessaDES_BASE_DADOS.AsString;
-
-          If Trim(sgTpConexao)='TCP/IP' Then
-           s:=sEndIP+':'+
-              IncludeTrailingPathDelimiter(CDS_EmpProcessaPASTA_BASE_DADOS.AsString)+
-                                           CDS_EmpProcessaDES_BASE_DADOS.AsString;
-
-          //==============================================================================
-          // Acerta Conexao com a Loja 08 - 201.86.212.9:C:\SIDICOM.NEW\BIGNEW.FDB - TCPIP
-          //==============================================================================
-          If CDS_EmpProcessaCOD_FILIAL.AsString='08' Then
-           s:=sEndIP+':'+
-              IncludeTrailingPathDelimiter(CDS_EmpProcessaPASTA_BASE_DADOS.AsString)+
-                                           CDS_EmpProcessaDES_BASE_DADOS.AsString;
-
-          (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=s;
-          Break;
-        End;
-      End; // If DMConexoes.Components[i] is TIBDatabase Then
-    End; // For i:=0 to DMConexoes.ComponentCount-1 do
-    CDS_EmpProcessa.Next;
-  End; // While Not CDS_EmpProcessa.Eof do
-  CDS_EmpProcessa.First;
-
-End; // Monta Empresas a Conectar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// OdirApagar - Fim do SIDICOM
+//// Monta Empresas a Conectar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Procedure TDMAtualizaEstoques.MontaConexaoEmpresas;
+//Var
+//  s: String;
+//  sEndIP: String;
+//  i: Integer;
+//Begin
+//
+//  CDS_EmpProcessa.Close;
+//  CDS_EmpProcessa.Open;
+//
+//  // Inicializa Conexoes
+//  While Not CDS_EmpProcessa.Eof do
+//  Begin
+//    For i:=0 to DMConexoes.ComponentCount-1 do
+//    Begin
+//      If DMConexoes.Components[i] is TIBDatabase Then
+//      Begin
+//        If (DMConexoes.Components[i] as TIBDatabase).Name=CDS_EmpProcessaDATABASE.AsString Then
+//        Begin
+//          (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
+//
+//          sEndIP:=CDS_EmpProcessaENDERECO_IP.AsString;
+//
+//          //Tipo de Conexão: TCP/IP NetBEUI
+//          If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
+//           s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+
+//                   IncludeTrailingPathDelimiter(CDS_EmpProcessaPASTA_BASE_DADOS.AsString)+
+//                                               CDS_EmpProcessaDES_BASE_DADOS.AsString;
+//
+//          If Trim(sgTpConexao)='TCP/IP' Then
+//           s:=sEndIP+':'+
+//              IncludeTrailingPathDelimiter(CDS_EmpProcessaPASTA_BASE_DADOS.AsString)+
+//                                           CDS_EmpProcessaDES_BASE_DADOS.AsString;
+//
+//          //==============================================================================
+//          // Acerta Conexao com a Loja 08 - 201.86.212.9:C:\SIDICOM.NEW\BIGNEW.FDB - TCPIP
+//          //==============================================================================
+//          If CDS_EmpProcessaCOD_FILIAL.AsString='08' Then
+//           s:=sEndIP+':'+
+//              IncludeTrailingPathDelimiter(CDS_EmpProcessaPASTA_BASE_DADOS.AsString)+
+//                                           CDS_EmpProcessaDES_BASE_DADOS.AsString;
+//
+//          (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=s;
+//          Break;
+//        End;
+//      End; // If DMConexoes.Components[i] is TIBDatabase Then
+//    End; // For i:=0 to DMConexoes.ComponentCount-1 do
+//    CDS_EmpProcessa.Next;
+//  End; // While Not CDS_EmpProcessa.Eof do
+//  CDS_EmpProcessa.First;
+//
+//End; // Monta Empresas a Conectar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMAtualizaEstoques.ConectaBanco;
@@ -259,6 +250,8 @@ End; // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TDMAtualizaEstoques.DataModuleCreate(Sender: TObject);
 Var
+  MySql: String;
+
   i: Integer;
   Arq: TextFile;
   sArquivo: TStringList;
@@ -326,7 +319,20 @@ begin
 
   ConectaBanco;
 
-  MontaConexaoEmpresas;
+// OdirApagar - Fim do SIDICOM
+//  MontaConexaoEmpresas;
+
+  // Se Utiliza Cod_Auxiliar/SIDICOM ===========================================
+  MySql:=' SELECT t.cod_aux'+
+         ' FROM TAB_AUXILIAR t'+
+         ' WHERE t.tip_aux=32'; // 32 => Se Utiliza LinxProdutos.COD_AUXILIAR nos SQLs
+  DMAtualizaEstoques.SQLQuery1.Close;
+  DMAtualizaEstoques.SQLQuery1.SQL.Clear;
+  DMAtualizaEstoques.SQLQuery1.SQL.Add(MySql);
+  DMAtualizaEstoques.SQLQuery1.Open;
+  bgCod_Auxiliar:=(DMAtualizaEstoques.SQLQuery1.FieldByName('Cod_Aux').AsInteger=1);
+  DMAtualizaEstoques.SQLQuery1.Close;
+
 end;
 
 end.

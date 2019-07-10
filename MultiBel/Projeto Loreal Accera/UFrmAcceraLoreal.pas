@@ -232,8 +232,8 @@ Begin
 
          If Not bgUsaDtaParam Then
           MySql:=
-           MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-                 ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+           MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-30'+ // -31
+                 ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP' // -1
          Else
           MySql:=
            MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
@@ -290,8 +290,8 @@ Begin
 
           If Not bgUsaDtaParam Then
            MySql:=
-            MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-                  ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+            MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-30'+  // -31
+                  ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP' // -1
           Else
            MySql:=
             MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
@@ -470,8 +470,8 @@ Begin
 
                            If Not bgUsaDtaParam Then
                             MySql:=
-                             MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-                                   ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+                             MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-30'+  // -31
+                                   ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP' // -1
                            Else
                             MySql:=
                              MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
@@ -639,8 +639,8 @@ Begin
 
          If Not bgUsaDtaParam Then
           MySql:=
-           MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-                 ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+           MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-30'+  // -31
+                 ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP'   // -1
          Else
           MySql:=
            MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
@@ -772,8 +772,8 @@ Begin
 
            If Not bgUsaDtaParam Then
             MySql:=
-             MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-                   ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+             MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-30'+  // -31
+                   ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP'  // -1
            Else
             MySql:=
              MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
@@ -879,8 +879,8 @@ Begin
 //
 //           If Not bgUsaDtaParam Then
 //            MySql:=
-//             MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-//                   ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+//             MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-30'+  // -31
+//                   ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP' // -1
 //           Else
 //            MySql:=
 //             MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
@@ -1708,14 +1708,14 @@ begin
 //  Else
 //   Begin
 //     MessageBox(Handle, pChar('ERRO ao Gerar Arquivos !!'+cr+cr+
-//                              'Período de '+DateToStr(Date-31)+' a '+DateToStr(Date-1)+cr+cr+
+//                              'Período de '+DateToStr(Date-30)+' a '+DateToStr(Date)+cr+cr+
 //                              'Não Existe Movto a Gerar no(s) Arquivo(s) Abaixo'+cr+cr+
 //                              Trim(sArqProc)), 'ATENÇÃO !!', MB_ICONERROR);
 //   End; // If Trim(sArqProc)='' Then
   If Trim(sArqProc)<>'' Then
   Begin
     MessageBox(Handle, pChar('ERRO ao Gerar Arquivos !!'+cr+cr+
-                             'Período de '+DateToStr(Date-31)+' a '+DateToStr(Date-1)+cr+cr+
+                             'Período de '+DateToStr(Date-30)+' a '+DateToStr(Date)+cr+cr+
                              'Não Existe Movto a Gerar no(s) Arquivo(s) Abaixo'+cr+cr+
                              Trim(sArqProc)), 'ATENÇÃO !!', MB_ICONERROR);
   End; // If Trim(sArqProc)='' Then

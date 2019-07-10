@@ -27,7 +27,8 @@ uses
   dxSkinXmas2008Blue, dxSkinsdxStatusBarPainter, dxStatusBar, cxContainer,
   cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, Shellapi, DB,
   jpeg, RelVisual, cxLocalization, Menus, Buttons, dxGDIPlusClasses,
-  JvExStdCtrls, JvBehaviorLabel, JvSpeedButton, DBClient, SqlExpr;
+  JvExStdCtrls, JvBehaviorLabel, JvSpeedButton, DBClient, SqlExpr,
+  cxProgressBar, MMSystem;
 
 type
   TFrmBelShopPedidos = class(TForm)
@@ -111,11 +112,11 @@ type
     Bt_Verificar: TJvXPButton;
     MenuPedidosCentralCompras: TMenuItem;
     SubMenuPCC_PedidoCompras: TMenuItem;
+    ReconectarBancosdeDados1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
-    procedure ApplicationEvents1Message(var Msg: tagMSG;
-      var Handled: Boolean);
+    procedure ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
     procedure Dbg_ProdutosEnter(Sender: TObject);
     procedure EdtCodProdLinxExit(Sender: TObject);
     procedure EdtCodProdLinxChange(Sender: TObject);
@@ -123,6 +124,9 @@ type
     procedure PC_PrincipalChange(Sender: TObject);
 
     // ODIR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    // Solicita Código da Loja a Trabalhar =====================================
+    Procedure InicializaLojaWork;
 
     // Hint em Fortma de Balão =================================================
     Procedure CreateToolTips(hWnd: Cardinal); // Cria Show Hint em Forma de Balão
@@ -145,11 +149,14 @@ type
     // Verifica Versão do Sistema ==============================================
     Function  NovaVersao: Boolean;
 
-    // CheckOut NFe Entrada ==================================================== 
+    // CheckOut NFe Entrada ====================================================
     Procedure CheckOutBuscaOC;
     Procedure CheckOutRetiraQtdCheckout;
     Procedure CheckOutRelatorio;
 
+    // Monta PrograssBar
+    Procedure MontaProgressBar(bCria: Boolean; Form: TForm);
+    
     // ODIR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     procedure Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word;
@@ -199,7 +206,9 @@ type
     procedure SubMenuCD_VerificarProdutosSolicitadosClick(Sender: TObject);
     procedure SubMenuCD_ProdutosSaldoNegativoClick(Sender: TObject);
     procedure SubMenuEN_CheckOutNFeEntradaClick(Sender: TObject);
-    procedure SubMenuPCC_PedidoComprasClick(Sender: TObject); // Posiciona no Componente
+    procedure SubMenuPCC_PedidoComprasClick(Sender: TObject);
+    procedure MenuCalculadoraClick(Sender: TObject);
+    procedure ReconectarBancosdeDados1Click(Sender: TObject); // Posiciona no Componente
 
   private
     { Private declarations }
@@ -225,11 +234,14 @@ var
   // Cria Ponteiro de transacão ================================================
   TD: TTransactionDesc;
 
-  bEnterTab: Boolean;
+  // Sql´s para IBQuery //////////////
+  MySqlDML, MySqlSelect, MySqlOrderBy, MySqlOrderGrup: String;
+  MySqlClausula1, MySqlClausula2, MySqlClausula3, MySqlClausula4: String;
+  ///////////////////////////////////////////
 
-  sgNumSolicitacao,
-  sgCodProdLinx, sgCodProdSidicom
-  : String;
+  pgProgBar: TcxProgressBar;
+
+  bgSiga, bEnterTab, bgCod_Auxiliar: Boolean;
 
 //  sgCodLojaVersaoOK: String;
 
@@ -237,9 +249,15 @@ var
 
   sgNrOCNova, sgNumSeqOCNova: String;
 
+  iNumSeqDoc: Integer;
+  sNumDoc, sgDtaDoc,
+  sgDtaProdLj // Data da Ultima Geração do Produtos que a Loja Trabalha
+  : String;
+
 implementation
 
-uses DK_Procs1, UPesquisa, UFrmLeitoraCodBarras, UDMBelShopPedidos;
+uses DK_Procs1, UPesquisa, UFrmLeitoraCodBarras, UDMBelShopPedidos,
+  UFrmOCLinx, UEntrada, UPermissao;
 
 {$R *.dfm}
 
@@ -247,13 +265,67 @@ uses DK_Procs1, UPesquisa, UFrmLeitoraCodBarras, UDMBelShopPedidos;
 // ODIR - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Solicita Código da Loja a Trabalhar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmBelShopPedidos.InicializaLojaWork;
+Begin
+
+  FrmLogin:=TFrmLogin.Create(Self);
+  FrmLogin.Caption:='BelShop - Pedidos';
+  FrmEntrada.Close;
+  FrmLogin.ShowModal;
+
+  FrmEntrada.Show;
+  FrmEntrada.Refresh;
+  Application.ProcessMessages;
+
+  // Verifica Encerramento  ====================================================
+  If sgNomeLoja='' Then
+  Begin
+    FrmEntrada.Close;
+    FreeAndNil(FrmEntrada);
+    FreeAndNil(FrmLogin);
+    Application.Terminate;
+    Exit;
+  End;
+  Pan_Loja.Caption:=sgNomeLoja;
+End; // Solicita Código da Loja a Trabalhar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Monta ProgressBar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmBelShopPedidos.MontaProgressBar(bCria: Boolean; Form: TForm);
+Begin
+  If bCria Then
+  Begin
+    pgProgBar:=TcxProgressBar.Create(Self);
+    pgProgBar.Parent:=Form;
+    pgProgBar.Visible:=True;
+    pgProgBar.Style.Font.Style:=[fsBold];
+    pgProgBar.Left:=100;
+    pgProgBar.Top:=302;
+    pgProgBar.Width:=Form.ClientWidth-200;
+
+    // Disabilita Formulario
+    Form.Enabled:=False;
+  End; // If bCria Then
+
+  If Not bCria Then
+  Begin
+    FreeAndNil(pgProgBar);
+
+    // Habilita Formulario
+    Form.Enabled:=True;
+  End;
+
+  Application.ProcessMessages;
+
+End; // Monta ProgressBar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // Fecha Todos os Client's >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShopPedidos.FechaTudo;
 Var
   i: Integer;
 Begin
 
-  // Fecha Componentes DMBelShop ===============================================
+  // Fecha Componentes DMBelShopPedidos ========================================
   For i:=0 to DMBelShopPedidos.ComponentCount-1 do
   Begin
     If DMBelShopPedidos.Components[i] is TClientDataSet Then
@@ -264,24 +336,6 @@ Begin
      If (DMBelShopPedidos.Components[i] as TSQLQuery).Active Then
      (DMBelShopPedidos.Components[i] as TSQLQuery).Close;
   End;
-
-//  // Fecha Componentes UDMVirtual ==============================================
-//  For i:=0 to DMVirtual.ComponentCount-1 do
-//  Begin
-//    If DMVirtual.Components[i] is TClientDataSet Then
-//     If (DMVirtual.Components[i] as TClientDataSet).Name<>'CDS_V_EmpConexoes' Then
-//      If (DMVirtual.Components[i] as TClientDataSet).Active Then
-//       (DMVirtual.Components[i] as TClientDataSet).Close;
-//
-//    If DMVirtual.Components[i] is TIBQuery Then
-//     If (DMVirtual.Components[i] as TIBQuery).Active Then
-//     (DMVirtual.Components[i] as TIBQuery).Close;
-//  End;
-
-//  // Fecha Series dos Graficos =================================================
-//  FechaSeriesGraficos;
-//
-//  DbGrafico_FinanObjetivosGrafico.SeriesList.Clear;
 
 end; // Fecha Todos os Client's >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -295,7 +349,7 @@ End; // Libera Opções de Menu >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Libera Opções de SubMenu >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShopPedidos.LiberaSubMenu(bLibera: Boolean = True);
 Var
- mPos: integer;
+  mPos: integer;
 Begin
   mpos := 0;
   While mpos <= FrmBelShopPedidos.ComponentCount-1 Do
@@ -305,89 +359,178 @@ Begin
       (FrmBelShopPedidos.Components[mpos] as TMenuItem).Enabled:=True;
 
       //========================================================================
-      // DESABILITADO para o CD ================================================
+      // CD - Centro de Distribuição ===========================================
       //========================================================================
-      // MENU: CENTRO DE DISTRIBUIÇÃO
-      // If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuCentroDistribuicao') And (sgLojaLinx='2') Then
-      //  (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+      If sgLojaLinx='2' Then
+      Begin
+        //----------------------------------------------------------------------
+        // MENU: CENTRO DE DISTRIBUIÇÃO ----------------------------------------
+        //----------------------------------------------------------------------
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuCentroDistribuicao') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=True;
 
-      If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_SolicitacaoReposicao') And (sgLojaLinx='2') Then
-       (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_SolicitacaoReposicao') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
 
-      If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_VerificarProdutosSolicitados') And (sgLojaLinx='2') Then
-       (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_VerificarProdutosSolicitados') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
 
-      // If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_ProdutosSaldoNegativo') And (sgLojaLinx='2') Then
-      //  (FrmBelShopPedidos.Components[mpos] as TMenuItem).Enabled:=False;
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_ProdutosSaldoNegativo') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Enabled:=True;
+        // MENU: CENTRO DE DISTRIBUIÇÃO ----------------------------------------
+        //----------------------------------------------------------------------
 
-      // DESABILITADO para o CD ================================================
+        //----------------------------------------------------------------------
+        // MENU: ENTRADA DE NOTAS ----------------------------------------------
+        //----------------------------------------------------------------------
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuEntradaNotas') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=True;
+
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuEN_CheckOutNFeEntrada')  Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=True;
+        // MENU: ENTRADA DE NOTAS ----------------------------------------------
+        //----------------------------------------------------------------------
+
+        //----------------------------------------------------------------------
+        // MENU: PEDIDOS CENTRAL DE COMPRAS ------------------------------------
+        //----------------------------------------------------------------------
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuPedidosCentralCompras') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuPCC_PedidoCompras') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+        // MENU: PEDIDOS CENTRAL DE COMPRAS ------------------------------------
+        //----------------------------------------------------------------------
+      End; // If sgLojaLinx='2' Then
+      // CD - Centro de Distribuição ===========================================
       //========================================================================
 
       //========================================================================
-      // DASABILIDADO para Todas as Lojas ======================================
+      // Todas as Lojas BelShop - RS ===========================================
       //========================================================================
-      // MENU: ENTRADA DE NOTAS -------------------------------------
-      If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuEntradaNotas') And (sgLojaLinx<>'2') Then
-       (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+      If (sgLojaLinx<>'2') and (sgUfLoja='RS')Then
+      Begin
+        //----------------------------------------------------------------------
+        // MENU: CENTRO DE DISTRIBUIÇÃO ----------------------------------------
+        //----------------------------------------------------------------------
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuCentroDistribuicao') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=True;
 
-      If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuEN_CheckOutNFeEntrada') And (sgLojaLinx<>'2') Then
-       (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
-      // DASABILIDADO para Todas as Lojas ======================================
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_SolicitacaoReposicao') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=True;
+
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_VerificarProdutosSolicitados') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=True;
+
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_ProdutosSaldoNegativo') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Enabled:=True;
+        // MENU: CENTRO DE DISTRIBUIÇÃO ----------------------------------------
+        //----------------------------------------------------------------------
+
+        //----------------------------------------------------------------------
+        // MENU: ENTRADA DE NOTAS ----------------------------------------------
+        //----------------------------------------------------------------------
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuEntradaNotas') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuEN_CheckOutNFeEntrada')  Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+        // MENU: ENTRADA DE NOTAS ----------------------------------------------
+        //----------------------------------------------------------------------
+
+        //----------------------------------------------------------------------
+        // MENU: PEDIDOS CENTRAL DE COMPRAS ------------------------------------
+        //----------------------------------------------------------------------
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuPedidosCentralCompras') Then
+        Begin
+          (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+
+          If (sgLojaLinx='23') Then
+           (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=True;
+        End;
+
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuPCC_PedidoCompras') Then
+        Begin
+          (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+          If (sgLojaLinx='23') Then
+           (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=True;
+        End;
+        // MENU: PEDIDOS CENTRAL DE COMPRAS ------------------------------------
+        //----------------------------------------------------------------------
+      End; // If (sgLojaLinx<>'2') and (sgUfLoja='RS')Then
+      // Todas as Lojas BelShop - RS ===========================================
       //========================================================================
 
       //========================================================================
-      // DASABILIDADO para Toda a Empresa ======================================
+      // Todas as Lojas BelShop - SC ===========================================
       //========================================================================
-      // MENU: PEDIDOS CENTRAL DE COMPRAS ---------------------------
-      If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuPedidosCentralCompras') Then
-       (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+      If (sgUfLoja='SC')Then
+      Begin
+        //----------------------------------------------------------------------
+        // MENU: CENTRO DE DISTRIBUIÇÃO ----------------------------------------
+        //----------------------------------------------------------------------
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuCentroDistribuicao') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=True;
 
-      If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuPCC_PedidoCompras') Then
-       (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
-      // Desabilitado para Todas as Lojas ======================================
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_SolicitacaoReposicao') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_VerificarProdutosSolicitados') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuCD_ProdutosSaldoNegativo') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Enabled:=True;
+        // MENU: CENTRO DE DISTRIBUIÇÃO ----------------------------------------
+        //----------------------------------------------------------------------
+
+        //----------------------------------------------------------------------
+        // MENU: ENTRADA DE NOTAS ----------------------------------------------
+        //----------------------------------------------------------------------
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuEntradaNotas') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+
+        // Desabilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuEN_CheckOutNFeEntrada')  Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=False;
+        // MENU: ENTRADA DE NOTAS ----------------------------------------------
+        //----------------------------------------------------------------------
+
+        //----------------------------------------------------------------------
+        // MENU: PEDIDOS CENTRAL DE COMPRAS ------------------------------------
+        //----------------------------------------------------------------------
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='MenuPedidosCentralCompras') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=True;
+
+        // Habilitado
+        If ((FrmBelShopPedidos.Components[mpos] as TMenuItem).Name='SubMenuPCC_PedidoCompras') Then
+         (FrmBelShopPedidos.Components[mpos] as TMenuItem).Visible:=True;
+        // MENU: PEDIDOS CENTRAL DE COMPRAS ------------------------------------
+        //----------------------------------------------------------------------
+      End; // If (sgUfLoja='SC')Then
+      // Todas as Lojas BelShop - SC ===========================================
       //========================================================================
-
-      {
-      mtag   := TMenuItem(Form.Components[mpos]).Tag;
-      mHelpC := TMenuItem(Form.Components[mpos]).HelpContext;
-
-      If bAdmin Then
-       Begin
-         TMenuItem(Form.Components[mpos]).Visible := True;
-       End
-      Else // If bAdmin Then
-       Begin
-         If mtag > 0 Then
-         Begin
-            If CDS_Seguranca.Locate('TAG',mtag,[loCaseInsensitive]) Then
-             Begin
-               TMenuItem(Form.Components[mpos]).Visible := TMenuItem(Form.Components[mpos]).Enabled;
-             End
-            Else If mHelpC=3 Then
-             Begin
-               MySql:=' Select s.Tag'+
-                      ' From seguranca s'+
-                      ' Where s.usuario='+QuotedStr(sUsuario)+
-                      ' and s.tag like '+QuotedStr('%'+IntToStr(mtag)+'%');
-               SDS_Busca.Close;
-               SDS_Busca.CommandText:=MySql;
-               SDS_Busca.Open;
-
-               If Trim(SDS_Busca.FieldByName('Tag').AsString)<>'' Then
-                TMenuItem(Form.Components[mpos]).Visible := TMenuItem(Form.Components[mpos]).Enabled
-               Else
-                TMenuItem(Form.Components[mpos]).Visible := False;
-
-               SDS_Busca.Close;
-
-             End
-            Else
-             Begin
-               TMenuItem(Form.Components[mpos]).Visible := False;
-             End; // If CDS_Seguranca.Locate('TAG',mtag,[loCaseInsensitive]) Then
-         End; // If mtag > 0 Then
-       End; //If bAdmin Then
-    }
     End; // If FrmBelShopPedidos.Components[mpos] is TMenuItem then
 
     Inc(mpos);
@@ -474,7 +617,7 @@ Begin
   SBt_Voltar.Visible:=PC_Principal.Visible;
 
   PC_PrincipalChange(Self);
-  
+
   Refresh;
 End; // Abre Determinada TabSheet >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -712,7 +855,6 @@ Begin
   DMBelShopPedidos.CDS_OCItensCheck.DisableControls;
   DMBelShopPedidos.CDS_OCItensCheck.Close;
   DMBelShopPedidos.CDS_OCItensCheck.Open;
-
   DMBelShopPedidos.CDS_OCItensCheck.EnableControls;
 
   // Posiciona no Produto ======================================================
@@ -821,7 +963,7 @@ Begin
   // Verifica se é Para Atualizar ==============================================
   MySql:=' SELECT *'+
          ' FROM TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux=20';
+         ' WHERE t.tip_aux=20'; // INFORMA PARA LOJA QUE TEM NOVA VERSÃO DO SISTEMA DE SOLICITAÇÃO DE TRANSFERENCIAS
   DMBelShopPedidos.CDS_BuscaRapida.Close;
   DMBelShopPedidos.SQLQ_BuscaRapida.Close;
   DMBelShopPedidos.SQLQ_BuscaRapida.SQL.Clear;
@@ -872,10 +1014,10 @@ Begin
     MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
            ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
            ' VALUES ('+
-           ' 19, '+ // TIP_AUX
-           sgLojaLinx+', '+ // COD_AUX
-           '25, '+ // DES_AUX
-           '24, '+ // DES_AUX1
+           ' 19, '+ // TIP_AUX - TRANSFERÊNCIAS LOJAS: Número de Produtos e Quantidade Máximo por Dia
+           sgLojaLinx+', '+ // COD_AUX - Código da Loja Linx
+           '25, '+ // DES_AUX - Número Máximo de Produtos Por Dia
+           '24, '+ // DES_AUX1 - Quantidade Máximo por Produto
            ' NULL, '+ // VLR_AUX
            ' NULL)'+ // VLR_AUX1
            ' MATCHING (TIP_AUX, COD_AUX)';
@@ -996,7 +1138,6 @@ begin
   // Pasta Executavel ==========================================================
   // ===========================================================================
 
-
   If not(fileexists(IncludeTrailingPathDelimiter(sgPastaExecutavel)+'Loja.ini')) then
   Begin
     msg('Definição da Loja Não Encontrada !!'+cr+'Entrar em Contato com o ODIR'+cr+'Celcular:  999-578-234','A');
@@ -1054,9 +1195,8 @@ begin
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_NFeBuscaOC.Handle, @ti, TipoDoIcone, 'Busca Ordem de Compra', 'CHECKOUT PRODUTOS !!');
 
-
   CreateToolTips(Self.Handle);
-  AddToolTip(Bt_NFeEscanear.Handle, @ti, TipoDoIcone, 'Orcanear Produtos', 'CHECKOUT PRODUTOS !!');
+  AddToolTip(Bt_NFeEscanear.Handle, @ti, TipoDoIcone, 'Escanear Produtos', 'CHECKOUT PRODUTOS !!');
   // Show Hint em Forma de Balão ===============================================
   // ===========================================================================
 
@@ -1090,33 +1230,31 @@ procedure TFrmBelShopPedidos.FormShow(Sender: TObject);
 Var
   MySql: String;
   b: Boolean;
-  iIndexCol: Integer;
 begin
-  If sgLojaLinx<>'2' Then
-   Ts_NFeCheckOut.TabVisible:=False;
+//  If sgLojaLinx<>'2' Then
+//   Ts_NFeCheckOut.TabVisible:=False;
+//  FreeAndNil(FrmEntrada);
 
   // Cor Form
   CorCaptionForm.Active:=False;
   CorCaptionForm.Active:=True;
 
-  // Atualiza Novca Versão do Sistema ==========================================
-  If sgLojaLinx<>'2' Then // Não Verifica Versão para o CD
-  Begin
-    If Not NovaVersao Then
-    Begin
-      msg('== TECNONOLOGIA DA INFORMAÇÃO =='+cr+
-          ' BelShop-CD ADVERTE !!'+cr+
-          'Versão do Sistema esta Incorreta !!'+cr+
-          'Solicite Atualização Imediata'+cr+'para ODIR / ALINE...','A');
-    End; // If not NovaVersao Then
-  End; // If sgLojaLinx<>2 Then // Não Verifica Versão para o CD
+  // Solicita Código da Loja a Trabalhar =======================================
+  InicializaLojaWork;
 
-  // ===========================================================================
-  // Descrição do Loja =========================================================
-  // ===========================================================================
-  Pan_Loja.Caption:=sgNomeLoja;
-  // Descrição do Loja =========================================================
-  // ===========================================================================
+  If FrmLogin=nil Then
+   Exit;
+
+  // Atualiza Novca Versão do Sistema ==========================================
+//  If (sgLojaLinx<>'2') and (sgUfLoja<>'SC') Then // Não Verifica Versão para o CD
+//  Begin
+//    If Not NovaVersao Then
+//    Begin
+//      msg('== TECNOLOGIA DA INFORMAÇÃO =='+cr+cr+
+//          'Versão do Sistema esta Incorreta !!'+cr+
+//          'Solicite para ODIR / ALINE'+cr+'Atualização Imediata...','A');
+//    End; // If not NovaVersao Then
+//  End; // If sgLojaLinx<>2 Then // Não Verifica Versão para o CD
 
   // ===========================================================================
   // Verifica Conexão ==========================================================
@@ -1124,17 +1262,6 @@ begin
   If Not DMBelShopPedidos.SQLC.Connected Then
    DMBelShopPedidos.SQLC.Connected:=True;
   // Verifica Conexão ==========================================================
-  // ===========================================================================
-
-  // ===========================================================================
-  // Apresentação dos Parametros de Conexão ====================================
-  // ===========================================================================
-  Mem_Odir.Lines.Add(DMBelShopPedidos.SQLC.Params.GetText);
-  If DMBelShopPedidos.SQLC.Connected Then
-   Mem_Odir.Lines.Add('CONNECTED=True')
-  Else
-   Mem_Odir.Lines.Add('CONNECTED=False');
-  // Apresentação dos Parametros de Conexão ====================================
   // ===========================================================================
 
   // ===========================================================================
@@ -1150,7 +1277,7 @@ begin
     Begin
       MySql:=' SELECT t.des_aux Num_Prod, t.des_aux1 Qtd_Prod'+
              ' FROM TAB_AUXILIAR t'+
-             ' WHERE t.tip_aux=19'+
+             ' WHERE t.tip_aux=19'+ // TRANSFERÊNCIAS LOJAS: Número de Produtos e Quantidade Máximo por Dia
              ' AND   t.cod_aux='+sgLojaLinx;
       DMBelShopPedidos.CDS_Busca.Close;
       DMBelShopPedidos.SQLQ_Busca.Close;
@@ -1159,7 +1286,7 @@ begin
       DMBelShopPedidos.CDS_Busca.Open;
       If Trim(DMBelShopPedidos.CDS_Busca.FieldByName('Num_Prod').AsString)='' Then
        Begin
-         // Cria Limites da Loja em Tab_Auxiliar
+         // Cria Limites da Loja em Tab_Auxiliar se Não Houver
          If Not CriaLimitesLoja Then
          Begin
            msg('Erro ao Criar Limites da Loja !!','A');
@@ -1183,32 +1310,35 @@ begin
   // Busca Informações para Lojas ==============================================
   // ===========================================================================
 
- //odirapagar 
-//  // ===========================================================================
-//  // Acerta Apresentação para o CD =============================================
-//  // ===========================================================================
-//  If sgLojaLinx='2' Then
-//  Begin
-//    // =========================================================================
-//    // Inicializa TabSheets para o CD ==========================================
-//    // =========================================================================
-//    FrmBelShopPedidos.AutoSize:=False;
-//    Ts_SolicitacaoConsulta.TabVisible:=False;
-//    Ts_SolicitacaoProdutos.TabVisible:=False;
-//    FrmBelShopPedidos.Align:=alClient;
-//    FrmBelShopPedidos.AutoSize:=True;
-//    // Inicializa TabSheets para o CD ==========================================
-//    // =========================================================================
-//
-//    // =========================================================================
-//    // Coluna de Endereçamento VISIVEL para CD =================================
-//    // =========================================================================
-//    Dbg_NFeProdutosOC.Columns[iIndexCol].Visible:=True;
-//    // Coluna de Endereçamento VISIVEL para CD =================================
-//    // =========================================================================
-//  End;
-//  // Acerta Apresentação para o CD =============================================
-//  // ===========================================================================
+  // ===========================================================================
+  //  Busca Data da Ultima Geração do Produtos que a Loja Trabalha =============
+  // ===========================================================================
+  MySql:=' SELECT MAX(p.dta_processa) DATA'+
+         ' FROM LINX_PRODUTOS_LOJAS p'+
+         ' WHERE p.cod_loja_linx='+sgLojaLinx;
+  DMBelShopPedidos.SQLQuery2.Close;
+  DMBelShopPedidos.SQLQuery2.SQL.Clear;
+  DMBelShopPedidos.SQLQuery2.SQL.Add(MySql);
+  DMBelShopPedidos.SQLQuery2.Open;
+  sgDtaProdLj:=f_Troca('/','.',f_Troca('-','.',DMBelShopPedidos.SQLQuery2.FieldByName('Data').AsString));
+  DMBelShopPedidos.SQLQuery2.Close;
+  //  Busca Data da Ultima Geração do Produtos que a Loja Trabalha =============
+  // ===========================================================================
+
+  // ===========================================================================
+  //  Verifica se Utiliza LinxProdtudos.COD_AUXILIAR ===========================
+  // ===========================================================================
+  MySql:=' SELECT t.cod_aux'+
+         ' FROM TAB_AUXILIAR t'+
+         ' WHERE t.tip_aux=32';
+  DMBelShopPedidos.SQLQuery2.Close;
+  DMBelShopPedidos.SQLQuery2.SQL.Clear;
+  DMBelShopPedidos.SQLQuery2.SQL.Add(MySql);
+  DMBelShopPedidos.SQLQuery2.Open;
+  bgCod_Auxiliar:=(DMBelShopPedidos.SQLQuery2.FieldByName('Cod_Aux').AsInteger=1);
+  DMBelShopPedidos.SQLQuery2.Close;
+  //  Verifica se Utiliza LinxProdtudos.COD_AUXILIAR ===========================
+  // ===========================================================================
 
   // ===========================================================================
   // Inicializa Menu ===========================================================
@@ -1230,13 +1360,16 @@ begin
   // primeiramente verificamos se é o evento a ser tratado...
   If Msg.message = WM_MOUSEWHEEL then
   Begin
-    Msg.message := WM_KEYDOWN;
-    Msg.lParam := 0;
-    Sentido := HiWord(Msg.wParam);
-    if Sentido > 0 then
-     Msg.wParam := VK_UP
-    else
-     Msg.wParam := VK_DOWN;
+    If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
+      Msg.message := WM_KEYDOWN;
+      Msg.lParam := 0;
+      Sentido := HiWord(Msg.wParam);
+      if Sentido > 0 then
+       Msg.wParam := VK_UP
+      else
+       Msg.wParam := VK_DOWN;
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   End; // if Msg.message = WM_MOUSEWHEEL then
 end;
 
@@ -1257,13 +1390,19 @@ begin
 
   If EdtCodProdLinx.Value<>0 Then
   Begin
-    If DMBelShopPedidos.CDS_Solicitacao.RecNo>=igNumMaxProd Then
+    If (PC_Principal.ActivePage=Ts_SolicitacaoProdutos) And (Ts_SolicitacaoProdutos.CanFocus) Then
     Begin
-      msg('Número Máximo de Produtos por'+cr+'Transferêcia Diária Esta Completo !!'+cr+IntToStr(igNumMaxProd)+' Produtos por Dia !!','A');
-      LimpaEdts;
-      EdtCodProdLinx.SetFocus;
-      Exit;
-    End; // If Not bMultiplo Then
+      If DMBelShopPedidos.CDS_Solicitacao.Active Then
+      Begin
+        If DMBelShopPedidos.CDS_Solicitacao.RecNo>=igNumMaxProd Then
+        Begin
+          msg('Número Máximo de Produtos por'+cr+'Transferêcia Diária Esta Completo !!'+cr+IntToStr(igNumMaxProd)+' Produtos por Dia !!','A');
+          LimpaEdts;
+          EdtCodProdLinx.SetFocus;
+          Exit;
+        End; // If DMBelShopPedidos.CDS_Solicitacao.RecNo>=igNumMaxProd Then
+      End; // If DMBelShopPedidos.CDS_Solicitacao.Active Then
+    End; // If (PC_Principal.ActivePage=Ts_SolicitacaoProdutos) And (Ts_SolicitacaoProdutos.CanFocus) Then
 
     Screen.Cursor:=crAppStart;
 
@@ -1271,13 +1410,34 @@ begin
     If Not DMBelShopPedidos.SQLC.Connected Then
      DMBelShopPedidos.SQLC.Connected:=True;
 
-    // Buaca Saldo do Produto no CD ============================================
+    // Busca Saldo do Produto no CD ============================================
     MySql:=' SELECT pr.Cod_Produto, pr.Nome, pr.Cod_Auxiliar,'+
-           '        pr.DesAtivado, pr.Unidade,'+
-           '        COALESCE(pd.Quantidade,0) Quantidade'+
-           ' FROM LINXPRODUTOS pr, LINXPRODUTOSDETALHES pd'+
-           ' WHERE pr.cod_produto=pd.cod_produto'+
-           ' AND   pd.empresa=2'+
+           '        pr.Desativado, pr.Unidade,'+
+           '        COALESCE(pd.Quantidade,0) Quantidade,'+
+           ' CASE'+
+           '    WHEN ( (COALESCE(pl.cod_produto,'''')='''') AND (COALESCE(cv.est_minimo, 0)<1) )  THEN'+
+           '      ''N'''+
+           '    ELSE'+
+           '      ''S'''+
+           ' END Ind_Trabalha'+
+
+           ' FROM LINXPRODUTOS pr'+
+           '       LEFT JOIN LINXPRODUTOSDETALHES pd  ON pd.cod_produto=pr.cod_produto'+
+           '       LEFT JOIN LINX_PRODUTOS_LOJAS pl   ON pl.cod_produto=pr.cod_produto'+
+           '                                         AND pl.cod_loja_linx='+sgLojaLinx+
+           '                                         AND pl.dta_processa='+QuotedStr(sgDtaProdLj)+
+           '       LEFT JOIN ES_FINAN_CURVA_ABC cv    ON cv.cod_linx='+sgLojaLinx+
+           '                                         AND cv.cod_prod_linx=pr.cod_produto'+
+
+           ' WHERE pd.empresa=2'+
+           // Setor: 17-IMOBILIZADOS 20-MOVEIS SALÃO 25 - USO E CONSUMO
+           ' AND NOT (COALESCE(pr.id_setor,0) in (17, 20, 25))'+
+           // Linha: 33 - Brindes
+           ' AND NOT (COALESCE(pr.id_linha ,0) in (33))'+
+           // Coleção: 294 - BRINDE 587 - KIDS
+           ' AND NOT (COALESCE(pr.id_colecao ,0) in (294, 587))'+
+           // Fornecedor Não
+           ' AND NOT (COALESCE(pr.cod_fornecedor,0) in (6, 1014, 260))'+
            ' AND   pr.cod_produto='+IntToStr(EdtCodProdLinx.AsInteger);
     DMBelShopPedidos.CDS_Busca.Close;
     DMBelShopPedidos.SQLQ_Busca.Close;
@@ -1290,9 +1450,32 @@ begin
     sDesAtivado              :=Trim(DMBelShopPedidos.CDS_Busca.FieldByName('DesAtivado').AsString);
     sgCodProdLinx            :=DMBelShopPedidos.CDS_Busca.FieldByName('Cod_Produto').AsString;
     sgCodProdSidicom         :=Trim(DMBelShopPedidos.CDS_Busca.FieldByName('Cod_Auxiliar').AsString);
-    Lab_Unidade.Caption      :=Trim(DMBelShopPedidos.CDS_Busca.FieldByName('Unidade').AsString);
-    Lab_UnidadeCD.Caption    :=Trim(DMBelShopPedidos.CDS_Busca.FieldByName('Unidade').AsString);
 
+    // Verifica se Produto Esta Autorizado para a Loja =========================
+    If Trim(DMBelShopPedidos.CDS_Busca.FieldByName('Ind_Trabalha').AsString)='N' Then
+    Begin
+      Screen.Cursor:=crDefault;
+
+      PlaySound(PChar('SystemQuestion'), 0, SND_ASYNC);
+      PlaySound(PChar('SystemAsterisk'), 0, SND_ASYNC);
+      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+      PlaySound(PChar('SystemQuestion'), 0, SND_ASYNC);
+
+      Application.MessageBox(PChar('O Produto: '+EdtDescProduto.Text+cr+cr+
+                                   'NÃO Esta Autorizado para Venda na Sua Loja !!'+cr+cr+
+                                   'Favor Entrar em Contato com o Setor de Compras para Liberação !!'), 'ATENÇÃO !!', 16);
+      DMBelShopPedidos.CDS_Busca.Close;
+      LimpaEdts;
+      EdtCodProdLinx.Clear;
+      EdtCodProdLinx.SetFocus;
+      Exit;
+    End; // If Trim(DMBelShopPedidos.CDS_Busca.FieldByName('Ind_Trabalha').AsString)='N' Then
+
+    If (PC_Principal.ActivePage=Ts_SolicitacaoProdutos) And (Ts_SolicitacaoProdutos.CanFocus) Then
+    Begin
+      Lab_Unidade.Caption      :=Trim(DMBelShopPedidos.CDS_Busca.FieldByName('Unidade').AsString);
+      Lab_UnidadeCD.Caption    :=Trim(DMBelShopPedidos.CDS_Busca.FieldByName('Unidade').AsString);
+    End; // If (PC_Principal.ActivePage=Ts_SolicitacaoProdutos) And (Ts_SolicitacaoProdutos.CanFocus) Then
     DMBelShopPedidos.CDS_Busca.Close;
 
     // Acerta Quantidade para Separação ========================================
@@ -1301,9 +1484,17 @@ begin
       // Verifica se Produto tem Quantidade de Reposição no CD a Separar =======
       MySql:=' SELECT SUM(Prod_Solic.Qtd_Solic) QTD_SOLIC'+
              ' FROM (SELECT SUM(l.Qtd_a_transf) QTD_SOLIC'+
-             '       FROM ES_ESTOQUES_LOJAS l, LINXPRODUTOS p'+
-             '       WHERE l.cod_produto=p.cod_auxiliar'+
-             '       AND   l.dta_movto=CURRENT_DATE'+
+             '       FROM ES_ESTOQUES_LOJAS l, LINXPRODUTOS p';
+
+             If bgCod_Auxiliar Then
+              MySql:=
+               MySql+'       WHERE l.cod_produto=p.cod_auxiliar'
+             Else
+              MySql:=
+               MySql+'       WHERE l.cod_produto=p.cod_produto';
+
+      MySql:=
+       MySql+'       AND   l.dta_movto=CURRENT_DATE'+
              '       AND   l.ind_transf=''SIM'''+
              '       AND   l.num_pedido=''000000'''+
              '       AND   COALESCE(l.rel_separacao,0)<>0'+
@@ -1316,20 +1507,23 @@ begin
              '       SELECT SUM(c.Qtd_Transf) QTD_SOLIC'+
              '       FROM SOL_TRANSFERENCIA_CD c'+
              '       WHERE c.doc_gerado=0'+
-             '       AND   c.cod_prod_linx='+IntToStr(EdtCodProdLinx.AsInteger);
+             '       AND   c.cod_prod_linx='+IntToStr(EdtCodProdLinx.AsInteger)+
 
       // Saldo de Transferencias do Compras em Aberto ==========================
-             If Trim(sgCodProdSidicom)<>'' Then
-             Begin
-               MySql:=
-                MySql+'       UNION'+
+             '       UNION'+
 
-                     ' SELECT SUM(oc.qtd_transf) QTD_SOLIC'+
-                     ' FROM OC_COMPRAR oc'+
-                     ' WHERE oc.num_oc_gerada>20160300'+ // Documentos de Transferencias
-                     ' AND   oc.ind_transf_cd=''N'''+
-                     ' AND   oc.cod_item='+QuotedStr(sgCodProdSidicom);
-             End; // If Trim(sgCodProdSidicom)<>'' Then
+             '       SELECT SUM(oc.qtd_transf) QTD_SOLIC'+
+             '       FROM OC_COMPRAR oc'+
+             '       WHERE oc.num_oc_gerada>20160300'+ // Documentos de Transferencias
+             '       AND   oc.ind_transf_cd=''N''';
+
+             If bgCod_Auxiliar Then
+              MySql:=
+               MySql+'       AND   oc.cod_item='+QuotedStr(sgCodProdSidicom)
+             Else
+              MySql:=
+               MySql+' AND   oc.cod_item='+IntToStr(EdtCodProdLinx.AsInteger);
+
       MySql:=
        MySql+') Prod_Solic';
       DMBelShopPedidos.CDS_Busca.Close;
@@ -1348,6 +1542,7 @@ begin
      EdtQtdEstoqueCD.AsInteger:=0;
 
     Screen.Cursor:=crDefault;
+
     If EdtDescProduto.Text='' Then
     Begin
       msg('Produto (Linx) NÃO Encontrado !!!', 'A');
@@ -1372,13 +1567,16 @@ begin
       Exit;
     End;
 
-    If EdtQtdEstoqueCD.AsInteger<=0 Then
+    If (PC_Principal.ActivePage=Ts_SolicitacaoProdutos) And (Ts_SolicitacaoProdutos.CanFocus) Then
     Begin
-      msg('Produto SEM ESTOQUE no CD !!!', 'A');
-      LimpaEdts;
-      EdtCodProdLinx.SetFocus;
-      Exit;
-    End;
+      If EdtQtdEstoqueCD.AsInteger<=0 Then
+      Begin
+        msg('Produto SEM ESTOQUE no CD !!!', 'A');
+        LimpaEdts;
+        EdtCodProdLinx.SetFocus;
+        Exit;
+      End;
+    End; // If (PC_Principal.ActivePage=Ts_SolicitacaoProdutos) And (Ts_SolicitacaoProdutos.CanFocus) Then
 
     If EdtQtdEstoque.CanFocus   Then EdtQtdEstoque.SetFocus;
     If DtEdt_DtaInicio.CanFocus Then DtEdt_DtaInicio.SetFocus;
@@ -1401,7 +1599,10 @@ Var
   b:Boolean;
   sNome: String;
 Begin
-  Dbg_Produtos.SetFocus;
+  If (PC_Principal.ActivePage=Ts_SolicitacaoProdutos) And (Ts_SolicitacaoProdutos.CanFocus) Then
+   Dbg_Produtos.SetFocus
+  Else
+   Dbg_VerificaProdutos.SetFocus;
 
   LimpaEdts;
   b:=True;
@@ -1417,10 +1618,10 @@ Begin
        Except
        End;
      End
-    Else // If InputQuery('Informe o Desconto','',sVlrDesc) then
+    Else // If InputQuery('Informe Parte do Nome','',sNome) then
      Begin
        Exit;
-     End; // If InputQuery('Informe o Desconto','',sVlrDesc) then
+     End; // If InputQuery('Informe Parte do Nome','',sNome) then
   End; // While b do
 
   FrmPesquisa:=TFrmPesquisa.Create(Self);
@@ -1442,11 +1643,20 @@ Begin
   If Not DMBelShopPedidos.SQLC.Connected Then
    DMBelShopPedidos.SQLC.Connected:=True;
 
-  MySql:=' SELECT TRIM(pr.nome) nome, pr.cod_produto'+
+  MySql:=' SELECT TRIM(pr.nome) Des_Produto, pr.cod_produto, pr.cod_fornecedor'+
          ' FROM LINXPRODUTOS pr'+
          ' WHERE pr.desativado=''N'''+
-         ' AND pr.Nome LIKE ''%'+AnsiUpperCase(sNome)+'%'''+
-         ' ORDER BY pr.nome';
+         // Setor: 17-IMOBILIZADOS 20-MOVEIS SALÃO 25 - USO E CONSUMO
+         ' AND   NOT (COALESCE(pr.id_setor,0) in (17, 20, 25))'+
+         // Linha: 33 - Brindes
+         ' AND   NOT (COALESCE(pr.id_linha ,0) in (33))'+
+         // Coleção: 294 - BRINDE 587 - KIDS
+         ' AND   NOT (COALESCE(pr.id_colecao ,0) in (294, 587))'+
+         // Fornecedor Não
+         ' AND   NOT (COALESCE(pr.cod_fornecedor,0) in (6, 1014, 260))'+
+
+         ' AND   UPPER(pr.Nome) LIKE ''%'+AnsiUpperCase(sNome)+'%'''+
+         ' ORDER BY 1';
   DMBelShopPedidos.CDS_Pesquisa.Close;
   DMBelShopPedidos.SQLQ_Pesquisa.Close;
   DMBelShopPedidos.SQLQ_Pesquisa.SQL.Clear;
@@ -1459,7 +1669,7 @@ Begin
   OdirPanApres.Visible:=False;
 
   // ============== Verifica Existencia de Dados ===============================
-  If Trim(DMBelShopPedidos.CDS_Pesquisa.FieldByName('Nome').AsString)='' Then
+  If Trim(DMBelShopPedidos.CDS_Pesquisa.FieldByName('Des_Produto').AsString)='' Then
   Begin
     msg('Sem Produto a Listar !!','A');
     DMBelShopPedidos.CDS_Pesquisa.Close;
@@ -1469,9 +1679,9 @@ Begin
   End;
 
   // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
-  FrmPesquisa.Campo_pesquisa:='Nome';
+  FrmPesquisa.Campo_pesquisa:='Des_Produto';
   FrmPesquisa.Campo_Codigo:='Cod_Produto';
-  FrmPesquisa.Campo_Descricao:='Nome';
+  FrmPesquisa.Campo_Descricao:='Des_Produto';
   FrmPesquisa.EdtDescricao.Clear;
 
   // ============= ABRE FORM DE PESQUISA =======================================
@@ -1823,8 +2033,8 @@ begin
 
            If Not DMBelShopPedidos.CDS_Solicitacao.Locate('COD_PROD_LINX', sValor,[]) Then
            Begin
-            If Not LocalizaRegistro(DMBelShopPedidos.CDS_Solicitacao, 'COD_PROD_LINX', sValor) Then
-             b:=False;
+             If Not LocalizaRegistro(DMBelShopPedidos.CDS_Solicitacao, 'COD_PROD_LINX', sValor) Then
+              b:=False;
            End; // If Not DMBelShopPedidos.CDS_Solicitacao.Locate('COD_PROD_LINX', sValor,[]) Then
 
            Break;
@@ -1855,9 +2065,9 @@ end;
 
 procedure TFrmBelShopPedidos.EdtQtdTransfExit(Sender: TObject);
 Var
-  MySql: String;
-  sCodGrupo, sCodSubGrupo, sQtdCaixa: String;
-  iQtdMultiplo: Integer;
+//  MySql: String;
+//  sCodGrupo, sCodSubGrupo, sQtdCaixa: String;
+//  iQtdMultiplo: Integer;
   bMultiplo: Boolean;
 begin
 
@@ -2030,27 +2240,40 @@ begin
          '     ''NÃO'''+
          '   ELSE'+
          '     ''SIM'''+
-         ' END enviado_cd,'+
+         ' END ENVIADO_CD,'+
 
          ' CASE'+
          '   WHEN (COALESCE(el.num_pedido,''000000'')<>''000000'') AND (CAST(COALESCE(el.num_pedido,''0'') AS INTEGER)<999990) THEN'+
          '     ''SIM'''+
          '   ELSE'+
          '     ''NÃO'''+
-         ' END transf_loja,'+
+         ' END TRANSF_LOJA,'+
 
-         ' so.qtd_transf Qtd_Solicitada,'+
-         ' el.qtd_transf Qtd_De_Transf,'+
+         ' so.qtd_transf QTD_SOLICITADA,'+
+         ' el.qtd_transf QTD_DE_Transf,'+
 
          ' CASE'+
          '   WHEN (COALESCE(el.num_pedido,''000000'')<>''000000'') AND (CAST(COALESCE(el.num_pedido,''0'') AS INTEGER)<999990) THEN'+
          '     el.qtd_a_transf'+
          '   ELSE'+
          '     0'+
-         ' END qtd_a_transf,'+
+         ' END QTD_A_TRANSF,'+
 
          ' so.cod_prod_sidi, so.cod_prod_linx,'+
-         ' so.dta_processamento, so.doc_gerado, el.obs_docto, so.num_solicitacao'+
+         ' so.dta_processamento, so.doc_gerado,'+
+
+         ' CASE'+
+         '   WHEN (COALESCE(el.obs_docto,'''')='''') and (COALESCE(so.obs_texto,'''')<>'''') THEN'+
+         '     so.obs_texto'+
+         '   WHEN (COALESCE(el.obs_docto,'''')<>'''') and (COALESCE(so.obs_texto,'''')='''') THEN'+
+         '     el.obs_docto'+
+         '   WHEN (COALESCE(el.obs_docto,'''')<>'''') and (COALESCE(so.obs_texto,'''')<>'''') THEN'+
+         '     so.obs_texto||'' - ''||el.obs_docto'+
+         '   ELSE'+
+         '     NULL'+
+         ' END OBS_DOCTO,'+
+
+         ' so.num_solicitacao'+
 
          ' FROM SOL_TRANSFERENCIA_CD so'+
          '    LEFT JOIN LINXPRODUTOS      pl  ON pl.cod_produto=so.cod_prod_linx'+
@@ -3060,8 +3283,55 @@ end;
 
 procedure TFrmBelShopPedidos.SubMenuPCC_PedidoComprasClick(Sender: TObject);
 begin
-  msg('Opção em Desenvolvimento !!','A');
-  Exit;
+
+// OdirApagar - 17/05/2019
+//  FrmOCLinx:=TFrmOCLinx.Create(Self);
+//  FrmOCLinx.CorCaptionForm.FormCaption:=Pan_Loja.Caption+' - '+'  PEDIDO DE COMPRA - LINX';
+
+  Try
+    If FrmOCLinx=nil Then
+     FrmOCLinx:=TFrmOCLinx.Create(Self);
+
+    FrmOCLinx.CorCaptionForm.FormCaption:=Pan_Loja.Caption+' - '+'  PEDIDO DE COMPRA - LINX';
+    FrmOCLinx.ShowModal;
+  Except
+    msg('ERRO de Conexão ao Banco de Dados'+cr+'Entre Novamente no Módulo'+cr+'de pedido de Compras !! !!','A');
+  End; // While bgSiga do
+
+  FreeAndNil(FrmOCLinx);
+end;
+
+procedure TFrmBelShopPedidos.MenuCalculadoraClick(Sender: TObject);
+begin
+  ShellExecute(handle, 'open', 'calc.exe', '', nil, sw_shownormal);
+
+end;
+
+procedure TFrmBelShopPedidos.ReconectarBancosdeDados1Click(Sender: TObject);
+begin
+  // Reconecta Bancos de Dados se Necessario ===================================
+  If Not DMBelShopPedidos.IBDB_BelShop.Connected Then
+  Begin
+    Try
+      DMBelShopPedidos.IBDB_BelShop.Connected:=True;
+    Except
+      msg('Problema de Conexão ao'+cr+'Banco de Dados !!'+cr+cr+'Saia e Entre no Sistema !!','A');
+      Exit;
+    End;
+  End; // If Not DMBelShopPedidos.IBDB_BelShop.Connected Then
+
+  If Not DMBelShopPedidos.SQLC.Connected Then
+  Begin
+    Try
+      DMBelShopPedidos.SQLC.Connected:=True;
+    Except
+      msg('Problema de Conexão ao'+cr+'Banco de Dados !!'+cr+cr+'Saia e Entre no Sistema !!','A');
+      Exit;
+    End;
+  End; // If Not DMBelShopPedidos.SQLC.Connected Then
+
+  msg('Bancos de Dados'+cr+cr+'CONECTADOS !!','A');
 end;
 
 end.
+

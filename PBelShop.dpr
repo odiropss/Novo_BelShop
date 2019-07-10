@@ -28,8 +28,6 @@ uses
   UFrmApresConciliacao in 'UFrmApresConciliacao.pas' {FrmApresConciliacao},
   UDMSalao in 'UDMSalao.pas' {DMSalao: TDataModule},
   UFrmSalao in 'UFrmSalao.pas' {FrmSalao},
-  UFrmGeraPedidosComprasLojas in 'UFrmGeraPedidosComprasLojas.pas' {FrmGeraPedidosComprasLojas},
-  UDMLojaUnica in 'UDMLojaUnica.pas' {DMLojaUnica: TDataModule},
   UWindowsFirewall in 'UWindowsFirewall.pas',
   UFrmSalaoPercServico in 'UFrmSalaoPercServico.pas' {FrmSalaoPercServico},
   UFrmConciliacaoCaixa in 'UFrmConciliacaoCaixa.pas' {FrmConciliacaoCaixa},
@@ -79,7 +77,6 @@ begin
   Application.CreateForm(TDMBelShop, DMBelShop);
   Application.CreateForm(TDMSalao, DMSalao);
   Application.CreateForm(TDMConciliacao, DMConciliacao);
-  Application.CreateForm(TDMLojaUnica, DMLojaUnica); // RETIRAR DI PROJETO E APAGAR
   Application.CreateForm(TDMRelatorio, DMRelatorio);
   Application.CreateForm(TDMSidicom, DMSidicom); // RETIRAR DI PROJETO E APAGAR
   Application.CreateForm(TDMCentralTrocas, DMCentralTrocas);
@@ -97,7 +94,6 @@ begin
   // Application.CreateForm(TFrmConfirmacao, FrmConfirmacao);
   // Application.CreateForm(TFrmLeitoraCodBarras, FrmLeitoraCodBarras);
   Application.CreateForm(TFrmBancoExtratos, FrmBancoExtratos);
-  Application.CreateForm(TFrmGeraPedidosComprasLojas, FrmGeraPedidosComprasLojas); // RETIRAR DI PROJETO E APAGAR
   Application.CreateForm(TFrmFluxoFornecedor, FrmFluxoFornecedor);
   // Application.CreateForm(TFrmPrioridadesReposicao, FrmPrioridadesReposicao);
   // Application.CreateForm(TFrmOCLinx, FrmOCLinx);

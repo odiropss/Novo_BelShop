@@ -1,0 +1,48 @@
+==================================
+Processamento INICIO: 06/06/2019 20:00:00
+==================================
+LOJAS A PROCESSAR
+Loja SIDI: 99 Loja Linx: 02 CNPJ: 03772229000213
+Loja SIDI: 08 Loja Linx: 23 CNPJ: 05110757000151
+Loja SIDI: 17 Loja Linx: 17 CNPJ: 03772229001708
+Loja SIDI: 06 Loja Linx: 13 CNPJ: 03772229001376
+Loja SIDI: 11 Loja Linx: 03 CNPJ: 03772229000302
+Loja SIDI: 07 Loja Linx: 07 CNPJ: 03772229000728
+Loja SIDI: 04 Loja Linx: 15 CNPJ: 03772229001538
+Loja SIDI: 13 Loja Linx: 12 CNPJ: 03772229001295
+Loja SIDI: 14 Loja Linx: 16 CNPJ: 03772229001619
+Loja SIDI: 03 Loja Linx: 14 CNPJ: 03772229001457
+Loja SIDI: 12 Loja Linx: 04 CNPJ: 03772229000485
+Loja SIDI: 16 Loja Linx: 06 CNPJ: 03772229000647
+Loja SIDI: 10 Loja Linx: 10 CNPJ: 03772229001023
+Loja SIDI: 01 Loja Linx: 08 CNPJ: 03772229000809
+Loja SIDI: 09 Loja Linx: 09 CNPJ: 03772229000990
+Loja SIDI: 05 Loja Linx: 11 CNPJ: 03772229001104
+Loja SIDI: 02 Loja Linx: 01 CNPJ: 03772229000132
+Loja SIDI: 20 Loja Linx: 20 CNPJ: 03772229002003
+Loja SIDI: 21 Loja Linx: 21 CNPJ: 03772229002186
+Loja SIDI: 18 Loja Linx: 18 CNPJ: 03772229001880
+Loja SIDI: 19 Loja Linx: 19 CNPJ: 03772229001961
+Loja SIDI: 22 Loja Linx: 22 CNPJ: 03772229002267
+Loja SIDI: 24 Loja Linx: 24 CNPJ: 03772229002348
+Loja SIDI: 15 Loja Linx: 05 CNPJ: 03772229000566
+Loja SIDI: 26 Loja Linx: 26 CNPJ: 03772229002500
+Loja SIDI: 27 Loja Linx: 27 CNPJ: 03772229002690
+Loja SIDI: 25 Loja Linx: 25 CNPJ: 03772229002429
+Loja SIDI: 28 Loja Linx: 28 CNPJ: 32614768000141
+Loja SIDI: 29 Loja Linx: 29 CNPJ: 32560217000223
+Loja SIDI: 30 Loja Linx: 30 CNPJ: 32560217000142
+==================================
+INICIO LOJA: 2 HORÁRIO: 06/06/2019 20:00:03
+   - Médoto: LinxLojas HORÁRIO: 06/06/2019 20:00:05
+   - Médoto: LinxVendedores HORÁRIO: 06/06/2019 20:00:07
+   - Médoto: LinxProdutosDepositos HORÁRIO: 06/06/2019 20:00:09
+   - Médoto: LinxProdutosInventario HORÁRIO: 06/06/2019 20:00:55
+   - Médoto: LinxProdutos HORÁRIO: 06/06/2019 20:04:41
+   - Médoto: LinxProdutosCamposAdicionais HORÁRIO: 06/06/2019 20:04:43
+   - Médoto: LinxProdutosDetalhes HORÁRIO: 06/06/2019 20:06:41
+   - Médoto: LinxProdutosCodBar HORÁRIO: 06/06/2019 20:08:34
+   - Médoto: LinxClientesFornec HORÁRIO: 06/06/2019 20:09:45
+   - Médoto: LinxClientesFornecCamposAdicionais HORÁRIO: 06/06/2019 20:09:47
+   - Médoto: LinxMovimento HORÁRIO: 06/06/2019 20:17:20
+   - Médoto: LinxMovimento HORÁRIO: 06/06/2019 20:17:35

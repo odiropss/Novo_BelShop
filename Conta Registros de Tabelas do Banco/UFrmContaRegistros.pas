@@ -26,9 +26,10 @@ type
 
     // Odir
     Procedure ConectaBanco;
+    // Odir
+
     procedure FormCreate(Sender: TObject);
     procedure CDS_AfterOpen(DataSet: TDataSet);
-    // Odir
 
   private
     { Private declarations }
@@ -40,6 +41,7 @@ Const
    sgUser_Name: String='SYSDBA';
    sgPassword: String='masterkey';
    sgPCTConect_IB: String='PCTConect_IB.ini';
+   // sgPCTConect_IB: String='PCTConect_IB - Fabiano.ini';
 
    cr = #13#10;
    Tab =#9;

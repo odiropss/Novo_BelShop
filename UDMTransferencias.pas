@@ -1,5 +1,5 @@
 unit UDMTransferencias;
-
+//OdirSemSIDICOM
 interface
 
 uses
@@ -106,6 +106,14 @@ type
     DSP_Busca1: TDataSetProvider;
     CDS_Busca1: TClientDataSet;
     SQLQ_Busca: TSQLQuery;
+    CDS_CurvasLojaCOD_PROD_LINX: TFMTBCDField;
+    SQLQuery2: TSQLQuery;
+    CDS_EstoqueLojaIND_PRIORIDADE: TSmallintField;
+    CDS_EstoqueLojaIND_LEITORA: TStringField;
+    CDS_EstoqueLojaQTD_CHECKOUT: TFMTBCDField;
+    CDS_EstoqueLojaREL_SEPARACAO: TIntegerField;
+    CDS_EstoqueLojaCOD_LINX: TIntegerField;
+    CDS_EstoqueLojaCOD_PROD_LINX: TFMTBCDField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================
@@ -113,7 +121,9 @@ type
     Procedure ConectaBanco;
     Function  BuscaServidorLojaUnica: Boolean; // Nome do Servidor, Tipo de Conexão e Codigo da Loja Se Unica ---------------
     Procedure MontaConexaoEmpresas;
-    Function  ConectaMPMS: Boolean;
+
+//OdirSemSIDICOM - 07/05/2019
+//    Function  ConectaMPMS: Boolean;
 
     // Odir ====================================================================
 
@@ -131,8 +141,10 @@ Const
 var
   DMTransferencias: TDMTransferencias;
 
+  bgUsaSIDICOM: Boolean; // Se é para Usar SIDICOM
+
   sgPath_Local: String;
-  sgNomeServidor, sgCodLojaUnica, sgTpConexao: String;
+  sgNomeServidor, sgTpConexao: String;
   sgCompMaster, sgCompServer: String; // Dados dos Servidores, Computador Local
   sgIPServer, sgIPInternetServer: String; // Ips do Servidor
 
@@ -177,7 +189,6 @@ Begin
     { Realiza um loop em toda a lista }
     s:='';
     sgNomeServidor:='';
-    sgCodLojaUnica:='';
     sgTpConexao   :='';
     For i := 0 to tsArquivo.Count - 1 do
     Begin
@@ -186,7 +197,7 @@ Begin
       If Trim(s)<>'' Then
       Begin
         If i=0 Then sgNomeServidor:=Trim(s);
-        If i=1 Then sgCodLojaUnica:=Trim(s);
+        // If i=1 Then sgCodLojaUnica:=Trim(s);
         If i=2 Then sgTpConexao:=Trim(s);
       End;
     End; // For i := 0 to tsArquivo.Count - 1 do
@@ -219,7 +230,7 @@ Begin
   CDS_BuscaRapida.Close;
 
   MySql:=' Select *'+
-         ' From EMP_Conexoes e'+
+         ' From EMP_CONEXOES e'+
          ' Order by Cod_Emp';
   CDS_Busca.Close;
   SDS_Busca.CommandText:=MySql;
@@ -538,71 +549,72 @@ Begin
   End;
 End; // Atualiza Conexao TIBQuery >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Conecta a Administraçao MPMS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TDMTransferencias.ConectaMPMS: Boolean;
-Var
-  MySql: String;
-  i: Integer;
-  sConcTCP_IP, sConcNetBEUI: String;
-  sEndIP: String;
-Begin
-  Result:=False;
-  
-  Try
-    MySql:=' SELECT *'+
-           ' FROM EMP_CONEXOES e'+
-           ' WHERE e.cod_filial='+QuotedStr('99');
-    CDS_Busca.Close;
-    SDS_Busca.CommandText:=MySql;
-    CDS_Busca.Open;
-
-    // Inicializa Conexao
-    For i:=0 to DMConexoes.ComponentCount-1 do
-    Begin
-      If DMConexoes.Components[i] is TIBDatabase Then
-      Begin
-        If (DMConexoes.Components[i] as TIBDatabase).Name='IBDB_MPMS' Then
-        Begin
-           (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
-
-           sEndIP:=DMTransferencias.CDS_Busca.FieldByName('ENDERECO_IP').AsString;
-
-           // Tipo de Conexão: TCP/IP
-           sConcTCP_IP:=sEndIP+':'+
-              IncludeTrailingPathDelimiter(DMTransferencias.CDS_Busca.FieldByName('PASTA_BASE_DADOS').AsString)+
-                                           DMTransferencias.CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
-
-           // Tipo de Conexão: NetBEUI
-           sConcNetBEUI:='\\'+sEndIP+'\'+
-              IncludeTrailingPathDelimiter(DMTransferencias.CDS_Busca.FieldByName('PASTA_BASE_DADOS').AsString)+
-                                           DMTransferencias.CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
-
-          (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=sConcTCP_IP;
-
-          If Not ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS','A') Then
-          Begin
-            (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=sConcNetBEUI;
-            If Not ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS','A') Then
-            Begin
-              msg('Erro de Conecxão ao Banco de Dados'+cr+' do CD, Avise o Odir Imediatamente !!','X');
-              Application.Terminate;
-              Exit;
-            End;
-          End;
-
-          Break;
-        End;
-      End; // If DMConexoes.Components[i] is TIBDatabase Then
-    End; // For i:=0 to DMConexoes.ComponentCount-1 do
-
-    // Cria Querys da MPMS =====================================================
-    CriaQueryIB('IBDB_MPMS', 'IBT_MPMS', IBQ_MPMS, True);
-    DMTransferencias.CDS_Busca.Close;
-
-    Result:=True;
-  Except
-  End;
-End; // Conecta a Administraçao MPMS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//OdirSemSIDICOM - 07/05/2019
+//// Conecta a Administraçao MPMS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Function TDMTransferencias.ConectaMPMS: Boolean;
+//Var
+//  MySql: String;
+//  i: Integer;
+//  sConcTCP_IP, sConcNetBEUI: String;
+//  sEndIP: String;
+//Begin
+//  Result:=False;
+//
+//  Try
+//    MySql:=' SELECT *'+
+//           ' FROM EMP_CONEXOES e'+
+//           ' WHERE e.cod_filial='+QuotedStr('99');
+//    CDS_Busca.Close;
+//    SDS_Busca.CommandText:=MySql;
+//    CDS_Busca.Open;
+//
+//    // Inicializa Conexao
+//    For i:=0 to DMConexoes.ComponentCount-1 do
+//    Begin
+//      If DMConexoes.Components[i] is TIBDatabase Then
+//      Begin
+//        If (DMConexoes.Components[i] as TIBDatabase).Name='IBDB_MPMS' Then
+//        Begin
+//           (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
+//
+//           sEndIP:=DMTransferencias.CDS_Busca.FieldByName('ENDERECO_IP').AsString;
+//
+//           // Tipo de Conexão: TCP/IP
+//           sConcTCP_IP:=sEndIP+':'+
+//              IncludeTrailingPathDelimiter(DMTransferencias.CDS_Busca.FieldByName('PASTA_BASE_DADOS').AsString)+
+//                                           DMTransferencias.CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
+//
+//           // Tipo de Conexão: NetBEUI
+//           sConcNetBEUI:='\\'+sEndIP+'\'+
+//              IncludeTrailingPathDelimiter(DMTransferencias.CDS_Busca.FieldByName('PASTA_BASE_DADOS').AsString)+
+//                                           DMTransferencias.CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
+//
+//          (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=sConcTCP_IP;
+//
+//          If Not ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS','A') Then
+//          Begin
+//            (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=sConcNetBEUI;
+//            If Not ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS','A') Then
+//            Begin
+//              msg('Erro de Conecxão ao Banco de Dados'+cr+' do CD, Avise o Odir Imediatamente !!','X');
+//              Application.Terminate;
+//              Exit;
+//            End;
+//          End;
+//
+//          Break;
+//        End;
+//      End; // If DMConexoes.Components[i] is TIBDatabase Then
+//    End; // For i:=0 to DMConexoes.ComponentCount-1 do
+//
+//    // Cria Querys da MPMS =====================================================
+//    CriaQueryIB('IBDB_MPMS', 'IBT_MPMS', IBQ_MPMS, True);
+//    DMTransferencias.CDS_Busca.Close;
+//
+//    Result:=True;
+//  Except
+//  End;
+//End; // Conecta a Administraçao MPMS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMTransferencias.ConectaBanco;
@@ -694,7 +706,6 @@ begin
   sgPath_Local:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
 
   // Nome do Servidor, Tipo de Conexão e Codigo da Loja Se Unica ===============
-  sgCodLojaUnica:='';
   BuscaServidorLojaUnica;
 
   // Verifica a Existencia do Arquivo "ConexaoExterna.ini" =====================
@@ -753,6 +764,13 @@ begin
   ConectaBanco;
 
   MontaConexaoEmpresas;
+
+  //============================================================================
+  // Utiliza SIDICOM ===========================================================
+  //============================================================================
+  bgUsaSIDICOM:=UtilizaSIDICOM(DMTransferencias.SQLQ_Busca);
+  // Utiliza SIDICOM ===========================================================
+  //============================================================================
 
 end;
 

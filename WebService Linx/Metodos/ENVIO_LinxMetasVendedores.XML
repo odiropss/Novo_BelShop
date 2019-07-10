@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinxMicrovix>
+	<Authentication password="linx_export" user="linx_export"/>
+	<ResponseFormat>xml</ResponseFormat>
+	<Command>
+		<Name>LinxMetasVendedores</Name>
+		<Parameters>
+			<Parameter id="chave">d52511f4-3541-4a65-9adc-665513ea3207</Parameter>
+			<Parameter id="cnpjEmp">03772229001708</Parameter>
+			<Parameter id="data_inicial_meta">2019-05-01</Parameter>
+			<Parameter id="data_fim_meta">2019-05-31</Parameter>
+		</Parameters>
+	</Command>
+</LinxMicrovix>

@@ -1,7 +1,7 @@
 object DMDebCredST: TDMDebCredST
   OldCreateOrder = False
   Left = 238
-  Top = 116
+  Top = 114
   Height = 532
   Width = 965
   object SQLQ_VlrBcICMSST: TSQLQuery
@@ -35,7 +35,8 @@ object DMDebCredST: TDMDebCredST
       'SELECT'
       'dc.cod_fornecedor COD_FORNECEDOR,'
       'fo.nome_cliente NOME_FORNECDOR,'
-      'SUM(dc.vlr_debito_icms_st) TOT_DEBITO_ICMS_ST,'
+      '--SUM(dc.vlr_debito_icms_st) TOT_DEBITO_ICMS_ST,'
+      '0.00 TOT_DEBITO_ICMS_ST,'
       ''
       'CASE'
       '  WHEN (SUM(DC.vlr_base_icms_st)=0.00) THEN'
@@ -53,20 +54,20 @@ object DMDebCredST: TDMDebCredST
       'ORDER BY 5,2')
     SQLConnection = DMBelShop.SQLC
     Left = 46
-    Top = 28
+    Top = 92
   end
   object DSP_VlrBcICMSST: TDataSetProvider
     DataSet = SQLQ_VlrBcICMSST
     Options = [poRetainServerOrder]
     Left = 94
-    Top = 41
+    Top = 105
   end
   object CDS_VlrBcICMSST: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_VlrBcICMSST'
     Left = 146
-    Top = 28
+    Top = 92
     object CDS_VlrBcICMSSTCOD_FORNECEDOR: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_FORNECEDOR'
@@ -97,7 +98,7 @@ object DMDebCredST: TDMDebCredST
   object DS_VlrBcICMSST: TDataSource
     DataSet = CDS_VlrBcICMSST
     Left = 200
-    Top = 40
+    Top = 104
   end
   object SQLQ_TotaisForn: TSQLQuery
     MaxBlobSize = -1
@@ -298,20 +299,20 @@ object DMDebCredST: TDMDebCredST
       'ORDER BY 7,3')
     SQLConnection = DMBelShop.SQLC
     Left = 46
-    Top = 100
+    Top = 164
   end
   object DSP_TotaisForn: TDataSetProvider
     DataSet = SQLQ_TotaisForn
     Options = [poRetainServerOrder]
     Left = 94
-    Top = 113
+    Top = 177
   end
   object CDS_TotaisForn: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_TotaisForn'
     Left = 146
-    Top = 100
+    Top = 164
     object CDS_TotaisFornSELECAO: TStringField
       Alignment = taCenter
       DisplayLabel = 'Sele'#231#227'o'
@@ -356,7 +357,7 @@ object DMDebCredST: TDMDebCredST
   object DS_TotaisForn: TDataSource
     DataSet = CDS_TotaisForn
     Left = 200
-    Top = 112
+    Top = 176
   end
   object SQLQ_ProdutoForn: TSQLQuery
     MaxBlobSize = -1
@@ -653,20 +654,20 @@ object DMDebCredST: TDMDebCredST
       'ORDER BY 28,2')
     SQLConnection = DMBelShop.SQLC
     Left = 46
-    Top = 172
+    Top = 236
   end
   object DSP_ProdutoForn: TDataSetProvider
     DataSet = SQLQ_ProdutoForn
     Options = [poRetainServerOrder]
     Left = 94
-    Top = 185
+    Top = 249
   end
   object CDS_ProdutoForn: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ProdutoForn'
     Left = 146
-    Top = 172
+    Top = 236
     object CDS_ProdutoFornCOD_PRODUTO: TFMTBCDField
       DisplayLabel = 'C'#243'd Prod'
       FieldName = 'COD_PRODUTO'
@@ -833,6 +834,83 @@ object DMDebCredST: TDMDebCredST
   object DS_ProdutoForn: TDataSource
     DataSet = CDS_ProdutoForn
     Left = 200
-    Top = 184
+    Top = 248
+  end
+  object DS_V_XMLsAnalisa: TDataSource
+    DataSet = CDS_V_XMLsAnalisa
+    Left = 152
+    Top = 368
+  end
+  object SQLQuery1: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 112
+    Top = 24
+  end
+  object CDS_V_XMLsAnalisa: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 88
+    Top = 352
+    object CDS_V_XMLsAnalisaCNPJ: TStringField
+      FieldName = 'CNPJ'
+      Size = 14
+    end
+    object CDS_V_XMLsAnalisaNOME: TStringField
+      DisplayLabel = 'Nome Fornecedor'
+      FieldName = 'NOME'
+      Size = 60
+    end
+    object CDS_V_XMLsAnalisaFONE: TStringField
+      DisplayLabel = 'Fone'
+      FieldName = 'FONE'
+    end
+    object CDS_V_XMLsAnalisaUF_EMIT: TStringField
+      DisplayLabel = 'UF Emit'
+      FieldName = 'UF_EMIT'
+    end
+    object CDS_V_XMLsAnalisaUF_DEST: TStringField
+      DisplayLabel = 'UF Dest'
+      FieldName = 'UF_DEST'
+    end
+    object CDS_V_XMLsAnalisaCST: TStringField
+      FieldName = 'CST'
+      Required = True
+      FixedChar = True
+      Size = 9
+    end
+    object CDS_V_XMLsAnalisaTAG_VST: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Tag vST'
+      FieldName = 'TAG_VST'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+    object CDS_V_XMLsAnalisaVALOR_ST: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = '$ vST'
+      FieldName = 'VALOR_ST'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+    object CDS_V_XMLsAnalisaTAG_VFCPSTRET: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Tag vFCPSTRet'
+      FieldName = 'TAG_VFCPSTRET'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+    object CDS_V_XMLsAnalisaVALOR_VFCPSTRET: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = '$ vFCPSTRet'
+      FieldName = 'VALOR_VFCPSTRET'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
   end
 end

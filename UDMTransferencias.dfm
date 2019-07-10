@@ -1,10 +1,10 @@
 object DMTransferencias: TDMTransferencias
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 321
-  Top = 117
-  Height = 483
-  Width = 620
+  Left = 251
+  Top = 115
+  Height = 584
+  Width = 766
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
     DriverName = 'Interbase'
@@ -27,6 +27,7 @@ object DMTransferencias: TDMTransferencias
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
+    Connected = True
     Left = 48
     Top = 16
   end
@@ -144,37 +145,70 @@ object DMTransferencias: TDMTransferencias
   end
   object SDS_CurvasLoja: TSQLDataSet
     CommandText = 
-      'SELECT'#13#10'c.cod_produto,'#13#10'CASE'#13#10'    WHEN (p.datainclusao>='#39'18.01.2' +
-      '016'#39') AND (c.ind_curva='#39'E'#39') THEN'#13#10'      '#39'C'#39#13#10'    ELSE'#13#10'      c.i' +
-      'nd_curva'#13#10'END ind_curva,'#13#10'CASE'#13#10'   WHEN (p.datainclusao>='#39'18.01.' +
-      '2016'#39') AND (c.ind_curva='#39'E'#39') AND (t.vlr_aux1>c.est_minimo) THEN'#13 +
-      #10'     CAST(t.vlr_aux1 AS INTEGER)'#13#10'   ELSE'#13#10'     CAST(c.est_mini' +
-      'mo AS INTEGER)'#13#10'END est_minimo,'#13#10#13#10'CAST(COALESCE(c.est_minimo,0)' +
-      ' AS INTEGER) Est_Maximo,'#13#10#13#10'CAST(COALESCE(t.vlr_aux,0) AS INTEGE' +
-      'R) Dias_Estocagem,'#13#10#13#10'CAST((CASE'#13#10'        WHEN COALESCE(e.pedido' +
-      'pendente,0)<0 THEN'#13#10'          COALESCE(e.saldoatual,0)'#13#10'        ' +
-      'WHEN COALESCE(e.pedidopendente,0)>COALESCE(e.saldoatual,0) THEN'#13 +
-      #10'          0'#13#10'        ELSE'#13#10'          COALESCE(e.saldoatual,0)-C' +
-      'OALESCE(e.pedidopendente,0)'#13#10'      END)'#13#10'AS INTEGER) saldoatual,' +
-      #13#10'p.datainclusao,'#13#10'p.dataalteracao'#13#10#13#10'FROM ES_FINAN_CURVA_ABC c'#13 +
-      #10'        LEFT JOIN PRODUTO      p  ON p.codproduto=c.cod_produto' +
-      #13#10'        LEFT JOIN ESTOQUE      e  ON e.codfilial=c.cod_loja'#13#10' ' +
-      '                                AND e.codproduto=c.cod_produto'#13#10 +
-      '        LEFT JOIN TAB_AUXILIAR t  ON CASE'#13#10'                     ' +
-      '                  WHEN (p.datainclusao>'#39'18.01.2016'#39') AND (c.ind_' +
-      'curva='#39'E'#39') THEN 3'#13#10'                                       WHEN c' +
-      '.ind_curva='#39'A'#39' THEN 1'#13#10'                                       WH' +
-      'EN c.ind_curva='#39'B'#39' THEN 2'#13#10'                                     ' +
-      '  WHEN c.ind_curva='#39'C'#39' THEN 3'#13#10'                                 ' +
-      '      WHEN c.ind_curva='#39'D'#39' THEN 4'#13#10'                             ' +
-      '          WHEN c.ind_curva='#39'E'#39' THEN 5'#13#10'                         ' +
-      '              END=t.cod_aux'#13#10'                                  A' +
-      'ND t.tip_aux=2'#13#10#13#10'WHERE c.est_minimo>0'#13#10'AND   p.situacaopro in (' +
-      '0,3)'#13#10'AND   p.principalfor Not in ('#39'000050'#39', '#39'000453'#39', '#39'000504'#39',' +
-      ' '#39'000797'#39', '#39'000048'#39', '#39'000251'#39', '#39'000338'#39','#13#10'                      ' +
-      '       '#39'000300'#39', '#39'000500'#39', '#39'000883'#39', '#39'010000'#39', '#39'001072'#39')'#13#10#13#10'AND ' +
-      '  ((c.ind_curva in ('#39'A'#39', '#39'B'#39', '#39'C'#39', '#39'D'#39')) OR (p.datainclusao>='#39'18' +
-      '.01.2016'#39' AND c.ind_curva='#39'E'#39'))'#13#10'AND   c.cod_loja='#39'06'#39#13#10#13#10#13#10
+      'SELECT First 1'#13#10'c.cod_produto cod_produto,'#13#10'p.cod_produto cod_pr' +
+      'od_linx,'#13#10'CASE'#13#10#13#10'-- If bCurvaC Then'#13#10'   WHEN ((CAST(p.dt_inclus' +
+      'ao AS DATE)>='#39'15.03.2019'#39') AND (c.ind_curva in ('#39'D'#39','#39'E'#39')))'#13#10'    ' +
+      '     OR'#13#10'        ((p.cod_fornecedor=594) AND (c.ind_curva in ('#39'D' +
+      #39','#39'E'#39')) AND (UPPER(p.nome) like '#39'%YELLOW%'#39'))'#13#10#13#10'         OR'#13#10'   ' +
+      '     ((p.cod_fornecedor=479) AND (c.ind_curva in ('#39'D'#39','#39'E'#39')) AND ' +
+      '(UPPER(p.nome) like '#39'NG %'#39'))'#13#10'         OR'#13#10'        ((p.cod_produ' +
+      'to=844) AND (c.ind_curva in ('#39'D'#39','#39'E'#39'))) THEN'#13#10'/*'#13#10'-- Else'#13#10'   WH' +
+      'EN (CAST(p.dt_inclusao AS DATE)>='#39'15.03.2019'#39') AND (c.ind_curva ' +
+      'in ('#39'D'#39','#39'E'#39')) THEN'#13#10'*/'#13#10'    '#39'C'#39#13#10'   ELSE'#13#10'    c.ind_curva'#13#10#13#10'END' +
+      ' ind_curva,'#13#10#13#10'CAST(COALESCE(c.est_minimo,0) AS INTEGER) est_min' +
+      'imo,'#13#10'CAST(COALESCE(c.est_maximo,0) AS INTEGER) est_maximo,'#13#10#13#10'C' +
+      'AST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,'#13#10'CAST(COAL' +
+      'ESCE(e.quantidade,0.00) AS INTEGER) saldoatual,'#13#10#13#10'CAST(p.dt_inc' +
+      'lusao AS DATE) datainclusao,'#13#10'CAST(p.dt_update AS DATE) dataalte' +
+      'racao'#13#10#13#10'FROM ES_FINAN_CURVA_ABC c'#13#10'       LEFT JOIN LINXPRODUTO' +
+      'S p          ON p.cod_produto=c.cod_prod_linx'#13#10'       LEFT JOIN ' +
+      'LINXPRODUTOSDETALHES e  ON e.cod_loja=c.cod_loja'#13#10'              ' +
+      '                          AND e.cod_produto=c.cod_prod_linx'#13#10'   ' +
+      '    LEFT JOIN TAB_AUXILIAR t  ON CASE'#13#10'                         ' +
+      '            -- If bCurvaC Then'#13#10'                                ' +
+      '         WHEN ((CAST(p.dt_inclusao AS DATE)>'#39'15.03.2019'#39') AND (c' +
+      '.ind_curva in ('#39'D'#39','#39'E'#39')))'#13#10'                                     ' +
+      '          OR'#13#10'                                              ((p.' +
+      'cod_fornecedor=594) AND (c.ind_curva in ('#39'D'#39','#39'E'#39')) AND (UPPER(p.' +
+      'nome) like '#39'%YELLOW%'#39'))'#13#10'                                       ' +
+      '        OR'#13#10'                                              ((p.co' +
+      'd_fornecedor=479) AND (c.ind_curva in ('#39'D'#39','#39'E'#39')) AND (UPPER(p.no' +
+      'me) like '#39'NG %'#39'))'#13#10'                                             ' +
+      '  OR'#13#10'                                              ((p.cod_forn' +
+      'ecedor=844) AND (c.ind_curva in ('#39'D'#39','#39'E'#39'))) THEN'#13#10'              ' +
+      '                              3'#13#10'                               ' +
+      '      /*'#13#10'                                     -- Else'#13#10'        ' +
+      '                                  WHEN (CAST(p.dt_inclusao AS DA' +
+      'TE)>'#39'15.03.2019'#39') AND (c.ind_curva in ('#39'D'#39','#39'E'#39')) THEN'#13#10'         ' +
+      '                                   3'#13#10'                          ' +
+      '            */'#13#10'                                      WHEN c.ind' +
+      '_curva='#39'A'#39' THEN 1'#13#10'                                      WHEN c.' +
+      'ind_curva='#39'B'#39' THEN 2'#13#10'                                      WHEN' +
+      ' c.ind_curva='#39'C'#39' THEN 3'#13#10'                                      W' +
+      'HEN c.ind_curva='#39'D'#39' THEN 4'#13#10'                                    ' +
+      '  WHEN c.ind_curva='#39'E'#39' THEN 5'#13#10'                                 ' +
+      '   END=t.cod_aux'#13#10'                                AND t.tip_aux=' +
+      '2'#13#10#13#10'WHERE CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'#13#10'AND   e.' +
+      'quantidade>=0'#13#10'AND   c.cod_loja='#39'01'#39#13#10#13#10'-- If bCurvaC Then'#13#10'AND ' +
+      '   ((c.ind_curva in ('#39'A'#39')) OR (CAST(p.dt_inclusao AS DATE)>='#39'15.' +
+      '03.2019'#39') --// '#39' AND c.ind_curva='#39'E'#39')'#13#10'       OR --// Manuela'#13#10' ' +
+      '     ((p.cod_fornecedor=594) AND (c.ind_curva in ('#39'D'#39','#39'E'#39')) AND ' +
+      '(UPPER(p.nome) like '#39'%YELLOW%'#39'))'#13#10'       OR'#13#10'      ((p.cod_forne' +
+      'cedor=844) AND (c.ind_curva in ('#39'D'#39','#39'E'#39')))'#13#10'       OR'#13#10'      ((p' +
+      '.cod_fornecedor=479) AND (c.ind_curva in ('#39'D'#39','#39'E'#39')) AND (UPPER(p' +
+      '.nome) like '#39'NG %'#39')))'#13#10'/*'#13#10'-- Else'#13#10'AND     ((c.ind_curva in ('#39'A' +
+      #39')) OR (CAST(p.dt_inclusao AS DATE)>='#39'15.03.2019'#39')) --// '#39' AND c' +
+      '.ind_curva='#39'E'#39'))'#13#10'AND NOT (((p.cod_fornecedor=594) AND (c.ind_cu' +
+      'rva in ('#39'D'#39','#39'E'#39')) AND (UPPER(p.nome) like '#39'%YELLOW%'#39'))'#13#10'        ' +
+      ' OR'#13#10'        ((p.cod_fornecedor=844) AND (c.ind_curva in ('#39'D'#39','#39'E' +
+      #39')))'#13#10'         OR'#13#10'        ((p.cod_fornecedor=479) AND (c.ind_cu' +
+      'rva in ('#39'D'#39','#39'E'#39')) AND (UPPER(p.nome) like '#39'NG %'#39')))'#13#10'*/'#13#10#13#10'--AND' +
+      '   p.id_setor NOT IN (17, 20, 25)  -- 17-IMOBILIZADOS 20-MOVEIS ' +
+      'SAL'#195'O 25-USO E CONSUMO'#13#10'AND   p.id_linha NOT IN (33) -- 33-Brind' +
+      'es'#13#10'AND   p.id_colecao NOT IN (197, 294, 587) -- 197-DESCONTINUA' +
+      'DO-CAMPANHA DE R$0,50 (Antigo N'#227'o Compra) 294-BRINDE 587-KIDS'#13#10'-' +
+      '-AND   p.cod_fornecedor NOT IN (6, 1014, 260)'#13#10'AND   p.desativad' +
+      'o='#39'N'#39#13#10#13#10'ORDER BY c.cod_produto'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -192,6 +226,11 @@ object DMTransferencias: TDMTransferencias
       Required = True
       FixedChar = True
       Size = 6
+    end
+    object CDS_CurvasLojaCOD_PROD_LINX: TFMTBCDField
+      FieldName = 'COD_PROD_LINX'
+      Precision = 15
+      Size = 0
     end
     object CDS_CurvasLojaIND_CURVA: TStringField
       FieldName = 'IND_CURVA'
@@ -502,6 +541,30 @@ object DMTransferencias: TDMTransferencias
       FieldName = 'OBS_DOCTO'
       Size = 2000
     end
+    object CDS_EstoqueLojaIND_PRIORIDADE: TSmallintField
+      FieldName = 'IND_PRIORIDADE'
+    end
+    object CDS_EstoqueLojaIND_LEITORA: TStringField
+      FieldName = 'IND_LEITORA'
+      FixedChar = True
+      Size = 3
+    end
+    object CDS_EstoqueLojaQTD_CHECKOUT: TFMTBCDField
+      FieldName = 'QTD_CHECKOUT'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_EstoqueLojaREL_SEPARACAO: TIntegerField
+      FieldName = 'REL_SEPARACAO'
+    end
+    object CDS_EstoqueLojaCOD_LINX: TIntegerField
+      FieldName = 'COD_LINX'
+    end
+    object CDS_EstoqueLojaCOD_PROD_LINX: TFMTBCDField
+      FieldName = 'COD_PROD_LINX'
+      Precision = 15
+      Size = 0
+    end
   end
   object DSP_EstoqueLoja: TDataSetProvider
     DataSet = SDS_EstoqueLoja
@@ -644,5 +707,12 @@ object DMTransferencias: TDMTransferencias
     SQLConnection = SQLC
     Left = 320
     Top = 16
+  end
+  object SQLQuery2: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 264
+    Top = 120
   end
 end

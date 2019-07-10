@@ -1,7 +1,7 @@
 object DMConciliacao: TDMConciliacao
   OldCreateOrder = False
-  Left = 183
-  Top = 122
+  Left = 237
+  Top = 107
   Height = 604
   Width = 1121
   object SDS_Bancos: TSQLDataSet
@@ -1567,6 +1567,7 @@ object DMConciliacao: TDMConciliacao
   end
   object CDS_CMDepositos: TClientDataSet
     Aggregates = <>
+    IndexFieldNames = 'DTA_DOCTO; RAZAO_SOCIAL; NUM_DOCTO; VLR_DOCTO; NUM_SEQ'
     Params = <>
     ProviderName = 'DSP_CMDepositos'
     Left = 656

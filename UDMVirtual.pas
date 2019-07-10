@@ -611,7 +611,6 @@ type
     IBQ_EstoqueLojaPRATELEIRA: TIBStringField;
     IBQ_EstoqueLojaGAVETA: TIBStringField;
     CDS_V_EstoquesSEQ: TFMTBCDField;
-    CDS_V_EstoquesCOD_PRODUTO: TStringField;
     CDS_V_EstoquesDES_PRODUTO: TStringField;
     CDS_V_EstoquesIND_CURVA: TStringField;
     CDS_V_EstoquesVLR_VENDAS_ANO: TFMTBCDField;
@@ -619,50 +618,30 @@ type
     CDS_V_EstoquesQTD_VENDAS_ANO: TIntegerField;
     CDS_V_EstoquesQTD_VENDAS_4M: TIntegerField;
     CDS_V_EstoquesQTD_ESTOCAGEM_ANO: TIntegerField;
-    CDS_V_EstoquesQTD_ESTCAGEM_4M: TIntegerField;
     CDS_V_EstoquesPER_PARTICIPACAO: TFMTBCDField;
     CDS_V_EstoquesQTD_ESTOQUE: TIntegerField;
     CDS_V_EstoquesQTD_TRANSITO: TIntegerField;
-    CDS_V_EstoquesQTD_DISPONIVEL: TIntegerField;
     CDS_V_EstoquesEST_IDEAL: TIntegerField;
     CDS_V_EstoquesPC_VENDA: TFMTBCDField;
-    CDS_V_EstoquesVLR_TOTAL_VENDA: TFMTBCDField;
-    CDS_V_EstoquesDTA_INCLUSAO: TDateField;
-    CDS_V_EstoquesCODGRUPO: TStringField;
-    CDS_V_EstoquesNOMEGRUPO: TStringField;
-    CDS_V_EstoquesCODSUBGRUPO: TStringField;
-    CDS_V_EstoquesNOMESUBGRUPO: TStringField;
-    CDS_V_EstoquesCODGRUPOSUB: TStringField;
-    CDS_V_EstoquesIND_SITUACAO: TStringField;
     CDS_V_EstoquesCOD_FORNECEDOR: TStringField;
     CDS_V_EstoquesDES_FORNECEDOR: TStringField;
-    CDS_V_EstoquesVLR_VENDAS_ACUM: TFMTBCDField;
     CDS_V_EstoquesORDENAR: TFMTBCDField;
-    CDS_V_EstoquesALTERACAO: TStringField;
-    CDS_V_EstoquesVLR_VENDAS_ACUM_OK: TFMTBCDField;
     CDS_V_EstoquesNUM_DIASUTEIS: TIntegerField;
-    CDS_V_EstoquesDIAS_UTEIS_4M: TIntegerField;
     CDS_V_EstoquesNUM_LINHA: TIntegerField;
     CDS_V_EstoquesVLR_VD_M1: TFMTBCDField;
     CDS_V_EstoquesVLR_VD_M2: TFMTBCDField;
     CDS_V_EstoquesVLR_VD_M3: TFMTBCDField;
     CDS_V_EstoquesVLR_VD_M4: TFMTBCDField;
     CDS_V_EstoquesVLR_VD_M5: TFMTBCDField;
-    CDS_V_EstoquesVLR_MEDIA_MES: TFMTBCDField;
     CDS_V_EstoquesQTD_VD_M1: TIntegerField;
     CDS_V_EstoquesQTD_VD_M2: TIntegerField;
     CDS_V_EstoquesQTD_VD_M3: TIntegerField;
     CDS_V_EstoquesQTD_VD_M4: TIntegerField;
     CDS_V_EstoquesQTD_VD_M5: TIntegerField;
-    CDS_V_EstoquesVLR_EST_PC_VENDA: TFMTBCDField;
     CDS_V_EstoquesPC_CUSTO: TFMTBCDField;
-    CDS_V_EstoquesVLR_DISP_PC_CUSTO: TFMTBCDField;
-    CDS_V_EstoquesVLR_EST_PC_CUSTO: TFMTBCDField;
     CDS_V_EstoquesPER_MARGEM: TFMTBCDField;
     CDS_V_EstoquesEST_MAXIMO: TIntegerField;
-    CDS_V_EstoquesVLR_MEDIA_DIA: TFMTBCDField;
     CDS_V_EstoquesQTD_MEDIA_MES: TFMTBCDField;
-    CDS_V_EstoquesQTD_MEDIA_DIA: TFMTBCDField;
     CDS_V_EstoqueLojas: TClientDataSet;
     CDS_V_EstoqueLojasCOD_LOJA: TStringField;
     CDS_V_EstoqueLojasQTD_ESTOQUE: TIntegerField;
@@ -686,8 +665,6 @@ type
     CDS_V_EstoquesFinanDIF_EST_DM: TIntegerField;
     CDS_V_EstoquesFinanDIF_EST_DM_PC: TFMTBCDField;
     CDS_V_EstoquesFinanDIF_EST_DM_PV: TFMTBCDField;
-    CDS_V_EstoquesCOD_COMPRADOR: TStringField;
-    CDS_V_EstoquesDES_COMPRADOR: TStringField;
     DS_V_NFeProdutos: TDataSource;
     CDS_V_NFeProdutos: TClientDataSet;
     CDS_V_NFeProdutosCOD_LOJA: TStringField;
@@ -760,10 +737,174 @@ type
     DS_V_MixAnaliseForn: TDataSource;
     CDS_V_MixAnaliseFornIND_MULTISEL: TSmallintField;
     CDS_V_MixAnaliseFornID_COLECAO: TIntegerField;
+    ClientDataSet1: TClientDataSet;
+    FMTBCDField1: TFMTBCDField;
+    StringField1: TStringField;
+    StringField2: TStringField;
+    StringField3: TStringField;
+    FMTBCDField2: TFMTBCDField;
+    FMTBCDField3: TFMTBCDField;
+    FMTBCDField4: TFMTBCDField;
+    FMTBCDField5: TFMTBCDField;
+    FMTBCDField6: TFMTBCDField;
+    FMTBCDField7: TFMTBCDField;
+    FMTBCDField8: TFMTBCDField;
+    FMTBCDField9: TFMTBCDField;
+    FMTBCDField10: TFMTBCDField;
+    IntegerField1: TIntegerField;
+    IntegerField2: TIntegerField;
+    IntegerField3: TIntegerField;
+    IntegerField4: TIntegerField;
+    IntegerField5: TIntegerField;
+    IntegerField6: TIntegerField;
+    FMTBCDField11: TFMTBCDField;
+    FMTBCDField12: TFMTBCDField;
+    IntegerField7: TIntegerField;
+    IntegerField8: TIntegerField;
+    IntegerField9: TIntegerField;
+    FMTBCDField13: TFMTBCDField;
+    IntegerField10: TIntegerField;
+    IntegerField11: TIntegerField;
+    IntegerField12: TIntegerField;
+    IntegerField13: TIntegerField;
+    IntegerField14: TIntegerField;
+    FMTBCDField14: TFMTBCDField;
+    FMTBCDField15: TFMTBCDField;
+    FMTBCDField16: TFMTBCDField;
+    FMTBCDField17: TFMTBCDField;
+    FMTBCDField18: TFMTBCDField;
+    FMTBCDField19: TFMTBCDField;
+    FMTBCDField20: TFMTBCDField;
+    DateField1: TDateField;
+    StringField4: TStringField;
+    StringField5: TStringField;
+    StringField6: TStringField;
+    StringField7: TStringField;
+    StringField8: TStringField;
+    StringField9: TStringField;
+    StringField10: TStringField;
+    StringField11: TStringField;
+    StringField12: TStringField;
+    StringField13: TStringField;
+    FMTBCDField21: TFMTBCDField;
+    FMTBCDField22: TFMTBCDField;
+    StringField14: TStringField;
+    FMTBCDField23: TFMTBCDField;
+    IntegerField15: TIntegerField;
+    IntegerField16: TIntegerField;
+    IntegerField17: TIntegerField;
+    DataSource2: TDataSource;
+    SQLQuery1: TSQLQuery;
+    DataSetProvider1: TDataSetProvider;
+    CDS_V_EstoquesCOD_PRODUTO: TFMTBCDField;
+    CDS_V_EstoquesDTA_INCLUSAO: TSQLTimeStampField;
+    CDS_V_EstoquesCOD_SETOR: TIntegerField;
+    CDS_V_EstoquesNOME_SETOR: TStringField;
+    CDS_V_EstoquesCOD_LINHA: TIntegerField;
+    CDS_V_EstoquesNOME_LINHA: TStringField;
+    CDS_V_EstoquesCOD_MARCA: TIntegerField;
+    CDS_V_EstoquesNOME_MARCA: TStringField;
+    CDS_V_EstoquesCOD_COLECAO: TIntegerField;
+    CDS_V_EstoquesNOME_COLECAO: TStringField;
+    CDS_V_EstoquesQTD_ESTOCAGEM_4M: TIntegerField;
+    CDS_V_EstoquesQTD_DISPONIVEL: TFMTBCDField;
+    ClientDataSet2: TClientDataSet;
+    FMTBCDField24: TFMTBCDField;
+    FMTBCDField25: TFMTBCDField;
+    StringField15: TStringField;
+    StringField16: TStringField;
+    FMTBCDField26: TFMTBCDField;
+    FMTBCDField27: TFMTBCDField;
+    FMTBCDField28: TFMTBCDField;
+    FMTBCDField29: TFMTBCDField;
+    FMTBCDField30: TFMTBCDField;
+    FMTBCDField31: TFMTBCDField;
+    FMTBCDField32: TFMTBCDField;
+    FMTBCDField33: TFMTBCDField;
+    FMTBCDField34: TFMTBCDField;
+    IntegerField18: TIntegerField;
+    IntegerField19: TIntegerField;
+    IntegerField20: TIntegerField;
+    IntegerField21: TIntegerField;
+    IntegerField22: TIntegerField;
+    IntegerField23: TIntegerField;
+    FMTBCDField35: TFMTBCDField;
+    FMTBCDField36: TFMTBCDField;
+    IntegerField24: TIntegerField;
+    IntegerField25: TIntegerField;
+    IntegerField26: TIntegerField;
+    FMTBCDField37: TFMTBCDField;
+    IntegerField27: TIntegerField;
+    IntegerField28: TIntegerField;
+    FMTBCDField38: TFMTBCDField;
+    IntegerField29: TIntegerField;
+    IntegerField30: TIntegerField;
+    FMTBCDField39: TFMTBCDField;
+    FMTBCDField40: TFMTBCDField;
+    FMTBCDField41: TFMTBCDField;
+    FMTBCDField42: TFMTBCDField;
+    FMTBCDField43: TFMTBCDField;
+    FMTBCDField44: TFMTBCDField;
+    FMTBCDField45: TFMTBCDField;
+    SQLTimeStampField1: TSQLTimeStampField;
+    IntegerField31: TIntegerField;
+    StringField17: TStringField;
+    IntegerField32: TIntegerField;
+    StringField18: TStringField;
+    IntegerField33: TIntegerField;
+    StringField19: TStringField;
+    IntegerField34: TIntegerField;
+    StringField20: TStringField;
+    StringField21: TStringField;
+    StringField22: TStringField;
+    StringField23: TStringField;
+    IntegerField35: TIntegerField;
+    StringField24: TStringField;
+    FMTBCDField46: TFMTBCDField;
+    FMTBCDField47: TFMTBCDField;
+    StringField25: TStringField;
+    FMTBCDField48: TFMTBCDField;
+    IntegerField36: TIntegerField;
+    IntegerField37: TIntegerField;
+    IntegerField38: TIntegerField;
+    IntegerField39: TIntegerField;
+    IntegerField40: TIntegerField;
+    IntegerField41: TIntegerField;
+    IntegerField42: TIntegerField;
+    IntegerField43: TIntegerField;
+    FMTBCDField49: TFMTBCDField;
+    FMTBCDField50: TFMTBCDField;
+    FMTBCDField51: TFMTBCDField;
+    FMTBCDField52: TFMTBCDField;
+    FMTBCDField53: TFMTBCDField;
+    FMTBCDField54: TFMTBCDField;
+    FMTBCDField55: TFMTBCDField;
+    FMTBCDField56: TFMTBCDField;
+    FMTBCDField57: TFMTBCDField;
+    FMTBCDField58: TFMTBCDField;
+    IntegerField44: TIntegerField;
+    IntegerField45: TIntegerField;
+    IntegerField46: TIntegerField;
+    IntegerField47: TIntegerField;
+    IntegerField48: TIntegerField;
+    IntegerField49: TIntegerField;
+    IntegerField50: TIntegerField;
+    IntegerField51: TIntegerField;
+    IntegerField52: TIntegerField;
+    IntegerField53: TIntegerField;
+    FMTBCDField59: TFMTBCDField;
+    FMTBCDField60: TFMTBCDField;
+    FMTBCDField61: TFMTBCDField;
+    FMTBCDField62: TFMTBCDField;
+    FMTBCDField63: TFMTBCDField;
+    DataSource3: TDataSource;
+    SQLQuery2: TSQLQuery;
+    DataSetProvider2: TDataSetProvider;
+    CDS_V_EstoquesCOD_COMPRADOR: TIntegerField;
+    CDS_V_EstoquesDES_COMPRADOR: TStringField;
     procedure CDS_V_GruposProdutosAfterScroll(DataSet: TDataSet);
     procedure CDS_V_EstFisFinanEmpAfterScroll(DataSet: TDataSet);
     procedure CDS_V_MargemLucroFornAfterScroll(DataSet: TDataSet);
-    procedure CDS_V_EstoquesAfterScroll(DataSet: TDataSet);
     procedure CDS_V_EstoquesAfterPost(DataSet: TDataSet);
 
     // Odir ====================================================================
@@ -778,7 +919,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    bSeProcessa1, // Se Libera FrmEstoques.Dbg_Estoques.Columns[9 e 10].ReadOnly:=True (Estoque Minimo/Maximo)
+    bSeProcessa1, // Se Libera FrmEstoques.Dbg_Estoques.Columns[10 e 11].ReadOnly:=True (Estoque Minimo/Maximo)
     bSeProcessa2, // Se Atualiza Valores de Estoques
     bSeCalcCurva  // Se Esta Calculando Curva ABC
     : Boolean;
@@ -871,65 +1012,15 @@ begin
 
 end;
 
-procedure TDMVirtual.CDS_V_EstoquesAfterScroll(DataSet: TDataSet);
-Var
-  MySql: string;
-  sMediaDia, sEstoque, sPcCusto, sPcVenda: String;
-begin
-//  If (Not CDS_V_Estoques.IsEmpty) And (CDS_V_Estoques.RecNo>0) Then
-//  Begin
-//    If bSeProcessa1 Then
-//    Begin
-//      If Trim(CDS_V_EstoquesCOD_PRODUTO.AsString)='' Then
-//       Begin
-//         FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly:=True;
-//         FrmEstoques.Dbg_Estoques.Columns[10].ReadOnly:=True;
-//       End
-//      Else
-//       Begin
-//         FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly:=False;
-//         FrmEstoques.Dbg_Estoques.Columns[10].ReadOnly:=False;
-//       End;
-//
-//      // Apresenta Demanda Prevista ------------------------------
-//      sMediaDia:=f_Troca(',','.', CDS_V_EstoquesQTD_MEDIA_DIA.AsString);
-//      sEstoque :=f_Troca(',','.', CDS_V_EstoquesQTD_ESTOQUE.AsString);
-//      sPcCusto :=f_Troca(',','.', CDS_V_EstoquesPC_CUSTO.AsString);
-//      sPcVenda :=f_Troca(',','.', CDS_V_EstoquesPC_VENDA.AsString);
-//
-//      MySql:=' SELECT'+
-//             ' CAST(fc.num_dias_estocagem AS INTEGER) NUM_DIAS_ESTOCAGEM,'+
-//             ' CAST('+sMediaDia+' AS NUMERIC(12,4)) QTD_VENDA_DIA,'+
-//             ' CAST('+sEstoque+' AS INTEGER) QTD_ESTOQUE,'+
-//             ' CAST(('+sEstoque+' * '+sPcCusto+') AS NUMERIC(12,2)) EST_PC_CUSTO,'+
-//             ' CAST(('+sEstoque+' * '+sPcVenda+') AS NUMERIC(12,2)) EST_PC_VENDA,'+
-//             ' CAST((fc.num_dias_estocagem * '+sMediaDia+') AS INTEGER) DM_PREVISTA,'+
-//             ' CAST(((fc.num_dias_estocagem * '+sMediaDia+') * '+sPcCusto+') AS NUMERIC(12,2)) DM_PREV_PC_CUSTO,'+
-//             ' CAST(((fc.num_dias_estocagem * '+sMediaDia+') * '+sPcVenda+') AS NUMERIC(12,2)) DM_PREV_PC_VENDA'+
-//             ' FROM ES_FINAN_CURVA_ABC fc'+
-//             ' WHERE fc.cod_loja = '+QuotedStr(sgCodEmp)+
-//             ' and   fc.cod_produto = '+QuotedStr(CDS_V_EstoquesCOD_PRODUTO.AsString);
-//      DMBelShop.CDS_EstoquePrevisao.Close;
-//      DMBelShop.SDS_EstoquePrevisao.CommandText:=MySql;
-//      DMBelShop.CDS_EstoquePrevisao.Open;
-//
-//      sMediaDia:='';
-//      sEstoque :='';
-//      sPcCusto :='';
-//      sPcVenda :='';
-//    End; // If bSeProcessa1 Then
-//  End; // If Not CDS_V_Estoques.IsEmpty Then
-end;
-
 procedure TDMVirtual.CDS_V_EstoquesAfterPost(DataSet: TDataSet);
 var
   MySql, s: string;
   bAtualizar: Boolean;
-  sMix, sLojaLinx, sProdLinx: String;
+  sMix, sProdSidicom: String;
 begin
   bAtualizar:=False;
 
-  If Not FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly Then
+  If Not FrmEstoques.Dbg_Estoques.Columns[10].ReadOnly Then
   Begin
     If igNrEmpProc=1 Then bAtualizar:=True;
 
@@ -956,31 +1047,28 @@ begin
                ', c.EST_MAXIMO='+QuotedStr(CDS_V_EstoquesEST_MAXIMO.AsString)+
                ', c.USU_ALTERA='+QuotedStr(Cod_Usuario)+
                ', c.DTA_ALTERA=current_timestamp'+
-               ' WHERE COD_LOJA='+QuotedStr(sgCodEmp)+
-               ' AND COD_PRODUTO='+QuotedStr(CDS_V_EstoquesCOD_PRODUTO.AsString);
+               ' WHERE C.COD_LINX='+IntToStr(igCodLojaLinx)+
+               ' AND C.COD_PROD_LINX='+CDS_V_EstoquesCOD_PRODUTO.AsString;
         DMBelShop.SQLC.Execute(MySql,nil,nil);
 
         sMix:='0';
         If CDS_V_EstoquesEST_IDEAL.AsInteger>0 Then
          sMix:='1';
 
-        // Loja Linx
-        MySql:=' SELECT l.empresa'+
-               ' FROM LINXLOJAS l'+
-               ' WHERE l.cod_loja='+QuotedStr(sgCodEmp);
-        DMBelShop.CDS_BuscaRapida.Close;
-        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-        DMBelShop.CDS_BuscaRapida.Open;
-        sLojaLinx:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Empresa').AsString);
-
-        // Produto Linx
-        MySql:=' SELECT p.cod_produto'+
+        // Produto Sidicom
+        MySql:=' SELECT'+
+               ' CASE'+
+               '   WHEN CHAR_LENGTH(TRIM(p.cod_auxiliar))>6 THEN'+
+               '     NULL'+
+               '   ELSE'+
+               '     TRIM(p.cod_auxiliar)'+
+               ' END COD_AUXILIAR'+
                ' FROM LINXPRODUTOS p'+
-               ' WHERE Trim(p.cod_auxiliar)='+QuotedStr(CDS_V_EstoquesCOD_PRODUTO.AsString);
+               ' WHERE p.cod_produto='+CDS_V_EstoquesCOD_PRODUTO.AsString;
         DMBelShop.CDS_BuscaRapida.Close;
         DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
         DMBelShop.CDS_BuscaRapida.Open;
-        sProdLinx:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString);
+        sProdSidicom:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Auxiliar').AsString);
         DMBelShop.CDS_BuscaRapida.Close;
 
         // Atualiza ES_PRODUTOS_MIX
@@ -988,13 +1076,13 @@ begin
                ' (COD_LOJA, EMPRESA, CODPRODUTO, COD_PRODUTO, IND_CURVA, IND_MIX, DTA_ATUALIZACAO)'+
                'VALUES ('+
                QuotedStr(sgCodEmp)+', '+ // COD_LOJA
-               sLojaLinx+', '+ // EMPRESA
-               QuotedStr(CDS_V_EstoquesCOD_PRODUTO.AsString)+', '+ // CODPRODUTO
-               sProdLinx+', '+ // COD_PRODUTO
+               IntToStr(igCodLojaLinx)+', '+ // EMPRESA
+               QuotedStr(sProdSidicom)+', '+ // CODPRODUTO
+               CDS_V_EstoquesCOD_PRODUTO.AsString+', '+ // COD_PRODUTO
                QuotedStr(CDS_V_EstoquesIND_CURVA.AsString)+', '+ // IND_CURVA
                sMix+', '+ // IND_MIX
                ' CURRENT_DATE)'+ //DTA_ATUALIZACAO
-               ' MATCHING (COD_LOJA, CODPRODUTO)';
+               ' MATCHING (EMPRESA, COD_PRODUTO)';
         DMBelShop.SQLC.Execute(MySql,nil,nil);
 
         // Atualiza Transacao ====================================================
@@ -1015,7 +1103,7 @@ procedure TDMVirtual.CDS_V_EstoquesAfterEdit(DataSet: TDataSet);
 var
  MySql, s: string;
 begin
-  If Not FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly Then
+  If Not FrmEstoques.Dbg_Estoques.Columns[10].ReadOnly Then
   Begin
     iQtdEstMinOld :=CDS_V_EstoquesEST_IDEAL.AsInteger;
     iQtdEstMaxOld :=CDS_V_EstoquesEST_MAXIMO.AsInteger;
@@ -1041,6 +1129,7 @@ begin
     CDS_V_NFeProdutos.Open;
     CDS_V_NFeProdutos.EnableControls;
   End;
+
 end;
 
 procedure TDMVirtual.CDS_V_NFeProdutosAfterScroll(DataSet: TDataSet);

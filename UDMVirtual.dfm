@@ -2971,7 +2971,6 @@ object DMVirtual: TDMVirtual
     ProviderName = 'DSP_SQLQ_Busca'
     AfterEdit = CDS_V_EstoquesAfterEdit
     AfterPost = CDS_V_EstoquesAfterPost
-    AfterScroll = CDS_V_EstoquesAfterScroll
     OnCalcFields = CDS_V_EstoquesCalcFields
     Left = 446
     Top = 24
@@ -2983,11 +2982,11 @@ object DMVirtual: TDMVirtual
       Precision = 15
       Size = 0
     end
-    object CDS_V_EstoquesCOD_PRODUTO: TStringField
+    object CDS_V_EstoquesCOD_PRODUTO: TFMTBCDField
       DisplayLabel = 'C'#243'd'
       FieldName = 'COD_PRODUTO'
-      FixedChar = True
-      Size = 6
+      Precision = 15
+      Size = 0
     end
     object CDS_V_EstoquesDES_PRODUTO: TStringField
       DisplayLabel = 'Desc Prod'
@@ -3044,20 +3043,6 @@ object DMVirtual: TDMVirtual
       Precision = 15
       Size = 2
     end
-    object CDS_V_EstoquesVLR_MEDIA_MES: TFMTBCDField
-      DisplayLabel = '$ '#215' Vd M'
-      FieldName = 'VLR_MEDIA_MES'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesVLR_MEDIA_DIA: TFMTBCDField
-      DisplayLabel = '$ '#215' Vd Dia'
-      FieldName = 'VLR_MEDIA_DIA'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 2
-    end
     object CDS_V_EstoquesQTD_VD_M1: TIntegerField
       FieldName = 'QTD_VD_M1'
       DisplayFormat = '0,'
@@ -3090,17 +3075,10 @@ object DMVirtual: TDMVirtual
       Precision = 15
       Size = 4
     end
-    object CDS_V_EstoquesQTD_MEDIA_DIA: TFMTBCDField
-      DisplayLabel = 'Qt '#215' Vd Dia'
-      FieldName = 'QTD_MEDIA_DIA'
-      DisplayFormat = '0,.0000'
-      Precision = 15
-      Size = 4
-    end
-    object CDS_V_EstoquesQTD_ESTCAGEM_4M: TIntegerField
+    object CDS_V_EstoquesQTD_ESTOCAGEM_4M: TIntegerField
       DisplayLabel = 'Qt EstG 4 M'
-      FieldName = 'QTD_ESTCAGEM_4M'
-      DisplayFormat = '0,'
+      FieldName = 'QTD_ESTOCAGEM_4M'
+      Required = True
     end
     object CDS_V_EstoquesQTD_VENDAS_ANO: TIntegerField
       DisplayLabel = 'Qt Vd AA'
@@ -3129,10 +3107,10 @@ object DMVirtual: TDMVirtual
       FieldName = 'QTD_TRANSITO'
       DisplayFormat = '0,'
     end
-    object CDS_V_EstoquesQTD_DISPONIVEL: TIntegerField
-      DisplayLabel = 'Qt Disp'
+    object CDS_V_EstoquesQTD_DISPONIVEL: TFMTBCDField
       FieldName = 'QTD_DISPONIVEL'
-      DisplayFormat = '0,'
+      Precision = 15
+      Size = 0
     end
     object CDS_V_EstoquesEST_IDEAL: TIntegerField
       DisplayLabel = 'Est M'#237'n'
@@ -3151,36 +3129,9 @@ object DMVirtual: TDMVirtual
       Precision = 15
       Size = 4
     end
-    object CDS_V_EstoquesVLR_TOTAL_VENDA: TFMTBCDField
-      DisplayLabel = '$ Qt Disp P'#231' Vd'
-      FieldName = 'VLR_DISP_PC_VENDA'
-      DisplayFormat = '0.,00'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesVLR_EST_PC_VENDA: TFMTBCDField
-      DisplayLabel = '$ Qt Est P'#231' Vd'
-      FieldName = 'VLR_EST_PC_VENDA'
-      Precision = 15
-      Size = 2
-    end
     object CDS_V_EstoquesPC_CUSTO: TFMTBCDField
       DisplayLabel = 'P'#231' Ct'
       FieldName = 'PC_CUSTO'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesVLR_DISP_PC_CUSTO: TFMTBCDField
-      DisplayLabel = '$ Qt Disp P'#231' Ct'
-      FieldName = 'VLR_DISP_PC_CUSTO'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesVLR_EST_PC_CUSTO: TFMTBCDField
-      DisplayLabel = '$ Qt Est P'#231' Ct'
-      FieldName = 'VLR_EST_PC_CUSTO'
       DisplayFormat = '0,.00'
       Precision = 15
       Size = 2
@@ -3192,46 +3143,37 @@ object DMVirtual: TDMVirtual
       Precision = 15
       Size = 4
     end
-    object CDS_V_EstoquesDTA_INCLUSAO: TDateField
+    object CDS_V_EstoquesDTA_INCLUSAO: TSQLTimeStampField
       DisplayLabel = 'Dt Incl'
       FieldName = 'DTA_INCLUSAO'
     end
-    object CDS_V_EstoquesCODGRUPO: TStringField
-      DisplayLabel = 'C'#243'd Gr'
-      FieldName = 'CODGRUPO'
-      FixedChar = True
-      Size = 3
+    object CDS_V_EstoquesCOD_SETOR: TIntegerField
+      FieldName = 'COD_SETOR'
     end
-    object CDS_V_EstoquesNOMEGRUPO: TStringField
-      DisplayLabel = 'Desc Gr'
-      FieldName = 'NOMEGRUPO'
-      FixedChar = True
+    object CDS_V_EstoquesNOME_SETOR: TStringField
+      FieldName = 'NOME_SETOR'
       Size = 30
     end
-    object CDS_V_EstoquesCODSUBGRUPO: TStringField
-      DisplayLabel = 'C'#243'd Sub-Gr'
-      FieldName = 'CODSUBGRUPO'
-      FixedChar = True
-      Size = 4
+    object CDS_V_EstoquesCOD_LINHA: TIntegerField
+      FieldName = 'COD_LINHA'
     end
-    object CDS_V_EstoquesNOMESUBGRUPO: TStringField
-      DisplayLabel = 'Desc Sub-Gr'
-      FieldName = 'NOMESUBGRUPO'
-      FixedChar = True
+    object CDS_V_EstoquesNOME_LINHA: TStringField
+      FieldName = 'NOME_LINHA'
       Size = 30
     end
-    object CDS_V_EstoquesCODGRUPOSUB: TStringField
-      DisplayLabel = 'C'#243'd Gr Sub'
-      FieldName = 'CODGRUPOSUB'
-      FixedChar = True
-      Size = 7
+    object CDS_V_EstoquesCOD_MARCA: TIntegerField
+      FieldName = 'COD_MARCA'
     end
-    object CDS_V_EstoquesIND_SITUACAO: TStringField
-      DisplayLabel = 'Sit Prod'
-      DisplayWidth = 5
-      FieldName = 'IND_SITUACAO'
-      Required = True
-      Size = 5
+    object CDS_V_EstoquesNOME_MARCA: TStringField
+      FieldName = 'NOME_MARCA'
+      Size = 30
+    end
+    object CDS_V_EstoquesCOD_COLECAO: TIntegerField
+      FieldName = 'COD_COLECAO'
+    end
+    object CDS_V_EstoquesNOME_COLECAO: TStringField
+      FieldName = 'NOME_COLECAO'
+      Size = 50
     end
     object CDS_V_EstoquesCOD_FORNECEDOR: TStringField
       Alignment = taRightJustify
@@ -3245,24 +3187,15 @@ object DMVirtual: TDMVirtual
       FieldName = 'DES_FORNECEDOR'
       Size = 40
     end
-    object CDS_V_EstoquesCOD_COMPRADOR: TStringField
+    object CDS_V_EstoquesCOD_COMPRADOR: TIntegerField
       FieldName = 'COD_COMPRADOR'
-      FixedChar = True
-      Size = 7
+      Required = True
     end
     object CDS_V_EstoquesDES_COMPRADOR: TStringField
       DisplayLabel = 'Desc Comprador'
       FieldName = 'DES_COMPRADOR'
       FixedChar = True
-      Size = 30
-    end
-    object CDS_V_EstoquesVLR_VENDAS_ACUM: TFMTBCDField
-      DisplayLabel = 'Vendas Acumuladas'
-      FieldName = 'VLR_VENDAS_ACUM'
-      Required = True
-      DisplayFormat = '0.,00'
-      Precision = 15
-      Size = 2
+      Size = 1
     end
     object CDS_V_EstoquesORDENAR: TFMTBCDField
       FieldName = 'ORDENAR'
@@ -3270,28 +3203,9 @@ object DMVirtual: TDMVirtual
       Precision = 15
       Size = 0
     end
-    object CDS_V_EstoquesALTERACAO: TStringField
-      FieldName = 'ALTERACAO'
-      Required = True
-      FixedChar = True
-      Size = 3
-    end
-    object CDS_V_EstoquesVLR_VENDAS_ACUM_OK: TFMTBCDField
-      DisplayLabel = 'Vendas Acumuladas OK'
-      FieldName = 'VLR_VENDAS_ACUM_OK'
-      Required = True
-      DisplayFormat = '0.,00'
-      Precision = 15
-      Size = 2
-    end
     object CDS_V_EstoquesNUM_DIASUTEIS: TIntegerField
       DisplayLabel = 'N'#186' Dias Uteis Ano'
       FieldName = 'NUM_DIASUTEIS'
-      DisplayFormat = '0,'
-    end
-    object CDS_V_EstoquesDIAS_UTEIS_4M: TIntegerField
-      DisplayLabel = 'N'#186' Dias Uteis 4Meses'
-      FieldName = 'DIAS_UTEIS_4M'
       DisplayFormat = '0,'
     end
     object CDS_V_EstoquesNUM_LINHA: TIntegerField
@@ -3384,7 +3298,7 @@ object DMVirtual: TDMVirtual
       '      LEFT JOIN PRODUTO p on e.codproduto=p.codproduto '
       'WHERE e.codfilial='#39'99'#39)
     Left = 385
-    Top = 472
+    Top = 488
     object IBQ_EstoqueLojaCODFILIAL: TIBStringField
       FieldName = 'CODFILIAL'
       Origin = 'ESTOQUE.CODFILIAL'
@@ -3600,8 +3514,8 @@ object DMVirtual: TDMVirtual
       'WHERE c.rdb$field_source = f.rdb$field_name'
       'AND   TRIM(c.RDB$RELATION_NAME) = UPPER(:Tabela)'
       'ORDER BY c.RDB$FIELD_POSITION')
-    Left = 425
-    Top = 520
+    Left = 481
+    Top = 512
     ParamData = <
       item
         DataType = ftString
@@ -3895,6 +3809,90 @@ object DMVirtual: TDMVirtual
   object SQLQ_Busca: TSQLQuery
     MaxBlobSize = -1
     Params = <>
+    SQL.Strings = (
+      'SELECT'
+      'GEN_ID(gen_odir,1) SEQ,'
+      'pr.cod_produto COD_PRODUTO,'
+      'TRIM(pr.nome) DES_PRODUTO,'
+      'TRIM(fc.ind_curva) IND_CURVA,'
+      'CAST(COALESCE(e4.vlr_venda_m1,0.00) AS NUMERIC(12,2)) VLR_VD_M1,'
+      'CAST(COALESCE(e4.vlr_venda_m2,0.00) AS NUMERIC(12,2)) VLR_VD_M2,'
+      'CAST(COALESCE(e4.vlr_venda_m3,0.00) AS NUMERIC(12,2)) VLR_VD_M3,'
+      'CAST(COALESCE(e4.vlr_venda_m4,0.00) AS NUMERIC(12,2)) VLR_VD_M4,'
+      'CAST(COALESCE(e4.vlr_venda_m5,0.00) AS NUMERIC(12,2)) VLR_VD_M5,'
+      'COALESCE(e4.vlr_venda,0) VLR_VENDAS_4M, 0.00 VLR_VENDAS_ANO,'
+      ''
+      'CAST(COALESCE(e4.qtd_venda_m1,0) AS INTEGER) QTD_VD_M1,'
+      'CAST(COALESCE(e4.qtd_venda_m2,0) AS INTEGER) QTD_VD_M2,'
+      'CAST(COALESCE(e4.qtd_venda_m3,0) AS INTEGER) QTD_VD_M3,'
+      'CAST(COALESCE(e4.qtd_venda_m4,0) AS INTEGER) QTD_VD_M4,'
+      'CAST(COALESCE(e4.qtd_venda_m5,0) AS INTEGER) QTD_VD_M5,'
+      'CAST(COALESCE(e4.qtd_venda,0) AS INTEGER)  QTD_VENDAS_4M,'
+      ''
+      'COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.0000)+'
+      '                COALESCE(e4.qtd_venda_m2,0.0000)+'
+      '                COALESCE(e4.qtd_venda_m3,0.0000)+'
+      '                COALESCE(e4.qtd_venda_m4,0.0000))/4)'
+      'AS NUMERIC(12,4)) , 0) QTD_MEDIA_MES,'
+      ''
+      '0 QTD_ESTOCAGEM_4M,'
+      '0 QTD_VENDAS_ANO,'
+      '0 QTD_ESTOCAGEM_ANO,'
+      'COALESCE(fc.per_participacao,0.0000) PER_PARTICIPACAO,'
+      'CAST(pd.quantidade AS INTEGER) QTD_ESTOQUE,'
+      'COALESCE(fc.qtd_transito,0) QTD_TRANSITO,'
+      
+        '(CAST(pd.quantidade AS INTEGER) + COALESCE(fc.qtd_transito,0)) Q' +
+        'TD_DISPONIVEL,'
+      'CAST(COALESCE(fc.est_minimo,0) AS INTEGER) EST_IDEAL,'
+      'CAST(COALESCE(fc.est_maximo,0) AS INTEGER) EST_MAXIMO,'
+      'CAST(COALESCE(pd.preco_venda,0.0000) AS NUMERIC(15,4)) PC_VENDA,'
+      'CAST(COALESCE(pd.preco_custo,0.0000) AS NUMERIC(15,4)) PC_CUSTO,'
+      '0.0000 PER_MARGEM,'
+      'pr.dt_inclusao DTA_INCLUSAO,'
+      'pr.id_setor COD_SETOR,'
+      'TRIM(pr.desc_setor) NOME_SETOR,'
+      'pr.id_linha COD_LINHA,'
+      'TRIM(pr.desc_linha) NOME_LINHA,'
+      'pr.id_marca COD_MARCA,'
+      'TRIM(pr.desc_marca) NOME_MARCA,'
+      'pr.id_colecao COD_COLECAO,'
+      'TRIM(pr.desc_colecao) NOME_COLECAO,'
+      'TRIM(pr.cod_fornecedor) COD_FORNECEDOR,'
+      'TRIM(fo.nome_cliente) DES_FORNECEDOR,'
+      '0 COD_COMPRADOR,'
+      'NUll DES_COMPRADOR,'
+      'GEN_ID(gen_tecbiz,1)+12 ORDENAR,'
+      'COALESCE(fc.num_dias_uteis,0) NUM_DIASUTEIS,'
+      '0 NUM_LINHA'
+      'FROM ES_FINAN_CURVA_ABC fc'
+      
+        '     LEFT JOIN LINXPRODUTOS pr          ON pr.cod_produto=fc.cod' +
+        '_prod_linx'
+      
+        '     LEFT JOIN LINXPRODUTOSDETALHES pd  ON pd.cod_produto=fc.cod' +
+        '_prod_linx'
+      
+        '                                       AND pd.empresa=fc.cod_lin' +
+        'x'
+      
+        '     LEFT JOIN ES_DEMANDAS_4MESES e4    ON e4.cod_linx =fc.cod_l' +
+        'inx'
+      
+        '                                       AND e4.cod_prod_linx=fc.c' +
+        'od_prod_linx'
+      
+        '     LEFT JOIN LINXCLIENTESFORNEC fo    ON fo.cod_cliente=pr.cod' +
+        '_fornecedor'
+      ''
+      'WHERE fc.cod_linx=30'
+      'AND   pr.desativado='#39'N'#39
+      'AND   NOT (COALESCE(pr.id_setor, 0) in (17, 20, 25))'
+      'AND   NOT (COALESCE(pr.id_linha, 0) in (33))'
+      'AND   NOT (COALESCE(pr.id_colecao, 0) in (294, 587))'
+      'AND   NOT (COALESCE(pr.cod_fornecedor, 0) in (6, 1014, 260))'
+      'ORDER BY fc.ind_curva, fc.per_participacao desc'
+      '')
     SQLConnection = DMBelShop.SQLC
     Left = 357
     Top = 24
@@ -4071,5 +4069,1034 @@ object DMVirtual: TDMVirtual
     DataSet = CDS_V_MixAnaliseForn
     Left = 977
     Top = 273
+  end
+  object ClientDataSet1: TClientDataSet
+    Aggregates = <>
+    AggregatesActive = True
+    Params = <>
+    ProviderName = 'DSP_SQLQ_Busca'
+    AfterEdit = CDS_V_EstoquesAfterEdit
+    AfterPost = CDS_V_EstoquesAfterPost
+    OnCalcFields = CDS_V_EstoquesCalcFields
+    Left = 894
+    Top = 424
+    object FMTBCDField1: TFMTBCDField
+      DisplayLabel = 'Seq'
+      FieldName = 'SEQ'
+      Required = True
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 0
+    end
+    object StringField1: TStringField
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'COD_PRODUTO'
+      FixedChar = True
+      Size = 6
+    end
+    object StringField2: TStringField
+      DisplayLabel = 'Desc Prod'
+      FieldName = 'DES_PRODUTO'
+      Size = 80
+    end
+    object StringField3: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'CL'
+      FieldName = 'IND_CURVA'
+      Size = 1
+    end
+    object FMTBCDField2: TFMTBCDField
+      FieldName = 'VLR_VD_M1'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField3: TFMTBCDField
+      FieldName = 'VLR_VD_M2'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField4: TFMTBCDField
+      FieldName = 'VLR_VD_M3'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField5: TFMTBCDField
+      FieldName = 'VLR_VD_M4'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField6: TFMTBCDField
+      FieldName = 'VLR_VD_M5'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField7: TFMTBCDField
+      DisplayLabel = '$ Vd AA'
+      FieldName = 'VLR_VENDAS_ANO'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField8: TFMTBCDField
+      DisplayLabel = '$ Vd 4 M'
+      FieldName = 'VLR_VENDAS_4M'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField9: TFMTBCDField
+      DisplayLabel = '$ '#215' Vd M'
+      FieldName = 'VLR_MEDIA_MES'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField10: TFMTBCDField
+      DisplayLabel = '$ '#215' Vd Dia'
+      FieldName = 'VLR_MEDIA_DIA'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object IntegerField1: TIntegerField
+      FieldName = 'QTD_VD_M1'
+      DisplayFormat = '0,'
+    end
+    object IntegerField2: TIntegerField
+      FieldName = 'QTD_VD_M2'
+      DisplayFormat = '0,'
+    end
+    object IntegerField3: TIntegerField
+      FieldName = 'QTD_VD_M3'
+      DisplayFormat = '0,'
+    end
+    object IntegerField4: TIntegerField
+      FieldName = 'QTD_VD_M4'
+      DisplayFormat = '0,'
+    end
+    object IntegerField5: TIntegerField
+      FieldName = 'QTD_VD_M5'
+      DisplayFormat = '0,'
+    end
+    object IntegerField6: TIntegerField
+      DisplayLabel = 'Qt Vd 4 M'
+      FieldName = 'QTD_VENDAS_4M'
+      DisplayFormat = '0,'
+    end
+    object FMTBCDField11: TFMTBCDField
+      DisplayLabel = 'Qt '#215' Vd M'
+      FieldName = 'QTD_MEDIA_MES'
+      DisplayFormat = '0,.0000'
+      Precision = 15
+      Size = 4
+    end
+    object FMTBCDField12: TFMTBCDField
+      DisplayLabel = 'Qt '#215' Vd Dia'
+      FieldName = 'QTD_MEDIA_DIA'
+      DisplayFormat = '0,.0000'
+      Precision = 15
+      Size = 4
+    end
+    object IntegerField7: TIntegerField
+      DisplayLabel = 'Qt EstG 4 M'
+      FieldName = 'QTD_ESTCAGEM_4M'
+      DisplayFormat = '0,'
+    end
+    object IntegerField8: TIntegerField
+      DisplayLabel = 'Qt Vd AA'
+      FieldName = 'QTD_VENDAS_ANO'
+      DisplayFormat = '0,'
+    end
+    object IntegerField9: TIntegerField
+      DisplayLabel = 'Qt EstG AA'
+      FieldName = 'QTD_ESTOCAGEM_ANO'
+      DisplayFormat = '0,'
+    end
+    object FMTBCDField13: TFMTBCDField
+      DisplayLabel = '% Part'
+      FieldName = 'PER_PARTICIPACAO'
+      DisplayFormat = '0.,0000'
+      Precision = 15
+      Size = 4
+    end
+    object IntegerField10: TIntegerField
+      DisplayLabel = 'Qt Est'
+      FieldName = 'QTD_ESTOQUE'
+      DisplayFormat = '0,'
+    end
+    object IntegerField11: TIntegerField
+      DisplayLabel = 'Qt Trans'
+      FieldName = 'QTD_TRANSITO'
+      DisplayFormat = '0,'
+    end
+    object IntegerField12: TIntegerField
+      DisplayLabel = 'Qt Disp'
+      FieldName = 'QTD_DISPONIVEL'
+      DisplayFormat = '0,'
+    end
+    object IntegerField13: TIntegerField
+      DisplayLabel = 'Est M'#237'n'
+      FieldName = 'EST_IDEAL'
+      DisplayFormat = '0,'
+    end
+    object IntegerField14: TIntegerField
+      DisplayLabel = 'Est M'#225'x'
+      FieldName = 'EST_MAXIMO'
+      DisplayFormat = '0,'
+    end
+    object FMTBCDField14: TFMTBCDField
+      DisplayLabel = 'P'#231' Vd'
+      FieldName = 'PC_VENDA'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 4
+    end
+    object FMTBCDField15: TFMTBCDField
+      DisplayLabel = '$ Qt Disp P'#231' Vd'
+      FieldName = 'VLR_DISP_PC_VENDA'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField16: TFMTBCDField
+      DisplayLabel = '$ Qt Est P'#231' Vd'
+      FieldName = 'VLR_EST_PC_VENDA'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField17: TFMTBCDField
+      DisplayLabel = 'P'#231' Ct'
+      FieldName = 'PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField18: TFMTBCDField
+      DisplayLabel = '$ Qt Disp P'#231' Ct'
+      FieldName = 'VLR_DISP_PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField19: TFMTBCDField
+      DisplayLabel = '$ Qt Est P'#231' Ct'
+      FieldName = 'VLR_EST_PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField20: TFMTBCDField
+      DisplayLabel = '% Mg Lc'
+      FieldName = 'PER_MARGEM'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 4
+    end
+    object DateField1: TDateField
+      DisplayLabel = 'Dt Incl'
+      FieldName = 'DTA_INCLUSAO'
+    end
+    object StringField4: TStringField
+      DisplayLabel = 'C'#243'd Gr'
+      FieldName = 'CODGRUPO'
+      FixedChar = True
+      Size = 3
+    end
+    object StringField5: TStringField
+      DisplayLabel = 'Desc Gr'
+      FieldName = 'NOMEGRUPO'
+      FixedChar = True
+      Size = 30
+    end
+    object StringField6: TStringField
+      DisplayLabel = 'C'#243'd Sub-Gr'
+      FieldName = 'CODSUBGRUPO'
+      FixedChar = True
+      Size = 4
+    end
+    object StringField7: TStringField
+      DisplayLabel = 'Desc Sub-Gr'
+      FieldName = 'NOMESUBGRUPO'
+      FixedChar = True
+      Size = 30
+    end
+    object StringField8: TStringField
+      DisplayLabel = 'C'#243'd Gr Sub'
+      FieldName = 'CODGRUPOSUB'
+      FixedChar = True
+      Size = 7
+    end
+    object StringField9: TStringField
+      DisplayLabel = 'Sit Prod'
+      DisplayWidth = 5
+      FieldName = 'IND_SITUACAO'
+      Required = True
+      Size = 5
+    end
+    object StringField10: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'd Forn'
+      FieldName = 'COD_FORNECEDOR'
+      FixedChar = True
+      Size = 6
+    end
+    object StringField11: TStringField
+      DisplayLabel = 'Desc Forn'
+      FieldName = 'DES_FORNECEDOR'
+      Size = 40
+    end
+    object StringField12: TStringField
+      FieldName = 'COD_COMPRADOR'
+      FixedChar = True
+      Size = 7
+    end
+    object StringField13: TStringField
+      DisplayLabel = 'Desc Comprador'
+      FieldName = 'DES_COMPRADOR'
+      FixedChar = True
+      Size = 30
+    end
+    object FMTBCDField21: TFMTBCDField
+      DisplayLabel = 'Vendas Acumuladas'
+      FieldName = 'VLR_VENDAS_ACUM'
+      Required = True
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField22: TFMTBCDField
+      FieldName = 'ORDENAR'
+      Required = True
+      Precision = 15
+      Size = 0
+    end
+    object StringField14: TStringField
+      FieldName = 'ALTERACAO'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+    object FMTBCDField23: TFMTBCDField
+      DisplayLabel = 'Vendas Acumuladas OK'
+      FieldName = 'VLR_VENDAS_ACUM_OK'
+      Required = True
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object IntegerField15: TIntegerField
+      DisplayLabel = 'N'#186' Dias Uteis Ano'
+      FieldName = 'NUM_DIASUTEIS'
+      DisplayFormat = '0,'
+    end
+    object IntegerField16: TIntegerField
+      DisplayLabel = 'N'#186' Dias Uteis 4Meses'
+      FieldName = 'DIAS_UTEIS_4M'
+      DisplayFormat = '0,'
+    end
+    object IntegerField17: TIntegerField
+      DisplayLabel = 'Seq'
+      FieldKind = fkCalculated
+      FieldName = 'NUM_LINHA'
+      Calculated = True
+    end
+  end
+  object DataSource2: TDataSource
+    DataSet = ClientDataSet1
+    Left = 945
+    Top = 440
+  end
+  object SQLQuery1: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 805
+    Top = 424
+  end
+  object DataSetProvider1: TDataSetProvider
+    DataSet = SQLQuery1
+    Options = [poRetainServerOrder]
+    Left = 853
+    Top = 446
+  end
+  object ClientDataSet2: TClientDataSet
+    Aggregates = <>
+    AggregatesActive = True
+    Params = <>
+    ProviderName = 'DSP_SQLQ_Busca'
+    AfterEdit = CDS_V_EstoquesAfterEdit
+    AfterPost = CDS_V_EstoquesAfterPost
+    OnCalcFields = CDS_V_EstoquesCalcFields
+    Left = 902
+    Top = 496
+    object FMTBCDField24: TFMTBCDField
+      DisplayLabel = 'Seq'
+      FieldName = 'SEQ'
+      Required = True
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 0
+    end
+    object FMTBCDField25: TFMTBCDField
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'COD_PRODUTO'
+      Precision = 15
+      Size = 0
+    end
+    object StringField15: TStringField
+      DisplayLabel = 'Desc Prod'
+      FieldName = 'DES_PRODUTO'
+      Size = 80
+    end
+    object StringField16: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'CL'
+      FieldName = 'IND_CURVA'
+      Size = 1
+    end
+    object FMTBCDField26: TFMTBCDField
+      FieldName = 'VLR_VD_M1'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField27: TFMTBCDField
+      FieldName = 'VLR_VD_M2'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField28: TFMTBCDField
+      FieldName = 'VLR_VD_M3'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField29: TFMTBCDField
+      FieldName = 'VLR_VD_M4'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField30: TFMTBCDField
+      FieldName = 'VLR_VD_M5'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField31: TFMTBCDField
+      DisplayLabel = '$ Vd AA'
+      FieldName = 'VLR_VENDAS_ANO'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField32: TFMTBCDField
+      DisplayLabel = '$ Vd 4 M'
+      FieldName = 'VLR_VENDAS_4M'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField33: TFMTBCDField
+      DisplayLabel = '$ '#215' Vd M'
+      FieldName = 'VLR_MEDIA_MES'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField34: TFMTBCDField
+      DisplayLabel = '$ '#215' Vd Dia'
+      FieldName = 'VLR_MEDIA_DIA'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object IntegerField18: TIntegerField
+      FieldName = 'QTD_VD_M1'
+      DisplayFormat = '0,'
+    end
+    object IntegerField19: TIntegerField
+      FieldName = 'QTD_VD_M2'
+      DisplayFormat = '0,'
+    end
+    object IntegerField20: TIntegerField
+      FieldName = 'QTD_VD_M3'
+      DisplayFormat = '0,'
+    end
+    object IntegerField21: TIntegerField
+      FieldName = 'QTD_VD_M4'
+      DisplayFormat = '0,'
+    end
+    object IntegerField22: TIntegerField
+      FieldName = 'QTD_VD_M5'
+      DisplayFormat = '0,'
+    end
+    object IntegerField23: TIntegerField
+      DisplayLabel = 'Qt Vd 4 M'
+      FieldName = 'QTD_VENDAS_4M'
+      DisplayFormat = '0,'
+    end
+    object FMTBCDField35: TFMTBCDField
+      DisplayLabel = 'Qt '#215' Vd M'
+      FieldName = 'QTD_MEDIA_MES'
+      DisplayFormat = '0,.0000'
+      Precision = 15
+      Size = 4
+    end
+    object FMTBCDField36: TFMTBCDField
+      DisplayLabel = 'Qt '#215' Vd Dia'
+      FieldName = 'QTD_MEDIA_DIA'
+      DisplayFormat = '0,.0000'
+      Precision = 15
+      Size = 4
+    end
+    object IntegerField24: TIntegerField
+      DisplayLabel = 'Qt EstG 4 M'
+      FieldName = 'QTD_ESTOCAGEM_4M'
+      Required = True
+    end
+    object IntegerField25: TIntegerField
+      DisplayLabel = 'Qt Vd AA'
+      FieldName = 'QTD_VENDAS_ANO'
+      DisplayFormat = '0,'
+    end
+    object IntegerField26: TIntegerField
+      DisplayLabel = 'Qt EstG AA'
+      FieldName = 'QTD_ESTOCAGEM_ANO'
+      DisplayFormat = '0,'
+    end
+    object FMTBCDField37: TFMTBCDField
+      DisplayLabel = '% Part'
+      FieldName = 'PER_PARTICIPACAO'
+      DisplayFormat = '0.,0000'
+      Precision = 15
+      Size = 4
+    end
+    object IntegerField27: TIntegerField
+      DisplayLabel = 'Qt Est'
+      FieldName = 'QTD_ESTOQUE'
+      DisplayFormat = '0,'
+    end
+    object IntegerField28: TIntegerField
+      DisplayLabel = 'Qt Trans'
+      FieldName = 'QTD_TRANSITO'
+      DisplayFormat = '0,'
+    end
+    object FMTBCDField38: TFMTBCDField
+      FieldName = 'QTD_DISPONIVEL'
+      Precision = 15
+      Size = 0
+    end
+    object IntegerField29: TIntegerField
+      DisplayLabel = 'Est M'#237'n'
+      FieldName = 'EST_IDEAL'
+      DisplayFormat = '0,'
+    end
+    object IntegerField30: TIntegerField
+      DisplayLabel = 'Est M'#225'x'
+      FieldName = 'EST_MAXIMO'
+      DisplayFormat = '0,'
+    end
+    object FMTBCDField39: TFMTBCDField
+      DisplayLabel = 'P'#231' Vd'
+      FieldName = 'PC_VENDA'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 4
+    end
+    object FMTBCDField40: TFMTBCDField
+      DisplayLabel = '$ Qt Disp P'#231' Vd'
+      FieldName = 'VLR_DISP_PC_VENDA'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField41: TFMTBCDField
+      DisplayLabel = '$ Qt Est P'#231' Vd'
+      FieldName = 'VLR_EST_PC_VENDA'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField42: TFMTBCDField
+      DisplayLabel = 'P'#231' Ct'
+      FieldName = 'PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField43: TFMTBCDField
+      DisplayLabel = '$ Qt Disp P'#231' Ct'
+      FieldName = 'VLR_DISP_PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField44: TFMTBCDField
+      DisplayLabel = '$ Qt Est P'#231' Ct'
+      FieldName = 'VLR_EST_PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField45: TFMTBCDField
+      DisplayLabel = '% Mg Lc'
+      FieldName = 'PER_MARGEM'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 4
+    end
+    object SQLTimeStampField1: TSQLTimeStampField
+      DisplayLabel = 'Dt Incl'
+      FieldName = 'DTA_INCLUSAO'
+    end
+    object IntegerField31: TIntegerField
+      FieldName = 'COD_SETOR'
+    end
+    object StringField17: TStringField
+      FieldName = 'NOME_SETOR'
+      Size = 30
+    end
+    object IntegerField32: TIntegerField
+      FieldName = 'COD_LINHA'
+    end
+    object StringField18: TStringField
+      FieldName = 'NOME_LINHA'
+      Size = 30
+    end
+    object IntegerField33: TIntegerField
+      FieldName = 'COD_MARCA'
+    end
+    object StringField19: TStringField
+      FieldName = 'NOME_MARCA'
+      Size = 30
+    end
+    object IntegerField34: TIntegerField
+      FieldName = 'COD_COLECAO'
+    end
+    object StringField20: TStringField
+      FieldName = 'NOME_COLECAO'
+      Size = 50
+    end
+    object StringField21: TStringField
+      DisplayLabel = 'Ativo'
+      FieldName = 'ATIVO'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+    object StringField22: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'd Forn'
+      FieldName = 'COD_FORNECEDOR'
+      FixedChar = True
+      Size = 6
+    end
+    object StringField23: TStringField
+      DisplayLabel = 'Desc Forn'
+      FieldName = 'DES_FORNECEDOR'
+      Size = 40
+    end
+    object IntegerField35: TIntegerField
+      FieldName = 'COD_COMPRADOR'
+      Required = True
+    end
+    object StringField24: TStringField
+      DisplayLabel = 'Desc Comprador'
+      FieldName = 'DES_COMPRADOR'
+      FixedChar = True
+      Size = 30
+    end
+    object FMTBCDField46: TFMTBCDField
+      DisplayLabel = 'Vendas Acumuladas'
+      FieldName = 'VLR_VENDAS_ACUM'
+      Required = True
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField47: TFMTBCDField
+      FieldName = 'ORDENAR'
+      Required = True
+      Precision = 15
+      Size = 0
+    end
+    object StringField25: TStringField
+      FieldName = 'ALTERACAO'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+    object FMTBCDField48: TFMTBCDField
+      DisplayLabel = 'Vendas Acumuladas OK'
+      FieldName = 'VLR_VENDAS_ACUM_OK'
+      Required = True
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object IntegerField36: TIntegerField
+      DisplayLabel = 'N'#186' Dias Uteis Ano'
+      FieldName = 'NUM_DIASUTEIS'
+      DisplayFormat = '0,'
+    end
+    object IntegerField37: TIntegerField
+      DisplayLabel = 'N'#186' Dias Uteis 4Meses'
+      FieldName = 'DIAS_UTEIS_4M'
+      DisplayFormat = '0,'
+    end
+    object IntegerField38: TIntegerField
+      DisplayLabel = 'Seq'
+      FieldKind = fkCalculated
+      FieldName = 'NUM_LINHA'
+      Calculated = True
+    end
+    object IntegerField39: TIntegerField
+      FieldName = 'EST_CURVAA'
+      Visible = False
+    end
+    object IntegerField40: TIntegerField
+      FieldName = 'EST_CURVAB'
+      Visible = False
+    end
+    object IntegerField41: TIntegerField
+      FieldName = 'EST_CURVAC'
+      Visible = False
+    end
+    object IntegerField42: TIntegerField
+      FieldName = 'EST_CURVAD'
+      Visible = False
+    end
+    object IntegerField43: TIntegerField
+      FieldName = 'EST_CURVAE'
+      Visible = False
+    end
+    object FMTBCDField49: TFMTBCDField
+      FieldName = 'EST_CURVAA_PC'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField50: TFMTBCDField
+      FieldName = 'EST_CURVAB_PC'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField51: TFMTBCDField
+      FieldName = 'EST_CURVAC_PC'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField52: TFMTBCDField
+      FieldName = 'EST_CURVAD_PC'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField53: TFMTBCDField
+      FieldName = 'EST_CURVAE_PC'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField54: TFMTBCDField
+      FieldName = 'EST_CURVAA_PV'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField55: TFMTBCDField
+      FieldName = 'EST_CURVAB_PV'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField56: TFMTBCDField
+      FieldName = 'EST_CURVAC_PV'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField57: TFMTBCDField
+      FieldName = 'EST_CURVAD_PV'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField58: TFMTBCDField
+      FieldName = 'EST_CURVAE_PV'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object IntegerField44: TIntegerField
+      FieldName = 'DM_CURVAA'
+      Visible = False
+    end
+    object IntegerField45: TIntegerField
+      FieldName = 'DM_CURVAB'
+      Visible = False
+    end
+    object IntegerField46: TIntegerField
+      FieldName = 'DM_CURVAC'
+      Visible = False
+    end
+    object IntegerField47: TIntegerField
+      FieldName = 'DM_CURVAD'
+      Visible = False
+    end
+    object IntegerField48: TIntegerField
+      FieldName = 'DM_CURVAE'
+      Visible = False
+    end
+    object IntegerField49: TIntegerField
+      FieldName = 'DM_CURVAA_PC'
+      Visible = False
+    end
+    object IntegerField50: TIntegerField
+      FieldName = 'DM_CURVAB_PC'
+      Visible = False
+    end
+    object IntegerField51: TIntegerField
+      FieldName = 'DM_CURVAC_PC'
+      Visible = False
+    end
+    object IntegerField52: TIntegerField
+      FieldName = 'DM_CURVAD_PC'
+      Visible = False
+    end
+    object IntegerField53: TIntegerField
+      FieldName = 'DM_CURVAE_PC'
+      Visible = False
+    end
+    object FMTBCDField59: TFMTBCDField
+      FieldName = 'DM_CURVAA_PV'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField60: TFMTBCDField
+      FieldName = 'DM_CURVAB_PV'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField61: TFMTBCDField
+      FieldName = 'DM_CURVAC_PV'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField62: TFMTBCDField
+      FieldName = 'DM_CURVAD_PV'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField63: TFMTBCDField
+      FieldName = 'DM_CURVAE_PV'
+      Visible = False
+      Precision = 15
+      Size = 2
+    end
+  end
+  object DataSource3: TDataSource
+    DataSet = ClientDataSet2
+    Left = 953
+    Top = 512
+  end
+  object SQLQuery2: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'SELECT'
+      'GEN_ID(gen_odir,1) SEQ,'
+      'pr.cod_produto COD_PRODUTO,'
+      'TRIM(pr.nome) DES_PRODUTO,'
+      'TRIM(fc.ind_curva) IND_CURVA,'
+      ''
+      'CAST(COALESCE(e4.vlr_venda_m1,0.00) AS NUMERIC(12,2)) VLR_VD_M1,'
+      'CAST(COALESCE(e4.vlr_venda_m2,0.00) AS NUMERIC(12,2)) VLR_VD_M2,'
+      'CAST(COALESCE(e4.vlr_venda_m3,0.00) AS NUMERIC(12,2)) VLR_VD_M3,'
+      'CAST(COALESCE(e4.vlr_venda_m4,0.00) AS NUMERIC(12,2)) VLR_VD_M4,'
+      'CAST(COALESCE(e4.vlr_venda_m5,0.00) AS NUMERIC(12,2)) VLR_VD_M5,'
+      ''
+      'COALESCE(e4.vlr_venda,0) VLR_VENDAS_4M,'
+      ''
+      '0.00 VLR_VENDAS_ANO,'
+      ''
+      '0.00 VLR_MEDIA_MES,'
+      ''
+      '0.00 VLR_MEDIA_DIA,'
+      ''
+      'CAST(COALESCE(e4.qtd_venda_m1,0) AS INTEGER) QTD_VD_M1,'
+      'CAST(COALESCE(e4.qtd_venda_m2,0) AS INTEGER) QTD_VD_M2,'
+      'CAST(COALESCE(e4.qtd_venda_m3,0) AS INTEGER) QTD_VD_M3,'
+      'CAST(COALESCE(e4.qtd_venda_m4,0) AS INTEGER) QTD_VD_M4,'
+      'CAST(COALESCE(e4.qtd_venda_m5,0) AS INTEGER) QTD_VD_M5,'
+      'CAST(COALESCE(e4.qtd_venda,0) AS INTEGER)  QTD_VENDAS_4M,'
+      ''
+      'COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.0000)+'
+      '                COALESCE(e4.qtd_venda_m2,0.0000)+'
+      '                COALESCE(e4.qtd_venda_m3,0.0000)+'
+      '                COALESCE(e4.qtd_venda_m4,0.0000))/4)'
+      '         AS NUMERIC(12,4))'
+      ', 0) QTD_MEDIA_MES,'
+      ''
+      '0.0000 QTD_MEDIA_DIA,'
+      ''
+      '0 QTD_ESTOCAGEM_4M,'
+      ''
+      '0 QTD_VENDAS_ANO,'
+      ''
+      '0 QTD_ESTOCAGEM_ANO,'
+      ''
+      'COALESCE(fc.per_participacao,0.0000) PER_PARTICIPACAO,'
+      ''
+      'CAST(pd.quantidade AS INTEGER) QTD_ESTOQUE,'
+      ''
+      'COALESCE(fc.qtd_transito,0) QTD_TRANSITO,'
+      
+        '(CAST(pd.quantidade AS INTEGER) + COALESCE(fc.qtd_transito,0)) Q' +
+        'TD_DISPONIVEL,'
+      ''
+      'CAST(COALESCE(fc.est_minimo,0) AS INTEGER) EST_IDEAL,'
+      'CAST(COALESCE(fc.est_maximo,0) AS INTEGER) EST_MAXIMO,'
+      ''
+      'CAST(COALESCE(pd.preco_venda,0.0000) AS NUMERIC(15,4)) PC_VENDA,'
+      ''
+      '0.00 VLR_DISP_PC_VENDA,'
+      '0.00 VLR_EST_PC_VENDA,'
+      ''
+      'CAST(COALESCE(pd.preco_custo,0.0000) AS NUMERIC(15,4)) PC_CUSTO,'
+      ''
+      '0.0000 VLR_DISP_PC_CUSTO,'
+      '0.0000 VLR_EST_PC_CUSTO,'
+      ''
+      '0.0000 PER_MARGEM,'
+      ''
+      'pr.dt_inclusao DTA_INCLUSAO,'
+      ''
+      ''
+      'pr.id_setor   COD_SETOR,'
+      'TRIM(pr.desc_setor) NOME_SETOR,'
+      'pr.id_linha   COD_LINHA,'
+      'TRIM(pr.desc_linha) NOME_LINHA,'
+      'pr.id_marca  COD_MARCA,'
+      'TRIM(pr.desc_marca) NOME_MARCA,'
+      'pr.id_colecao  COD_COLECAO,'
+      'TRIM(pr.desc_colecao) NOME_COLECAO,'
+      ''
+      'CASE'
+      '  WHEN pr.desativado='#39'N'#39' THEN'
+      '     '#39'SIM'#39
+      '  ELSE'
+      '     '#39'NAO'#39
+      'END ATIVO,'
+      ''
+      'TRIM(pr.cod_fornecedor) COD_FORNECEDOR,'
+      'TRIM(fo.nome_cliente) DES_FORNECEDOR,'
+      ''
+      '0 COD_COMPRADOR,'
+      'LPAD('#39#39', 30, '#39' '#39')  DES_COMPRADOR,'
+      ''
+      '0.00 VLR_VENDAS_ACUM,'
+      'GEN_ID(gen_tecbiz,1)+12 ORDENAR,'
+      #39'NAO'#39' ALTERACAO,'
+      '0.00 VLR_VENDAS_ACUM_OK,'
+      'COALESCE(fc.num_dias_uteis,0) NUM_DIASUTEIS,'
+      'COALESCE(121,0) DIAS_UTEIS_4M,'
+      '0 NUM_LINHA,'
+      ''
+      '0 EST_CurvaA,'
+      '0 EST_CurvaB,'
+      '0 EST_CurvaC,'
+      '0 EST_CurvaD,'
+      '0 EST_CurvaE,'
+      ''
+      '0.00 EST_CurvaA_PC,'
+      '0.00 EST_CurvaB_PC,'
+      '0.00 EST_CurvaC_PC,'
+      '0.00 EST_CurvaD_PC,'
+      '0.00 EST_CurvaE_PC,'
+      ''
+      '0.00 EST_CurvaA_PV,'
+      '0.00 EST_CurvaB_PV,'
+      '0.00 EST_CurvaC_PV,'
+      '0.00 EST_CurvaD_PV,'
+      '0.00 EST_CurvaE_PV,'
+      ''
+      '0 DM_CurvaA,'
+      '0 DM_CurvaB,'
+      '0 DM_CurvaC,'
+      '0 DM_CurvaD,'
+      '0 DM_CurvaE,'
+      ''
+      '0 DM_CurvaA_PC,'
+      '0 DM_CurvaB_PC,'
+      '0 DM_CurvaC_PC,'
+      '0 DM_CurvaD_PC,'
+      '0 DM_CurvaE_PC,'
+      ''
+      '0.00 DM_CurvaA_PV,'
+      '0.00 DM_CurvaB_PV,'
+      '0.00 DM_CurvaC_PV,'
+      '0.00 DM_CurvaD_PV,'
+      '0.00 DM_CurvaE_PV'
+      ''
+      'FROM ES_FINAN_CURVA_ABC fc'
+      
+        '    LEFT JOIN LINXPRODUTOS pr          ON pr.cod_produto=fc.cod_' +
+        'prod_linx'
+      
+        '    LEFT JOIN LINXPRODUTOSDETALHES pd  ON pd.cod_produto=fc.cod_' +
+        'prod_linx'
+      '                                      AND pd.empresa=fc.cod_linx'
+      
+        '    LEFT JOIN ES_DEMANDAS_4MESES e4    ON e4.cod_linx =fc.cod_li' +
+        'nx'
+      
+        '                                      AND e4.cod_prod_linx=fc.co' +
+        'd_prod_linx'
+      
+        '    LEFT JOIN LINXCLIENTESFORNEC fo    ON fo.cod_cliente=pr.cod_' +
+        'fornecedor'
+      '/*'
+      
+        '    LEFT JOIN (SELECT FIRST 1 xx.cod_comprador, xx.des_comprador' +
+        ','
+      '                              xx.num_ordens, xx.cod_produto'
+      '               FROM PRODUTOS_COMPRADORES xx'
+      
+        '               ORDER BY xx.num_ordens desc) cp on cp.cod_produto' +
+        '=pr.cod_produto'
+      '*/'
+      'WHERE fc.cod_linx=30'
+      'AND   pr.desativado='#39'N'#39
+      'AND   NOT (COALESCE(pr.id_setor, 0) in (17, 20, 25))'
+      'AND   NOT (COALESCE(pr.id_linha, 0) in (33))'
+      'AND   NOT (COALESCE(pr.id_colecao, 0) in (294, 587))'
+      'AND   NOT (COALESCE(pr.cod_fornecedor, 0) in (6, 1014, 260))'
+      ''
+      'ORDER BY fc.ind_curva, fc.per_participacao desc'
+      ''
+      ''
+      '')
+    SQLConnection = DMBelShop.SQLC
+    Left = 813
+    Top = 496
+  end
+  object DataSetProvider2: TDataSetProvider
+    DataSet = SQLQuery2
+    Options = [poRetainServerOrder]
+    Left = 861
+    Top = 518
   end
 end

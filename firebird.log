@@ -14,3 +14,19 @@ ODIR-PC (Client)	Tue Mar 12 20:38:46 2019
 ODIR-PC (Client)	Tue Mar 12 20:39:09 2019
 	INET/inet_error: connect errno = 10060
 
+
+ODIR-PC (Client)	Thu Jun 20 14:36:35 2019
+	INET/inet_error: connect errno = 10060
+
+
+ODIR-PC (Client)	Thu Jun 20 14:36:58 2019
+	INET/inet_error: connect errno = 10060
+
+
+ODIR-PC (Client)	Thu Jun 20 17:14:43 2019
+	INET/inet_error: connect errno = 10060
+
+
+ODIR-PC (Client)	Thu Jun 20 17:15:06 2019
+	INET/inet_error: connect errno = 10060
+

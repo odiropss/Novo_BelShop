@@ -28,6 +28,7 @@ type
     SDS_MovtoLinx: TSQLDataSet;
     DSP_MovtoLinx: TDataSetProvider;
     CDS_MovtoLinx: TClientDataSet;
+    SQLQuery1: TSQLQuery;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================
@@ -52,8 +53,10 @@ Const
 var
   DMAtualizaSeteHoras: TDMAtualizaSeteHoras;
 
+  bgCod_Auxiliar: Boolean; // Se Utiliza o SIDICOM
+
   sgPath_Local: String;
-  sgNomeServidor, sgCodLojaUnica, sgTpConexao: String;
+  sgNomeServidor, sgTpConexao: String;
   sgCompMaster, sgCompServer: String; // Dados dos Servidores, Computador Local
   sgIPServer, sgIPInternetServer: String; // Ips do Servidor
 
@@ -98,7 +101,6 @@ Begin
     { Realiza um loop em toda a lista }
     s:='';
     sgNomeServidor:='';
-    sgCodLojaUnica:='';
     sgTpConexao   :='';
     For i := 0 to tsArquivo.Count - 1 do
     Begin
@@ -107,7 +109,7 @@ Begin
       If Trim(s)<>'' Then
       Begin
         If i=0 Then sgNomeServidor:=Trim(s);
-        If i=1 Then sgCodLojaUnica:=Trim(s);
+        //If i=1 Then sgCodLojaUnica:=Trim(s);
         If i=2 Then sgTpConexao:=Trim(s);
       End;
     End; // For i := 0 to tsArquivo.Count - 1 do
@@ -536,6 +538,8 @@ End; // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TDMAtualizaSeteHoras.DataModuleCreate(Sender: TObject);
 Var
+  MySql: String;
+
   i: Integer;
   Arq: TextFile;
   sArquivo: TStringList;
@@ -546,7 +550,6 @@ begin
   sgPath_Local:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
 
   // Nome do Servidor, Tipo de Conexão e Codigo da Loja Se Unica ===============
-  sgCodLojaUnica:='';
   BuscaServidorLojaUnica;
 
   // Verifica a Existencia do Arquivo "ConexaoExterna.ini" =====================
@@ -604,6 +607,17 @@ begin
 
   ConectaBanco;
   MontaConexaoEmpresas;
+
+  // Se Utiliza Cod_Auxiliar/SIDICOM ===========================================
+  MySql:=' SELECT t.cod_aux'+
+         ' FROM TAB_AUXILIAR t'+
+         ' WHERE t.tip_aux=32'; // 32 => Se Utiliza LinxProdutos.COD_AUXILIAR nos SQLs
+  DMAtualizaSeteHoras.SQLQuery1.Close;
+  DMAtualizaSeteHoras.SQLQuery1.SQL.Clear;
+  DMAtualizaSeteHoras.SQLQuery1.SQL.Add(MySql);
+  DMAtualizaSeteHoras.SQLQuery1.Open;
+  bgCod_Auxiliar:=(DMAtualizaSeteHoras.SQLQuery1.FieldByName('Cod_Aux').AsInteger=1);
+  DMAtualizaSeteHoras.SQLQuery1.Close;
 
 end;
 

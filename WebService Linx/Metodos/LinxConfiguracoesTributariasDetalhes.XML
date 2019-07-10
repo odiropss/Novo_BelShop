@@ -6,8 +6,8 @@
 		<Name>LinxConfiguracoesTributariasDetalhes</Name>
 		<Parameters>
 			<Parameter id="chave">d52511f4-3541-4a65-9adc-665513ea3207</Parameter>
-			<Parameter id="cnpjEmp">05110757000151</Parameter>
-			<Parameter id="id_config_tributaria">1</Parameter>
+			<Parameter id="cnpjEmp">03772229002429</Parameter>
+			<Parameter id="id_config_tributaria">300</Parameter>
 		</Parameters>
 	</Command>
 </LinxMicrovix>

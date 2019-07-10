@@ -5591,55 +5591,6 @@ object FrmLogin: TFrmLogin
       ParentFont = False
       OnClick = BT_SairClick
     end
-    object Gb_SuaLoja: TcxGroupBox
-      Left = 12
-      Top = 212
-      Ctl3D = False
-      ParentCtl3D = False
-      ParentFont = False
-      Style.Font.Charset = DEFAULT_CHARSET
-      Style.Font.Color = clWindowText
-      Style.Font.Height = -11
-      Style.Font.Name = 'MS Sans Serif'
-      Style.Font.Style = [fsBold]
-      Style.IsFontAssigned = True
-      TabOrder = 4
-      Visible = False
-      Height = 233
-      Width = 403
-      object Cklb_Lojas: TRxCheckListBox
-        Left = 2
-        Top = 59
-        Width = 399
-        Height = 172
-        CheckKind = ckCheckMarks
-        Align = alClient
-        Color = 15658734
-        ItemHeight = 13
-        TabOrder = 0
-        OnClickCheck = Cklb_LojasClickCheck
-        InternalVersion = 202
-      end
-      object Panel2: TPanel
-        Left = 2
-        Top = 18
-        Width = 399
-        Height = 41
-        Align = alTop
-        Alignment = taLeftJustify
-        Caption = '          Selecione a Sua Loja de Trabalho ...'
-        TabOrder = 1
-        object Bt_SelecionaLoja: TJvXPButton
-          Left = 257
-          Top = 7
-          Width = 89
-          Height = 27
-          Caption = 'Selecinar'
-          TabOrder = 0
-          OnClick = Bt_SelecionaLojaClick
-        end
-      end
-    end
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer

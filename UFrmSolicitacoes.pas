@@ -57,7 +57,8 @@ TabIndex:
   11 = Parametros do Gerenciador - Ts_ParametrosGerenciador
   12 = Manutenção de Consistencias - Ts_Consistencias
   13 = Manutenção de Vales - Ts_Vales
-  14 = Fornecedores a Importar de Solicitações de Lojas - Ts_SolicitFornLojas
+  14 = RETIRADO:
+       Fornecedores a Importar de Solicitações de Lojas - Ts_SolicitFornLojas
   15 = Seleciona Profissional de Qualquer Loja - Ts_ProfSelecina
   16 = Movimento com Códigos TecBiz  NÃO Encontrados (Apresenta Grid) - Ts_ApresentaGrid
   17 = Planilha Financeira - Periodo de Apropriação - Ts_PlanilhaFinanceira
@@ -167,11 +168,6 @@ type
     Label41: TLabel;
     EdtValesPrazo: TcxCurrencyEdit;
     Label42: TLabel;
-    Ts_SolicitFornLojas: TTabSheet;
-    Dbg_SolicitFornLojas: TDBGridJul;
-    Panel43: TPanel;
-    Bt_SolicitFornLojasVoltar: TJvXPButton;
-    Bt_SolicitFornLojasImportar: TJvXPButton;
     Panel12: TPanel;
     Bt_EdtProfSelecionaVoltar: TJvXPButton;
     Bt_EdtProfSelecionaSelecionar: TJvXPButton;
@@ -193,10 +189,6 @@ type
     Pan_MargemLucroPcCustoTE: TPanel;
     Lb_MargemLucroPcCustoTE: TLabel;
     Ckb_MargemLucroPcCustoTE: TJvXPCheckbox;
-    Sb_SelectEmpProc2: TdxStatusBar;
-    Pan_SolicitFornLojasMostraLoja: TPanel;
-    Ckb_SolicitFornLojasMostraLoja: TJvCheckBox;
-    Bt_SolicitFornLojasLixeira: TJvXPButton;
     Gb_SolicExpLoja: TGroupBox;
     EdtSolicExpLoja: TEdit;
     Label1: TLabel;
@@ -715,6 +707,7 @@ type
     Rb_AudPosEstoque: TJvRadioButton;
     Gb_AudDepositos: TGroupBox;
     Dbg_AudDepositos: TDBGrid;
+    TabSheet1: TTabSheet;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -727,7 +720,7 @@ type
     // Odir ====================================================================
     //==========================================================================
 
-    // CRIA GRIDNEW em Ts_QualquerCoisa ////////////////////////////////////////
+    // CRIA GRID NEW em Ts_QualquerCoisa ////////////////////////////////////////
     Procedure GridNewCriar(Dts: TDataSource; sNomeObjeto: String; bSalvar: Boolean = True);
     ////////////////////////////////////////////////////////////////////////////
 
@@ -780,7 +773,7 @@ type
     ////////////////////////////////////////////////////////////////////////////
 
     // PARAMETROS do SISTEMA ///////////////////////////////////////////////////
-    Function ConsisteParametrosSIS(sTipo: String): Boolean;
+    Function  ConsisteParametrosSIS(sTipo: String): Boolean;
                                 // sTipo = (SM) Salario Mínimo
                                 // sTipo = (INSS) Tabela INSS
                                 // sTipo = (IRRF) Tabela IRRF
@@ -789,7 +782,7 @@ type
 
     // ATUALIZA PERMISSOES USUARIOS ////////////////////////////////////////////
     Procedure AtualizaPermissoesUsuarios;
-    Function ExcutaQueryUsuario(MySql: String): Boolean;
+    Function  ExcutaQueryUsuario(MySql: String): Boolean;
 
     // BUSCA ESTOQUES DAS LOJAS ////////////////////////////////////////////////
     Procedure BuscaEstoquesLojas;
@@ -802,6 +795,10 @@ type
     // AUDITORIA ///////////////////////////////////////////////////////////////
     // OdirApagar - 22/01/2019
     // Function  Auditoria_Delete_Insert(bInsert:Boolean): Boolean;
+
+    // Busca Dados de Inventario Aleatório ====================================
+    //DadosInventario;
+
     Procedure AuditoriaGeraArquivo;
     ////////////////////////////////////////////////////////////////////////////
 
@@ -894,22 +891,11 @@ type
       State: TGridDrawState);
     procedure Bt_ParamSalMinExcluirClick(Sender: TObject);
     procedure DtEdtParamVigFimSalMininoExit(Sender: TObject);
-    procedure Bt_SolicitFornLojasVoltarClick(Sender: TObject);
-    procedure Bt_SolicitFornLojasImportarClick(Sender: TObject);
-    procedure Dbg_SolicitFornLojasDrawColumnCell(Sender: TObject;
-      const Rect: TRect; DataCol: Integer; Column: TColumn;
-      State: TGridDrawState);
-    procedure Dbg_SolicitFornLojasDblClick(Sender: TObject);
-    procedure Ckb_SolicitFornLojasMostraLojaClick(Sender: TObject);
     procedure Ckb_ValesAtivosClick(Sender: TObject);
     procedure Ckb_ValesInativosClick(Sender: TObject);
     procedure Ckb_ValesAtivosKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure Ckb_ValesInativosKeyUp(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure Ckb_SolicitFornLojasMostraLojaKeyUp(Sender: TObject;
-      var Key: Word; Shift: TShiftState);
-    procedure Dbg_SolicitFornLojasKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure Ckb_ParamTaxaSindVlrTaxaClick(Sender: TObject);
     procedure Ckb_ParamTaxaSindVlrTaxaKeyUp(Sender: TObject; var Key: Word;
@@ -917,7 +903,6 @@ type
     procedure Ckb_MargemLucroPcCustoTEClick(Sender: TObject);
     procedure Ckb_MargemLucroPcCustoTEKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure Bt_SolicitFornLojasLixeiraClick(Sender: TObject);
     procedure Bt_EdtProfSelecionaVoltarClick(Sender: TObject);
     procedure Bt_EdtProfSelecionaLocalizaClick(Sender: TObject);
     procedure Dbg_ProfSelecionaDblClick(Sender: TObject);
@@ -1041,7 +1026,6 @@ type
     procedure Dbg_TransfLojasEnter(Sender: TObject);
     procedure Dbg_ConsistenciasEnter(Sender: TObject);
     procedure Dbg_ValesParcelasEnter(Sender: TObject);
-    procedure Dbg_SolicitFornLojasEnter(Sender: TObject);
     procedure Dbg_ProfSelecionaEnter(Sender: TObject);
     procedure Dbg_SelecionarEnter(Sender: TObject);
     procedure Dbg_ExcelImportarEnter(Sender: TObject);
@@ -1150,7 +1134,7 @@ var
 implementation
 
 uses DK_Procs1, UDMBelShop, UFrmBelShop, UDMSalao, UPesquisa, UFrmSalao,
-     UDMVirtual, UDMLojaUnica, UDMCentralTrocas, UDMConexoes,
+     UDMVirtual, UDMCentralTrocas, UDMConexoes,
      UFrmSelectEmpProcessamento, IBCustomDataSet, UDMRelatorio,
      UPesquisaIB, UDMBancosConciliacao, RTLConsts, UFrmBancoExtratos;
 
@@ -1301,10 +1285,14 @@ Var
 
   wDia, wMes, wAno: Word;
 
-  sLinha, sDia, sHora, sNrDocto, sDtaMovto,
+  sDateSeparator: Char;
+
+  sLinha, sDia, sHora,
+  sNrDocto, sDtaMovto, sDtaRegistro,
   sCodTrinks, sCodLinx, sCodSidicom: String;
 
   i: Integer;
+
   bImporta, bInsert: Boolean; // Se é Linha Para Importar
 Begin
   Result:=True;
@@ -1352,14 +1340,19 @@ Begin
     pgProgBar.Properties.Max:=EditorProSoftImpArquivo.Lines.Count;
     pgProgBar.Position:=0;
 
+    // =========================================================================
+    // Processa Arquivo Trinks =================================================
+    // =========================================================================
     For i:=0 to EditorProSoftImpArquivo.Lines.Count-1 do
     Begin
-      // Verifica Leiaute NOVO - Relatório de 2019-03-12 até 2019-03-13
+      // =======================================================================
+      // Verifica Leiaute NOVO - Formato: Relatório de 2019-03-12 até 2019-03-13
+      // =======================================================================
       If Copy(Trim(EditorProSoftImpArquivo.Lines[i]),1,9)='Relatório' Then
       Begin
         If Pos('-',Trim(EditorProSoftImpArquivo.Lines[i]))<>18 Then
         Begin
-          msg('TRINKS - Leiaute Inválido !!','A');
+          msg('TRINKS - Leiaute Inválido (-)!!','A');
           FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
           Screen.Cursor:=crDefault;
           OdirPanApres.Visible:=False;
@@ -1371,6 +1364,21 @@ Begin
         sDtaMovto:=Copy(sNrDocto,9,2);
         sDtaMovto:=sDtaMovto+'.'+Copy(sNrDocto,6,2);
         sDtaMovto:=sDtaMovto+'.'+Copy(sNrDocto,1,4);
+
+        Try
+          sDateSeparator:=DateSeparator;
+          DateSeparator:='.';
+
+          StrToDate(sDtaMovto);
+        Except
+          DateSeparator:=sDateSeparator;
+          msg('TRINKS - Leiaute Inválido (sDtaMovto) !!','A');
+          FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
+          Screen.Cursor:=crDefault;
+          OdirPanApres.Visible:=False;
+          Exit;
+        End;
+        DateSeparator:=sDateSeparator;
 
         // Verifica se Já Existe Movto =======================================
         sNrDocto:='';
@@ -1405,15 +1413,34 @@ Begin
 
         sNrDocto:=sNrDocto+Copy(IntToStr(wAno),length(IntToStr(wAno))-1,2);
       End; // If Copy(Trim(EditorProSoftImpArquivo.Lines[i]),1,9)='Relatório' Then
+      // Verifica Leiaute NOVO - Formato: Relatório de 2019-03-12 até 2019-03-13
+      // =======================================================================
 
+      // =======================================================================
+      // Pega Codigo da Loja no Trinks e ve se Importa =========================
+      // =======================================================================
       Try
         sCodTrinks:=IntToStr(StrToInt(Trim(Separa_String(EditorProSoftImpArquivo.Lines[i],1))));
+
+        If (Trim(sDtaMovto)='') Or (Trim(sNrDocto)='') Then
+        Begin
+          msg('TRINKS - Leiaute Inválido  (Sem sDtaMovto) !!','A');
+          FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
+          Screen.Cursor:=crDefault;
+          OdirPanApres.Visible:=False;
+          Exit;
+        End; // If (Trim(sDtaMovto)='') Or (Trim(sNrDocto)='') Then
+
         bImporta:=True;
       Except
         bImporta:=False;
       End;
+      // Pega Codigo da Loja no Trinks e ve se Importa =========================
+      // =======================================================================
 
+      // =======================================================================
       // Importa Trinks Diario =================================================
+      // =======================================================================
       If bImporta Then
       Begin
         // Trata Linha para importação =========================================
@@ -1421,15 +1448,23 @@ Begin
         If Copy(sLinha,length(sLinha),1)<>';' Then
          sLinha:=sLinha+';';
 
-        // OdirApapgar - Novo Leiaoute data é Unica para todos os Movtos
-        // Data do Movimento ===================================================
-        // sDtaMovto:=Copy(Trim(Separa_String(sLinha,3)),9,2);
-        // sDtaMovto:=sDtaMovto+'.'+Copy(Trim(Separa_String(sLinha,3)),6,2);
-        // sDtaMovto:=sDtaMovto+'.'+Copy(Trim(Separa_String(sLinha,3)),1,4);
+        // Atualiza Data do Registro ===========================================
+        sDtaRegistro:=Trim(Separa_String(sLinha,3));
+        sDtaRegistro:=Copy(sDtaRegistro,9,2)+'.'+Copy(sDtaRegistro,6,2)+'.'+Copy(sDtaRegistro,1,4);
 
-        // Monta Numero do Documento ===========================================
-        // OdirApagar - 13/03/2019 - Mudança de Leiaute
-        // DecodeDate(StrToDate(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3))))), wAno, wMes, wDia);
+        Try
+          sDateSeparator:=DateSeparator;
+          DateSeparator:='.';
+          DateToStr(StrToDateTime(sDtaRegistro));
+        Except
+          msg('TRINKS - Leiaute Inválido (sDtaRegistro) !!','A');
+          FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
+          Screen.Cursor:=crDefault;
+          OdirPanApres.Visible:=False;
+          DateSeparator:=sDateSeparator;
+          Exit;
+        End;
+        DateSeparator:=sDateSeparator;
 
         // Busca Codigos da Lojas SIDICOM e LINX ===============================
         MySql:=' SELECT e.cod_filial, e.cod_linx'+
@@ -1446,12 +1481,37 @@ Begin
         If Trim(sCodLinx)='' Then
         Begin
           bImporta:=False;
-          msg('Loja Não Encontrada: '+cr+sCodTrinks+' - '+Trim(Separa_String(sLinha,2))+cr+'Entrar em Contato com o ODIR !!','A')
+
+          While Not bImporta do
+          Begin
+            msg('Loja Não Encontrada: '+cr+sCodTrinks+' - '+Trim(Separa_String(sLinha,2))+cr+
+                'Favor Cadastrar Antes de Continuar..','A');
+
+            // Busca Codigos da Lojas SIDICOM e LINX ===============================
+            MySql:=' SELECT e.cod_filial, e.cod_linx'+
+                   ' FROM EMP_CONEXOES e'+
+                   ' WHERE e.cod_trinks='+sCodTrinks;
+            DMBelShop.SQLQuery1.Close;
+            DMBelShop.SQLQuery1.SQL.Clear;
+            DMBelShop.SQLQuery1.SQL.Add(MySql);
+            DMBelShop.SQLQuery1.Open;
+            sCodSidicom:=DMBelShop.SQLQuery1.FieldByName('Cod_Filial').AsString;
+            sCodLinx   :=DMBelShop.SQLQuery1.FieldByName('Cod_Linx').AsString;
+            DMBelShop.SQLQuery1.Close;
+
+            If Trim(sCodLinx)<>'' Then
+             bImporta:=True;
+          End; // While Not bImporta do
         End; // If Trim(sCodLinx)='' Then
 
+        // =====================================================================
+        // Importa dados do Aequivo Trinks Diario ==============================
+        // =====================================================================
         If bImporta Then
         Begin
+          // ===================================================================
           // Verifica se Já Existe Movto =======================================
+          // ===================================================================
           MySql:=' SELECT t.cod_trinks'+
                  ' FROM TRINKS_DIARIO t'+
                  ' WHERE t.dta_movto = '+QuotedStr(sDtaMovto)+
@@ -1462,81 +1522,11 @@ Begin
           DMBelShop.SQLQuery1.Open;
           bInsert:=(Trim(DMBelShop.SQLQuery1.FieldByName('Cod_Trinks').AsString)='');
           DMBelShop.SQLQuery1.Close;
-
-          // OdirApagar - 13/03/2019 - Alteração de Leiaute
-//          // Update no Movimento ===============================================
-//          If Not bInsert Then
-//          Begin
-//            MySql:=' UPDATE TRINKS_DIARIO t'+
-//                   ' set t.num_clientes=t.num_clientes + '+Trim(f_Troca('.','',Separa_String(sLinha,4)))+
-//                   ', t.num_atendimentos=num_atendimentos + '+Trim(f_Troca('.','',Separa_String(sLinha,5)))+
-//                   ', t.vlr_servicos=vlr_servicos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,7)))))+
-//                   ', t.vlr_produtos=vlr_produtos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,8)))))+
-//                   ', t.vlr_pacotes=vlr_pacotes + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,9)))))+
-//                   ', t.vlr_descontos=vlr_descontos + ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,10)))))+')'+
-//                   ', t.vlr_total=vlr_total + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,11)))))+
-//                   ', t.vlr_creditos=vlr_creditos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,12)))))+
-//                   ', t.vlr_debitos=vlr_debitos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,13)))))+
-//                   ', t.vlr_dinheiro=vlr_dinheiro + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,14)))))+
-//                   ', t.vlr_outros=vlr_outros + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,15)))))+
-//                   ', t.vlr_troco=vlr_troco + ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,16)))))+')'+
-//                   ', t.vlr_sangria = '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,17)))))+
-//                   ', t.qtd_servicos=qtd_servicos + '+Trim(f_Troca('.','',Separa_String(sLinha,18)))+
-//                   ', t.qtd_produtos=qtd_produtos + '+Trim(f_Troca('.','',Separa_String(sLinha,19)))+
-//                   ', t.qtd_pacotes=qtd_pacotes + '+Trim(f_Troca('.','',Separa_String(sLinha,20)))+
-//                   ', t.vlr_ticket_medio=t.vlr_total / t.num_atendimentos'+
-//                   ', t.dta_atualizacao='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+
-//                   ', t.hra_atualizacao='+QuotedStr(sHora)+
-//
-//                   ' WHERE t.dta_movto = '+QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3)))))+
-//                   ' AND   t.cod_trinks='+sCodTrinks;
-//          End; // If Not bInsert Then
-//
-//          // Insere Novo Movimento =============================================
-//          If bInsert Then
-//          Begin
-//            MySql:=' UPDATE OR INSERT INTO TRINKS_DIARIO '+
-//                   ' (COD_TRINKS, DES_TRINKS, NUM_DOCTO, DTA_MOVTO,'+
-//                   '  NUM_CLIENTES, NUM_ATENDIMENTOS,'+
-//                   '  VLR_TICKET_MEDIO, VLR_SERVICOS, VLR_PRODUTOS, VLR_PACOTES,'+
-//                   '  VLR_DESCONTOS, VLR_TOTAL, VLR_CREDITOS, VLR_DEBITOS, VLR_DINHEIRO,'+
-//                   '  VLR_OUTROS, VLR_TROCO, VLR_SANGRIA,'+
-//                   '  QTD_SERVICOS, QTD_PRODUTOS, QTD_PACOTES,'+
-//                   '  COD_LINX, COD_LOJA, DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
-//
-//                   ' VALUES ('+
-//                   sCodTrinks+', '+ // COD_TRINKS
-//                   QuotedStr(Trim(Separa_String(sLinha,2)))+', '+ // DES_TRINKS
-//                   QuotedStr(sNrDocto)+', '+ // NUM_DOCTO
-//                   QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3)))))+', '+ // DTA_MOVTO
-//                   Trim(f_Troca('.','',Separa_String(sLinha,4)))+', '+ // NUM_CLIENTES
-//                   Trim(f_Troca('.','',Separa_String(sLinha,5)))+', '+ // NUM_ATENDIMENTOS
-//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,6)))))+', '+ // VLR_TICKET_MEDIO
-//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,7)))))+', '+ // VLR_SERVICOS
-//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,8)))))+', '+ // VLR_PRODUTOS
-//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,9)))))+', '+ // VLR_PACOTES
-//                   'ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,10)))))+'), '+ // VLR_DESCONTOS
-//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,11)))))+', '+ // VLR_TOTAL
-//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,12)))))+', '+ // VLR_CREDITOS
-//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,13)))))+', '+ // VLR_DEBITOS
-//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,14)))))+', '+ // VLR_DINHEIRO
-//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,15)))))+', '+ // VLR_OUTROS
-//                   'ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,16)))))+'), '+ //  VLR_TROCO
-//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,17)))))+', '+ // VLR_SAGRIA
-//                   Trim(f_Troca('.','',Separa_String(sLinha,18)))+', '+ // QTD_SERVICOS
-//                   Trim(f_Troca('.','',Separa_String(sLinha,19)))+', '+ // QTD_PRODUTOS
-//                   Trim(f_Troca('.','',Separa_String(sLinha,20)))+', '+ // QTD_PACOTES
-//                   sCodLinx+', '+ // COD_LINX
-//                   QuotedStr(sCodSidicom)+', '+ // COD_LOJA
-//                   QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+', '+ // DTA_ATUALIZACAO
-//                   QuotedStr(sHora)+')'+ // HRA_ATUALIZACAO
-//                   ' MATCHING (COD_TRINKS, DTA_MOVTO)';
-//          End; // If bInsert Then
-
+          // Verifica se Já Existe Movto =======================================
+          // ===================================================================
 
           //====================================================================
           // Update no Movimento ===============================================
-          // NÃO EFETUA UPDATE EM MOVIMENTOS JÁ EXISTENTES =====================
           //====================================================================
           If Not bInsert Then
           Begin
@@ -1553,19 +1543,25 @@ Begin
                    ', t.vlr_dinheiro=vlr_dinheiro + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,14))))+
                    ', t.vlr_outros=vlr_outros + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,15))))+
                    ', t.vlr_troco=vlr_troco + ABS('+Trim(f_Troca(',','',Trim(Separa_String(sLinha,16))))+')'+
-                   ', t.vlr_sangria=t.vlr_sangria+'+Trim(f_Troca(',','',Trim(Separa_String(sLinha,17))))+
                    ', t.qtd_servicos=qtd_servicos + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,18))))+
                    ', t.qtd_produtos=qtd_produtos + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,19))))+
                    ', t.qtd_pacotes=qtd_pacotes + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,20))))+
                    ', t.vlr_ticket_medio=t.vlr_total / t.num_atendimentos'+
                    ', t.dta_atualizacao='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+
-                   ', t.hra_atualizacao='+QuotedStr(sHora)+
+                   ', t.hra_atualizacao='+QuotedStr(sHora);
 
-                   ' WHERE t.dta_movto = '+QuotedStr(sDtaMovto)+
+                   // Valores Somente para Movimentos do Dia ===================
+                   If sDtaMovto=sDtaRegistro Then
+                   Begin
+                     MySql:=
+                      MySql+', t.vlr_sangria=t.vlr_sangria+'+Trim(f_Troca(',','',Trim(Separa_String(sLinha,17))));
+                   End; // If sDtaMovto=sDtaRegistro Then
+
+            MySql:=
+             MySql+' WHERE t.dta_movto = '+QuotedStr(sDtaMovto)+
                    ' AND   t.cod_trinks='+sCodTrinks;
           End; // If Not bInsert Then
           // Update no Movimento ===============================================
-          // NÃO EFETUA UPDATE EM MOVIMENTOS JÁ EXISTENTES =====================
           //====================================================================
 
           //====================================================================
@@ -1573,12 +1569,12 @@ Begin
           //====================================================================
           If bInsert Then
           Begin
-            MySql:=' UPDATE OR INSERT INTO TRINKS_DIARIO '+
+            MySql:=' INSERT INTO TRINKS_DIARIO '+
                    ' (COD_TRINKS, DES_TRINKS, NUM_DOCTO, DTA_MOVTO,'+
                    '  NUM_CLIENTES, NUM_ATENDIMENTOS,'+
                    '  VLR_TICKET_MEDIO, VLR_SERVICOS, VLR_PRODUTOS, VLR_PACOTES,'+
-                   '  VLR_DESCONTOS, VLR_TOTAL, VLR_CREDITOS, VLR_DEBITOS, VLR_DINHEIRO,'+
-                   '  VLR_OUTROS, VLR_TROCO, VLR_SANGRIA,'+
+                   '  VLR_DESCONTOS, VLR_TOTAL, VLR_CREDITOS, VLR_DEBITOS,'+
+                   '  VLR_DINHEIRO, VLR_OUTROS, VLR_TROCO, VLR_SANGRIA,'+
                    '  QTD_SERVICOS, QTD_PRODUTOS, QTD_PACOTES,'+
                    '  COD_LINX, COD_LOJA, DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
 
@@ -1599,29 +1595,53 @@ Begin
                    Trim(f_Troca(',','',Separa_String(sLinha,13)))+', '+ // VLR_DEBITOS
                    Trim(f_Troca(',','',Separa_String(sLinha,14)))+', '+ // VLR_DINHEIRO
                    Trim(f_Troca(',','',Separa_String(sLinha,15)))+', '+ // VLR_OUTROS
-                   'ABS('+Trim(f_Troca(',','',Separa_String(sLinha,16)))+'), '+ // VLR_TROCO
-                   Trim(f_Troca(',','',Separa_String(sLinha,17)))+', '+ // VLR_SAGRIA
-                   Trim(f_Troca(',','',Separa_String(sLinha,18)))+', '+ // QTD_SERVICOS
+                   'ABS('+Trim(f_Troca(',','',Separa_String(sLinha,16)))+'), '; // VLR_TROCO
+
+                   // Valores Somente para Movimentos do Dia ===================
+                   If sDtaMovto=sDtaRegistro Then
+                   Begin
+                     MySql:=
+                      MySql+Trim(f_Troca(',','',Separa_String(sLinha,17)))+', '; // VLR_SAGRIA
+                   End; // If sDtaMovto=sDtaRegistro Then
+
+                   // Valores Zerados para Movimentos que Sekjam do Dia ========
+                   If sDtaMovto<>sDtaRegistro Then
+                   Begin
+                     MySql:=
+                      MySql+'0.00 , '; // VLR_SAGRIA
+                   End; // If sDtaMovto<>sDtaRegistro Then
+
+            MySql:=
+             MySql+Trim(f_Troca(',','',Separa_String(sLinha,18)))+', '+ // QTD_SERVICOS
                    Trim(f_Troca(',','',Separa_String(sLinha,19)))+', '+ // QTD_PRODUTOS
                    Trim(f_Troca(',','',Separa_String(sLinha,20)))+', '+ // QTD_PACOTES
                    sCodLinx+', '+ // COD_LINX
                    QuotedStr(sCodSidicom)+', '+ // COD_LOJA
                    QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+', '+ // DTA_ATUALIZACAO
-                   QuotedStr(sHora)+')'+ // HRA_ATUALIZACAO
-                   ' MATCHING (COD_TRINKS, DTA_MOVTO)';
+                   QuotedStr(sHora)+')'; // HRA_ATUALIZACAO
           End; // If bInsert Then
           // Insere Novo Movimento =============================================
           //====================================================================
 
           DMBelShop.SQLC.Execute(MySql,nil,nil);
         End; // If bImporta Then
+        // Importa dados do Aequivo Trinks Diario ==============================
+        // =====================================================================
       End; // If bImporta Then
+      // Importa Trinks Diario =================================================
+      // =======================================================================
 
       pgProgBar.Position:=i+1;
     End; // For i:=0 to EditorProSoftImpArquivo.Lines.Count-1 do
+    // Processa Arquivo Trinks =================================================
+    // =========================================================================
 
+    // =========================================================================
     // Atualiza Transacao ======================================================
+    // =========================================================================
     DMBelShop.SQLC.Commit(TD);
+    // Atualiza Transacao ======================================================
+    // =========================================================================
 
     msg('Arquivo Diário Trinks'+cr+cr+'Importado com SUCESSO !!','A')
   Except // Except da Transação
@@ -1699,8 +1719,11 @@ End; // MOVIMENTO DE CAIXA DIA - Importa Arquivo Diario - Trinks >>>>>>>>>>>>>>>
 Procedure TFrmSolicitacoes.AuditoriaGeraArquivo;
 Var
   MySql: String;
+
   tsArquivo: TStringList;
   sParametros: String;
+
+  b: Boolean;
 Begin
   Screen.Cursor:=crArrow;
 
@@ -1738,8 +1761,29 @@ Begin
   //============================================================================
   If Rb_AudPosEstoque.Checked Then
   Begin
-    If msg('Buscar Saldo de Estoque Inicial'+cr+cr+'do Dia de Hoje no Linx ??','C')=1 Then
+    sgDia :=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+    b:=True;
+    While b do
     Begin
+      sgDia:=InputBoxData('Auditoria', 'Saldo Final do Dia ? (Encerrar=99/99/9999)', sgDia, False);
+
+      If sgDia='' Then
+      Begin
+        msg('Dia Inválido !!','A');
+        Exit;
+      End;
+
+      If sgDia='99/99/9999' Then
+       Exit;
+
+      if msg('O Dia '+sgDia+' Esta Correto ??','C')=1 Then
+       b:=False
+    End; // While b do
+
+    If msg('Buscar Saldo de Estoque Inicial'+cr+cr+'do Dia '+sgDia+'e no Linx ??','C')=1 Then
+    Begin
+      sgDia :=DateToStr(StrToDate(sgDia)-1);
+
       PainelApresExp.Caption:='AGUARDE !! Atualizando Saldo Depósito '+IntToStr(igCodDeposito)+' (LINX - CLOUD)';
       PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
       PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
@@ -1749,8 +1793,6 @@ Begin
       PainelApresExp.Parent:=FrmSolicitacoes;
       PainelApresExp.Visible:=True;
       Refresh;
-
-      sgDia :=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)-1);
 
       // WebService Linx - Atualiza Saldo do Depoisto Solicitado =================
       sParametros:=sgPastaWebService+'PWebServiceLinx.exe LinxProdutosInventario'; // Excutavel e Metodo a Processar
@@ -1850,7 +1892,7 @@ Begin
            ' ''0;''||'+
            ' TRIM(pr.desativado) LINHA'+
 
-           ' FROM linxprodutoscodbar cb'+
+           ' FROM LINXPRODUTOSCODBAR cb'+
            '     LEFT JOIN LINXPRODUTOS pr            ON pr.cod_produto=cb.cod_produto'+
            '     LEFT JOIN LINXLOJAS lj               ON lj.empresa='+IntToStr(EdtAudCodLoja.AsInteger)+
            '     LEFT JOIN LINXPRODUTOSDETALHES pd    ON pd.empresa=lj.empresa'+
@@ -4583,11 +4625,6 @@ begin
     Else Dbg_ValesParcelas.SetFocus;
   End; // If (PC_Principal.ActivePage=Ts_Vales) And (Ts_Vales.CanFocus) Then
 
-  If (PC_Principal.ActivePage=Ts_SolicitFornLojas) And (Ts_SolicitFornLojas.CanFocus) Then
-  Begin
-    Dbg_SolicitFornLojas.SetFocus;
-  End; // If (PC_Principal.ActivePage=Ts_SolicitFornLojas) And (Ts_SolicitFornLojas.CanFocus) Then
-
   If (PC_Principal.ActivePage=Ts_ProfSelecina) And (Ts_ProfSelecina.CanFocus) Then
   Begin
     EdtProfSelecionaNome.SetFocus;
@@ -4659,6 +4696,7 @@ begin
   Begin
     igCodDeposito:=0;
   End; // If (PC_Principal.ActivePage=Ts_Auditoria) And (Ts_Auditoria.CanFocus) Then
+
 end;
 
 procedure TFrmSolicitacoes.Bt_SolicExpVoltarClick(Sender: TObject);
@@ -4800,7 +4838,7 @@ begin
            MySql+' AND d.origem='+QuotedStr('Linx')
          Else
           MySql:=
-           MySql+' AND d.origem<>'+QuotedStr('Linx');
+           MySql+' AND UPPER(TRIM(d.Origem)) LIKE '+QuotedStr('%BEL%');
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
   DMBelShop.CDS_BuscaRapida.Open;
@@ -6616,319 +6654,6 @@ begin
   Bt_ParamSalMinNovo.SetFocus;
 end;
 
-procedure TFrmSolicitacoes.Bt_SolicitFornLojasVoltarClick(Sender: TObject);
-begin
-  DMLojaUnica.CDS_V_SolicitFornLojas.Close;
-  bgProcessar:=False;
-  Close;
-end;
-
-procedure TFrmSolicitacoes.Bt_SolicitFornLojasImportarClick(Sender: TObject);
-Var
-  sCodLoja, sCodForn: String;
-begin
-
-  // Verifica se tem Fornecedor Selecionado ====================================
-  sCodLoja:='';
-  DMLojaUnica.CDS_V_SolicitFornLojas.First;
-  DMLojaUnica.CDS_V_SolicitFornLojas.DisableControls;
-  While Not DMLojaUnica.CDS_V_SolicitFornLojas.Eof do
-  Begin
-    If DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString='SIM' Then
-    Begin
-      sCodLoja:='ok';
-      Break;
-    End;
-    
-    DMLojaUnica.CDS_V_SolicitFornLojas.Next;
-  End; // While Not DMLojaUnica.CDS_V_SolicitFornLojas.Eof do
-  DMLojaUnica.CDS_V_SolicitFornLojas.EnableControls;
-  DMLojaUnica.CDS_V_SolicitFornLojas.First;
-
-  If sCodLoja='' Then
-  Begin
-    msg('Favor Selecionar o(s)'+cr+cr+'Fornecedor(es) a Importar !!','A');
-    Dbg_SolicitFornLojas.SetFocus;
-    Exit;
-  End;
-
-  If msg('Deseja Realmente Importar os'+cr+'Fornecedores Selecionados ??','C')=2 Then
-  Begin
-    Dbg_SolicitFornLojas.SetFocus;
-    Exit;
-  End;
-
-  sgFornLojas:='';
-  sgDemandas:='';
-  sgInsertOC_Meses:='';
-  sCodLoja:='';
-  sCodForn:='';
-
-  DMLojaUnica.CDS_V_SolicitFornLojas.First;
-  DMLojaUnica.CDS_V_SolicitFornLojas.DisableControls;
-  While Not DMLojaUnica.CDS_V_SolicitFornLojas.Eof do
-  Begin
-    sCodLoja:=Copy(DMLojaUnica.CDS_V_SolicitFornLojasCOD_LOJA.AsString,5,2);
-    sCodForn:=DMLojaUnica.CDS_V_SolicitFornLojasCOD_FORNECEDOR.AsString;
-
-    If DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString='SIM' Then
-    Begin
-      // Aguarda Periodos de Demanda --------------------------------
-      If Trim(sgDemandas)='' Then
-      Begin
-        sgInsertOC_Meses:=
-              ' INSERT INTO OC_COMPRAR_MESES ('+
-              ' NUM_DOCUMENTO, MES1, MES2, MES3, MES4, MES5, MES6, MES7, MES8)'+
-              ' Values (NumDoc,';
-
-              If Trim(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES1.AsString)='' Then
-               sgInsertOC_Meses:=sgInsertOC_Meses+' NULL,'
-              Else
-               sgInsertOC_Meses:=sgInsertOC_Meses+
-               QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES1.AsString)+', ';
-
-              If Trim(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES2.AsString)='' Then
-               sgInsertOC_Meses:=sgInsertOC_Meses+' NULL,'
-              Else
-               sgInsertOC_Meses:=sgInsertOC_Meses+
-               QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES2.AsString)+', ';
-
-              If Trim(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES3.AsString)='' Then
-               sgInsertOC_Meses:=sgInsertOC_Meses+' NULL,'
-              Else
-               sgInsertOC_Meses:=sgInsertOC_Meses+
-               QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES3.AsString)+', ';
-
-              If Trim(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES4.AsString)='' Then
-               sgInsertOC_Meses:=sgInsertOC_Meses+' NULL,'
-              Else
-               sgInsertOC_Meses:=sgInsertOC_Meses+
-               QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES4.AsString)+', ';
-
-              If Trim(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES5.AsString)='' Then
-               sgInsertOC_Meses:=sgInsertOC_Meses+' NULL,'
-              Else
-               sgInsertOC_Meses:=sgInsertOC_Meses+
-               QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES5.AsString)+', ';
-
-              If Trim(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES6.AsString)='' Then
-               sgInsertOC_Meses:=sgInsertOC_Meses+' NULL,'
-              Else
-               sgInsertOC_Meses:=sgInsertOC_Meses+
-               QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES6.AsString)+', ';
-
-              If Trim(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES7.AsString)='' Then
-               sgInsertOC_Meses:=sgInsertOC_Meses+' NULL,'
-              Else
-               sgInsertOC_Meses:=sgInsertOC_Meses+
-               QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES7.AsString)+', ';
-
-              If Trim(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES8.AsString)='' Then
-               sgInsertOC_Meses:=sgInsertOC_Meses+' NULL'
-              Else
-               sgInsertOC_Meses:=sgInsertOC_Meses+
-               QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES8.AsString);
-
-              sgInsertOC_Meses:=sgInsertOC_Meses+')';
-
-        sgDemandas:=' AND EXISTS (SELECT 1'+
-                    ' FROM OC_COMPRAR_MESES_LOJAS ml'+
-                    ' WHERE ml.num_documento=ol.num_documento'+
-                    ' AND   ml.cod_loja=ol.cod_empresa'+
-                    ' AND   COALESCE(ml.mes1, '''')='+
-                    QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES1.AsString)+
-                    ' AND   COALESCE(ml.mes2, '''')='+
-                    QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES2.AsString)+
-                    ' AND   COALESCE(ml.mes3, '''')='+
-                    QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES3.AsString)+
-                    ' AND   COALESCE(ml.mes4, '''')='+
-                    QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES4.AsString)+
-                    ' AND   COALESCE(ml.mes5, '''')='+
-                    QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES5.AsString)+
-                    ' AND   COALESCE(ml.mes6, '''')='+
-                    QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES6.AsString)+
-                    ' AND   COALESCE(ml.mes7, '''')='+
-                    QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES7.AsString)+
-                    ' AND   COALESCE(ml.mes8, '''')='+
-                    QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES8.AsString)+')'
-      End; // If Trim(sgDemandas)='' Then
-
-      // Guarda Codigos de Fornecedores e Lojas ---------------------
-      If Dbg_SolicitFornLojas.Columns[3].Visible Then
-      Begin
-        If sgFornLojas='' Then
-         Begin
-           sgFornLojas:='AND ((ol.Cod_Fornecedor='+QuotedStr(sCodForn)+' and ol.cod_Empresa='+QuotedStr(sCodLoja)+')';
-         End
-        Else // If sgFornLojas='' Then
-         Begin
-           sgFornLojas:=sgFornLojas+' Or (ol.Cod_Fornecedor='+QuotedStr(sCodForn)+' and ol.cod_Empresa='+QuotedStr(sCodLoja)+')';
-         End; // If sgFornLojas='' Then
-      End; // If Dbg_SolicitFornLojas.Columns[3].Visible Then
-
-      If Not Dbg_SolicitFornLojas.Columns[3].Visible Then
-      Begin
-        // Guarda Codigos de Fornecedores ---------------------------
-        If sgFornLojas='' Then
-         Begin
-           sgFornLojas:=' AND ol.Cod_Fornecedor IN ('+QuotedStr(sCodForn);
-         End
-        Else
-         Begin
-           sgFornLojas:=sgFornLojas+', '+QuotedStr(sCodForn);
-         End; // If sgFornLojas='' Then
-      End; // If Not Dbg_SolicitFornLojas.Columns[3].Visible Then
-
-    End; // If DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString='SIM' Then
-
-    DMLojaUnica.CDS_V_SolicitFornLojas.Next
-  End; // While Not DMLojaUnica.CDS_V_SolicitFornLojas.Eof do
-  DMLojaUnica.CDS_V_SolicitFornLojas.EnableControls;
-  DMLojaUnica.CDS_V_SolicitFornLojas.First;
-
-  sgFornLojas:=sgFornLojas+')';
-  DMLojaUnica.CDS_V_SolicitFornLojas.Close;
-
-  bgProcessar:=True;
-  Close;
-end;
-
-procedure TFrmSolicitacoes.Dbg_SolicitFornLojasDrawColumnCell(Sender: TObject;
-          const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
-begin
-  If not (gdSelected in State) Then
-  Begin
-    If DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString='SIM' then
-    Begin
-      Dbg_SolicitFornLojas.Canvas.Brush.Color:=clYellow;
-
-      Dbg_SolicitFornLojas.Canvas.FillRect(Rect);
-      Dbg_SolicitFornLojas.DefaultDrawDataCell(Rect,Column.Field,state);
-    End; // If DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString='SIM' then
-
-    DMLojaUnica.CDS_V_SolicitFornLojasDTA_SOLICITACAO.Alignment:=taCenter;
-  End;
-
-end;
-
-procedure TFrmSolicitacoes.Dbg_SolicitFornLojasDblClick(Sender: TObject);
-Var
-  i: Integer;
-  sDemaAtual, sDemandas: String;
-begin
-  If Not DMLojaUnica.CDS_V_SolicitFornLojas.IsEmpty Then
-  Begin
-    i:=DMLojaUnica.CDS_V_SolicitFornLojas.RecNo;
-
-    If DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString='SIM' Then
-     Begin
-       DMLojaUnica.CDS_V_SolicitFornLojas.Edit;
-       DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString:='NAO';
-       DMLojaUnica.CDS_V_SolicitFornLojas.Post;
-     End
-    Else // If DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString='SIM' Then
-     Begin
-        sDemaAtual:=DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES1.AsString+
-                    DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES2.AsString+
-                    DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES3.AsString+
-                    DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES4.AsString+
-                    DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES5.AsString+
-                    DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES6.AsString+
-                    DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES7.AsString+
-                    DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES8.AsString;
-
-       DMLojaUnica.CDS_V_SolicitFornLojas.DisableControls;
-       bgSiga:=True;
-       DMLojaUnica.CDS_V_SolicitFornLojas.First;
-       While Not DMLojaUnica.CDS_V_SolicitFornLojas.Eof do
-       Begin
-         If (i<>DMLojaUnica.CDS_V_SolicitFornLojas.RecNo) And (DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString='SIM')Then
-         Begin
-           sDemandas:=DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES1.AsString+
-                      DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES2.AsString+
-                      DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES3.AsString+
-                      DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES4.AsString+
-                      DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES5.AsString+
-                      DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES6.AsString+
-                      DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES7.AsString+
-                      DMLojaUnica.CDS_V_SolicitFornLojasDEM_MES8.AsString;
-
-           If sDemaAtual<>sDemandas Then
-           Begin
-             bgSiga:=False;
-             Break;
-           end; // If sDemaAtual<>sDemandas Then
-         End; // If i<>DMLojaUnica.CDS_V_SolicitFornLojas.RecNo Then
-
-         DMLojaUnica.CDS_V_SolicitFornLojas.Next;
-       End; // While Not DMLojaUnica.CDS_V_SolicitFornLojas.Eof do
-       DMLojaUnica.CDS_V_SolicitFornLojas.EnableControls;
-
-       DMLojaUnica.CDS_V_SolicitFornLojas.RecNo:=i;
-
-       If bgSiga Then
-        Begin
-          // Grava SIM
-          DMLojaUnica.CDS_V_SolicitFornLojas.Edit;
-          DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString:='SIM';
-          DMLojaUnica.CDS_V_SolicitFornLojas.Post;
-        End
-       Else // If bgSiga Then
-        Begin
-          // Não Altera Demandas Diferentes
-          msg('Impossivel Selecionar !!'+cr+cr+'Os Períodos de Demandas são Diferentes !!','A');
-        End;
-     End; // If DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString='SIM' Then
-
-  End; // If Not DMLojaUnica.CDS_V_SolicitFornLojas.IsEmpty Then
-end;
-
-procedure TFrmSolicitacoes.Ckb_SolicitFornLojasMostraLojaClick(Sender: TObject);
-Var
-  i: Integer;
-begin
-  AcertaCkb_Style(Ckb_SolicitFornLojasMostraLoja);
-
-  i:=DMLojaUnica.CDS_V_SolicitFornLojas.RecNo;
-
-  DMLojaUnica.CDS_V_SolicitFornLojas.DisableControls;
-  If Not Ckb_SolicitFornLojasMostraLoja.Checked Then
-   Begin
-     DMLojaUnica.CDS_V_SolicitFornLojas.First;
-     While Not DMLojaUnica.CDS_V_SolicitFornLojas.Eof do
-     Begin
-
-       If DMLojaUnica.CDS_V_SolicitFornLojasESTE.AsString='N' Then
-       Begin
-         DMLojaUnica.CDS_V_SolicitFornLojas.Edit;
-         DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString:='NAO';
-         DMLojaUnica.CDS_V_SolicitFornLojas.Post;
-       End; // If DMLojaUnica.CDS_V_SolicitFornLojasESTE.AsString='N' Then
-
-       DMLojaUnica.CDS_V_SolicitFornLojas.Next;
-     End; // While Not DMLojaUnica.CDS_V_SolicitFornLojas.Eof do
-
-     // Apresenta Fornecedores Distintos
-     Dbg_SolicitFornLojas.Columns[3].Visible:=False;
-     Dbg_SolicitFornLojas.Columns[4].Visible:=False;
-     DMLojaUnica.CDS_V_SolicitFornLojas.Filter:='ESTE='+QuotedStr('S');
-     DMLojaUnica.CDS_V_SolicitFornLojas.Filtered:=True;
-   End
-  Else // If Not Ckb_SolicitFornLojasMostraLoja.Checked Then
-   Begin
-     // Apresenta Toodos Fornecedores e Lojas
-     Dbg_SolicitFornLojas.Columns[3].Visible:=True;
-     Dbg_SolicitFornLojas.Columns[4].Visible:=True;
-     DMLojaUnica.CDS_V_SolicitFornLojas.Filter:='';
-     DMLojaUnica.CDS_V_SolicitFornLojas.Filtered:=False;
-   End; // If Not Ckb_SolicitFornLojasMostraLoja.Checked Then
-  DMLojaUnica.CDS_V_SolicitFornLojas.EnableControls;
-
-  If i<=DMLojaUnica.CDS_V_SolicitFornLojas.RecordCount Then
-   DMLojaUnica.CDS_V_SolicitFornLojas.RecNo:=i;
-
-end;
-
 procedure TFrmSolicitacoes.Ckb_ValesAtivosClick(Sender: TObject);
 begin
   AcertaCkb_Style(Ckb_ValesAtivos);
@@ -6950,46 +6675,6 @@ begin
   Ckb_ValesInativosClick(Self);
 end;
 
-procedure TFrmSolicitacoes.Ckb_SolicitFornLojasMostraLojaKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  Ckb_SolicitFornLojasMostraLojaClick(Self);
-end;
-
-procedure TFrmSolicitacoes.Dbg_SolicitFornLojasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-Var
-  s: String;
-  i: Integer;
-begin
-  // Bloquei Ctrl + Delete =====================================================  
-  if (Shift = [ssCtrl]) and (Key = 46) then
-    Key := 0;
-
-  If Key=VK_F4 Then
-  Begin
-    If Not DMLojaUnica.CDS_V_SolicitFornLojas.IsEmpty Then
-    Begin
-      s:='';
-      If InputQuery('Localizar Fornecedor','',s) then
-      Begin
-        if Trim(s)<>'' then
-        Begin
-          Try
-            StrToInt(s);
-            DMLojaUnica.CDS_V_SolicitFornLojas.Locate('COD_FORNECEDOR',FormatFloat('000000',StrToInt(s)),[]);
-          Except
-            s:=AnsiUpperCase(s);
-            i:=DMLojaUnica.CDS_V_SolicitFornLojas.RecNo;
-            If Not LocalizaRegistro(DMLojaUnica.CDS_V_SolicitFornLojas, 'NOMEFORNECEDOR', s) Then
-             DMLojaUnica.CDS_V_SolicitFornLojas.RecNo:=i;
-          End;
-        End; // if Trim(s)<>'' then
-      End; // If InputQuery('Localizar Fornecedor','',s) then
-    End; // If Not DMLojaUnica.CDS_V_SolicitFornLojas.IsEmpty Then
-  End; // If Key=VK_F4 Then
-  Dbg_SolicitFornLojas.SetFocus;
-
-end;
-
 procedure TFrmSolicitacoes.Ckb_ParamTaxaSindVlrTaxaClick(Sender: TObject);
 begin
   AcertaCkb_Style(Ckb_ParamTaxaSindVlrTaxa);
@@ -7009,153 +6694,6 @@ end;
 procedure TFrmSolicitacoes.Ckb_MargemLucroPcCustoTEKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_MargemLucroPcCustoTEClick(Self);
-end;
-
-procedure TFrmSolicitacoes.Bt_SolicitFornLojasLixeiraClick(Sender: TObject);
-Var
-  sCodLoja, sCodForn, sDtaSolicit: String;
-  MySql: String;
-begin
-  sCodForn:='';
-  sCodForn:='';
-  sDtaSolicit:='';
-
-  DMLojaUnica.CDS_V_SolicitFornLojas.First;
-  DMLojaUnica.CDS_V_SolicitFornLojas.DisableControls;
-  While Not DMLojaUnica.CDS_V_SolicitFornLojas.Eof do
-  Begin
-    If DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString='SIM' Then
-    Begin
-      // Guarda Codigos de Fornecedores --------------------------
-      If Trim(sCodForn)='' Then
-       Begin
-         sCodForn:=QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasCOD_FORNECEDOR.AsString);
-       End
-      Else // If Trim(sCodForn)='' Then
-       Begin
-         If Not AnsiContainsStr(sCodForn, QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasCOD_FORNECEDOR.AsString)) Then
-          sCodForn:=sCodForn+', '+QuotedStr(DMLojaUnica.CDS_V_SolicitFornLojasCOD_FORNECEDOR.AsString);
-       End; // If Trim(sCodForn)='' Then
-
-      // Guarda Codigos de Lojas e Data da Solicitação ------------
-      If Dbg_SolicitFornLojas.Columns[3].Visible Then
-      Begin
-        If Trim(sCodLoja)='' Then
-         Begin
-           sCodLoja:=QuotedStr(Copy(DMLojaUnica.CDS_V_SolicitFornLojasCOD_LOJA.AsString,5,2));
-         End
-        Else // If Trim(sCodLoja)='' Then
-         Begin
-           If Not AnsiContainsStr(sCodLoja, QuotedStr(Copy(DMLojaUnica.CDS_V_SolicitFornLojasCOD_LOJA.AsString,5,2))) Then
-            sCodLoja:=QuotedStr(Copy(DMLojaUnica.CDS_V_SolicitFornLojasCOD_LOJA.AsString,5,2));
-         End; // If Trim(sCodLoja)='' Then
-
-
-        If Trim(sDtaSolicit)='' Then
-         Begin
-          sDtaSolicit:=QuotedStr(f_Troca('/','.',f_Troca('-','.',DMLojaUnica.CDS_V_SolicitFornLojasDTA_SOLICITACAO.AsString)));
-         End
-        Else // If Trim(sDtaSolicit)='' Then
-         Begin
-           If Not AnsiContainsStr(sDtaSolicit, QuotedStr(f_Troca('/','.',f_Troca('-','.',DMLojaUnica.CDS_V_SolicitFornLojasDTA_SOLICITACAO.AsString)))) Then
-            sDtaSolicit:=sDtaSolicit+', '+QuotedStr(f_Troca('/','.',f_Troca('-','.',DMLojaUnica.CDS_V_SolicitFornLojasDTA_SOLICITACAO.AsString)));
-         End; // If Trim(sCosDtaSolicitdLoja)='' Then
-      End; // If Dbg_SolicitFornLojas.Columns[3].Visible Then
-    End; // If DMLojaUnica.CDS_V_SolicitFornLojasPROC.AsString='SIM' Then
-
-    DMLojaUnica.CDS_V_SolicitFornLojas.Next
-  End; // While Not DMLojaUnica.CDS_V_SolicitFornLojas.Eof do
-  DMLojaUnica.CDS_V_SolicitFornLojas.EnableControls;
-  DMLojaUnica.CDS_V_SolicitFornLojas.First;
-
-  // Verifica se é Para Colocar na Lixeira a Solicitação =======================
-  If Trim(sCodForn)='' Then
-  Begin
-    msg('SEM Solicitação Selecionada !!','A');
-    Dbg_SolicitFornLojas.SetFocus;
-    Exit;
-  End; // If Trim(sCodForn)='' Then
-
-  If (Trim(sCodForn)<>'') And (Trim(sCodLoja)='') And (Trim(sDtaSolicit)='') Then
-   sgMensagem:='Deseja Realmente Enviar para LIXEIRA'+cr+
-               'TODAS as Solicitações em Aberto'+cr+
-               'do(s) Fornecedor(es) Selecionado(s) ???'
-  Else
-   sgMensagem:='Deseja Realmente Enviar para LIXEIRA'+cr+
-               'as Solicitações Selecionada(s) ???';
-
-  If msg(sgMensagem,'C')=2 Then
-  Begin
-    Dbg_SolicitFornLojas.SetFocus;
-    Exit;
-  End; // If Trim(sCodForn)='' Then
-  sgMensagem:='';
-
-  // ENVIA SOLICITAÇÕES PARA LIXEIRA ===========================================
-  // IND_OC_GERADA = (L)ixeira
-  // DTA_OC_GERADA = DATA DO ENVIO PARA LIXEIRA
-  // NUM_OC_GERADA = 999999999 9/9
-  // Verifica se Transação esta Ativa
-  //============================================================================
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-  Try
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    MySql:=' UPDATE OC_COMPRAR_LOJAS ol'+
-           ' Set ol.IND_OC_GERADA='+QuotedStr('L')+
-           ',    ol.DTA_OC_GERADA=current_timestamp'+
-           ',    ol.NUM_OC_GERADA=999999999'+
-
-           ' WHERE ol.ind_oc_gerada='+QuotedStr('N')+
-           ' AND   ol.cod_fornecedor IN ('+sCodForn+')';
-
-           If Trim(sCodLoja)<>'' Then
-            MySql:=MySql+' AND   ol.cod_empresa IN ('+sCodLoja+')';
-
-           If Trim(sDtaSolicit)<>'' Then
-            MySql:=MySql+' AND   CAST(ol.dta_documento AS DATE) IN ('+sDtaSolicit+')';
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    // Atualiza Transacao =======================================
-    DMBelShop.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-    Screen.Cursor:=crDefault;
-
-  Except
-    on e : Exception do
-    Begin
-      // Abandona Transacao =====================================
-      DMBelShop.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      Exit;
-    End; // on e : Exception do
-  End; // Try
-
-  // Busca Fornecedores de Lojas Unicas a Importar =============================
-  If Not FrmBelShop.LojaUnicaFornecedorImportar Then
-  Begin
-    sgMensagem:='';
-    Bt_SolicitFornLojasVoltarClick(Self);
-    Exit;
-  End;
-  Ckb_SolicitFornLojasMostraLoja.Checked:=False;
-  Ckb_SolicitFornLojasMostraLojaClick(Self);
-  sgMensagem:='';
 end;
 
 procedure TFrmSolicitacoes.Bt_EdtProfSelecionaVoltarClick(Sender: TObject);
@@ -7253,7 +6791,7 @@ begin
 
     // Posiciona no Marcado
     DMSalao.CDS_V_ProfSeleciona.RecNo:=i;
-  End; // If Not DMLojaUnica.CDS_V_SolicitFornLojas.IsEmpty Then
+  End; // If Not DMSalao.CDS_V_ProfSeleciona.IsEmpty Then
 end;
 
 procedure TFrmSolicitacoes.Dbg_ProfSelecionaDrawColumnCell(Sender: TObject;
@@ -8621,10 +8159,21 @@ begin
     Screen.Cursor:=crAppStart;
 
     // Busca Lojas =============================================================
-    MySql:=' Select COD_FILIAL, RAZAO_SOCIAL'+
-           ' From   EMP_CONEXOES'+
-           ' Where  Ind_Ativo=''SIM'''+
-           ' And    COD_FILIAL='+QuotedStr(FormatFloat('00',EdtParamLojaNecesCodLoja.AsInteger));
+    If bgUsaSIDICOM Then
+    Begin
+      MySql:=' SELECT e.cod_filial, e.razao_social'+
+             ' FROM EMP_CONEXOES e'+
+             ' WHERE e.ind_ativo=''SIM'''+
+             ' AND   e.cod_filial='+QuotedStr(FormatFloat('00',EdtParamLojaNecesCodLoja.AsInteger));
+    End; // If bgUsaSIDICOM Then
+
+    If Not bgUsaSIDICOM Then
+    Begin
+      MySql:=' SELECT e.cod_linx cod_filial, e.razao_social'+
+             ' FROM EMP_CONEXOES e'+
+             ' WHERE e.ind_ativo=''SIM'''+
+             ' AND   e.cod_linx='+EdtParamLojaNecesCodLoja.Text;
+    End; // If Not bgUsaSIDICOM Then
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
@@ -8660,10 +8209,31 @@ begin
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
 
-  MySql:=' Select COD_FILIAL, RAZAO_SOCIAL'+
-         ' From EMP_CONEXOES'+
-         ' Where IND_ATIVO=''SIM'''+
-         ' Order by RAZAO_SOCIAL';
+  //============================================================================
+  // Utilizando SIDICOM ========================================================
+  //============================================================================
+  If bgUsaSIDICOM Then
+  Begin
+    MySql:=' SELECT e.cod_filial, e.razao_social'+
+           ' FROM EMP_CONEXOES e'+
+           ' WHERE e.ind_ativo=''SIM'''+
+           ' ORDER BY e.razao_social';
+  End; // If bgUsaSIDICOM Then
+  // Utilizando SIDICOM ========================================================
+  //============================================================================
+
+  //============================================================================
+  // Utilizando LINX ===========================================================
+  //============================================================================
+  If Not bgUsaSIDICOM Then
+  Begin
+    MySql:=' SELECT e.cod_linx cod_filial, e.razao_social'+
+           ' FROM EMP_CONEXOES e'+
+           ' WHERE e.ind_ativo=''SIM'''+
+           ' ORDER BY e.razao_social';
+  End; // If Not bgUsaSIDICOM Then
+  // Utilizando LINX ===========================================================
+  //============================================================================
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
   DMBelShop.SDS_Pesquisa.CommandText:=MySql;
@@ -8740,18 +8310,47 @@ begin
        End;
     End; // For i:= Low(LongDayNames) to High(LongDayNames) do
 
-    MySql:=' SELECT e.cod_filial, e.razao_social des_loja,'+
-           ' SUBSTRING(t.des_aux FROM  1 FOR 3) Class_A,'+
-           ' SUBSTRING(t.des_aux FROM  5 FOR 3) Class_B,'+
-           ' SUBSTRING(t.des_aux FROM  9 FOR 3) Class_C,'+
-           ' SUBSTRING(t.des_aux FROM 13 FOR 3) Class_D,'+
-           ' SUBSTRING(t.des_aux FROM 17 FOR 3) Class_E,'+
-           ' TRIM(Coalesce(t.des_aux1,''NAO'')) Ind_Ativo'+
+    //============================================================================
+    // Utilizando SIDICOM ========================================================
+    //============================================================================
+    If bgUsaSIDICOM Then
+    Begin
+      MySql:=' SELECT e.cod_filial, e.razao_social des_loja,'+
+             ' SUBSTRING(t.des_aux FROM  1 FOR 3) Class_A,'+
+             ' SUBSTRING(t.des_aux FROM  5 FOR 3) Class_B,'+
+             ' SUBSTRING(t.des_aux FROM  9 FOR 3) Class_C,'+
+             ' SUBSTRING(t.des_aux FROM 13 FOR 3) Class_D,'+
+             ' SUBSTRING(t.des_aux FROM 17 FOR 3) Class_E,'+
+             ' TRIM(Coalesce(t.des_aux1,''NAO'')) Ind_Ativo'+
 
-           ' FROM TAB_AUXILIAR t, EMP_CONEXOES e'+
-           ' WHERE t.cod_aux=e.cod_filial'+
-           ' AND t.tip_aux='+IntToStr(igDiaSemana)+ // Dias das Semana e Lojas para Processamento de Transf/Venda CD
-           ' ORDER BY 1';
+             ' FROM TAB_AUXILIAR t, EMP_CONEXOES e'+
+             ' WHERE t.cod_aux=e.cod_filial'+
+             ' AND t.tip_aux='+IntToStr(igDiaSemana)+ // Dias das Semana e Lojas para Processamento de Transf/Venda CD
+             ' ORDER BY 1';
+    End; // If bgUsaSIDICOM Then
+    // Utilizando SIDICOM ========================================================
+    //============================================================================
+
+    //============================================================================
+    // Utilizando LINX ===========================================================
+    //============================================================================
+    If Not bgUsaSIDICOM Then
+    Begin
+      MySql:=' SELECT e.cod_linx cod_filial, e.razao_social des_loja,'+
+             ' SUBSTRING(t.des_aux FROM  1 FOR 3) Class_A,'+
+             ' SUBSTRING(t.des_aux FROM  5 FOR 3) Class_B,'+
+             ' SUBSTRING(t.des_aux FROM  9 FOR 3) Class_C,'+
+             ' SUBSTRING(t.des_aux FROM 13 FOR 3) Class_D,'+
+             ' SUBSTRING(t.des_aux FROM 17 FOR 3) Class_E,'+
+             ' TRIM(Coalesce(t.des_aux1,''NAO'')) Ind_Ativo'+
+
+             ' FROM TAB_AUXILIAR t, EMP_CONEXOES e'+
+             ' WHERE t.cod_aux=e.cod_linx'+
+             ' AND t.tip_aux='+IntToStr(igDiaSemana)+ // Dias das Semana e Lojas para Processamento de Transf/Venda CD
+             ' ORDER BY 1';
+    End; // If Not bgUsaSIDICOM Then
+    // Utilizando LINX ===========================================================
+    //============================================================================
     DMBelShop.CDS_Busca.Close;
     DMBelShop.SDS_Busca.CommandText:=MySql;
     DMBelShop.CDS_Busca.Open;
@@ -8993,15 +8592,16 @@ begin
 
   Bt_ReposLojasAlterar.Enabled:=False;
 
-  // Verifica se Existe Preco de Compra ========================================
-  if (DMCentralTrocas.CDS_ReposicaoTransfPRECOCOMPRA.AsCurrency<=0.00) And (EdtReposLojasQtdReposicao.AsInteger>0) Then
-  Begin
-    FrmSolicitacoes.Bt_ReposLojasPreco.Enabled:=True;
-    FrmSolicitacoes.EdtReposLojasSeq.SetFocus;
-
-    msg('Produto SEM PREÇO de COMPRA!!'+cr+'Solicitar o Cadastramento no SIDICOM !!'+cr+'Lista de Preços <0006>'+cr+'Após Atualize !','A');
-    Exit;
-  End;
+  //OdirSemSIDICOM - 07/05/2019
+//  // Verifica se Existe Preco de Compra ========================================
+//  if (DMCentralTrocas.CDS_ReposicaoTransfPRECOCOMPRA.AsCurrency<=0.00) And (EdtReposLojasQtdReposicao.AsInteger>0) Then
+//  Begin
+//    FrmSolicitacoes.Bt_ReposLojasPreco.Enabled:=True;
+//    FrmSolicitacoes.EdtReposLojasSeq.SetFocus;
+//
+//    msg('Produto SEM PREÇO de COMPRA!!'+cr+'Solicitar o Cadastramento no SIDICOM !!'+cr+'Lista de Preços <0006>'+cr+'Após Atualize !','A');
+//    Exit;
+//  End;
 
   // Verifica se Transação esta Ativa
   If DMBelShop.SQLC.InTransaction Then
@@ -9325,14 +8925,33 @@ begin
   Begin
     If FrmSolicitacoes.Components[i] is TTabSheet Then
      If (FrmSolicitacoes.Components[i] as TTabSheet).Parent=PC_Parametros Then
-     (FrmSolicitacoes.Components[i] as TTabSheet).TabVisible:=False;
+      (FrmSolicitacoes.Components[i] as TTabSheet).TabVisible:=False;
   End; // For i:=0 to FrmSolicitacoes.ComponentCount-1 do
 
-  MySql:=' SELECT f.codfornecedor, f.nomefornecedor'+
-         ' FROM TAB_AUXILIAR t, FORNECEDOR f'+
-         ' WHERE t.cod_aux=f.codfornecedor'+
+  MySql:=' SELECT '+
+         ' CASE'+
+         '   WHEN CHAR_LENGTH(TRIM(f.doc_cliente))=14 THEN'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 1 FOR 2) || ''.'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 3 for 3) || ''.'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 6 for 3) || ''/'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 9 for 4) || ''-'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 13 for 2)'+
+         '   WHEN CHAR_LENGTH(TRIM(f.doc_cliente))=11 THEN'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 1 for 3) || ''.'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 4 for 3) || ''.'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 7 for 3) || ''-'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 10 for 2)'+
+         '   ELSE'+
+         '     TRIM(f.doc_cliente)'+
+         ' End DOC_CLIENTE,'+
+
+         ' f.nome_cliente NOMEFORNECEDOR,'+
+         ' f.cod_cliente CODFORNECEDOR'+
+
+         ' FROM TAB_AUXILIAR t, LINXCLIENTESFORNEC f'+
+         ' WHERE t.cod_aux=f.cod_cliente'+
          ' AND t.tip_aux=13'+ // Fornecedores que NÃO Entram no Calculo de Reposições Automáticas
-         ' ORDER BY f.nomefornecedor';
+         ' ORDER BY f.nome_cliente';
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
   DMBelShop.CDS_Busca.Open;
@@ -9372,7 +8991,7 @@ begin
 
       MySql:=' DELETE FROM TAB_AUXILIAR t'+
              ' WHERE t.tip_aux=13'+ // Fornecedores que NÃO Entram no Calculo de Reposições Automáticas
-             ' AND   LPAD(t.cod_aux, 6, ''0'')='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('codfornecedor').AsString);
+             ' AND   t.cod_aux='+DMBelShop.CDS_Busca.FieldByName('codfornecedor').AsString;
       DMBelShop.SQLC.Execute(MySql,nil,nil);
 
       // Atualiza Transacao ======================================================
@@ -9418,9 +9037,14 @@ begin
     Screen.Cursor:=crAppStart;
 
     // Busca Fornecedores =======================================================
-    MySql:=' SELECT f.nomefornecedor, f.codfornecedor'+
-           ' FROM FORNECEDOR f'+
-           ' WHERE f.codfornecedor='+VarToStr(EdtParamLojaReposCodForn.Value);
+    MySql:=' SELECT f.nome_cliente NOMEFORNECEDOR,'+
+           '        f.cod_cliente CODFORNECEDOR'+
+
+           ' FROM LINXCLIENTESFORNEC f'+
+           ' WHERE f.cod_cliente='+VarToStr(EdtParamLojaReposCodForn.AsInteger)+
+           ' AND   EXISTS (SELECT 1'+
+           '               FROM LINXPRODUTOS p'+
+           '               WHERE p.cod_fornecedor=f.cod_cliente)';
     DMBelShop.SQLQ_Busca.Close;
     DMBelShop.SQLQ_Busca.SQL.Clear;
     DMBelShop.SQLQ_Busca.SQL.Add(MySql);
@@ -9436,18 +9060,21 @@ begin
       EdtParamLojaReposCodForn.SetFocus;
       Exit;
     End;
-    PlaySound(PChar('SystemQuestion'), 0, SND_ASYNC);
-    PlaySound(PChar('SystemAsterisk'), 0, SND_ASYNC);
-    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-    PlaySound(PChar('SystemQuestion'), 0, SND_ASYNC);
 
-    If Application.MessageBox('No Momento da Inclusão do Fornecedor TODOS os PRODUTOS'+cr+
-                              'Teram seus ESTOQUES MÍNIMO ZERADOS !!'+cr+cr+'DESEJA CONTINUAR ???????', 'ATENÇÃO !!', 292) = IdNo Then
-    Begin
-      EdtParamLojaReposCodForn.Text:='0';
-      EdtParamLojaReposCodForn.SetFocus;
-      Exit;
-    End;
+// OdirApagar - 02/05/2019 - Não Zera Estoque Minimo
+//    PlaySound(PChar('SystemQuestion'), 0, SND_ASYNC);
+//    PlaySound(PChar('SystemAsterisk'), 0, SND_ASYNC);
+//    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+//    PlaySound(PChar('SystemQuestion'), 0, SND_ASYNC);
+//    If Application.MessageBox(PChar('No Momento da Inclusão do Fornecedor:'+cr+
+//                                    DMBelShop.SQLQ_Busca.FieldByName('nomefornecedor').AsString+cr+cr+
+//                                    'TODOS os PRODUTOS Terão SEUS ESTOQUES MÍNIMO ZERADOS !!'+cr+cr+
+//                                    'DESEJA CONTINUAR ???????'), 'ATENÇÃO !!', 292) = IdNo Then
+//    Begin
+//      EdtParamLojaReposCodForn.AsInteger:=0;
+//      EdtParamLojaReposCodForn.SetFocus;
+//      Exit;
+//    End;
 
     // Verifica se Transação esta Ativa
     If DMBelShop.SQLC.InTransaction Then
@@ -9468,17 +9095,28 @@ begin
              ' values (13, '+QuotedStr(DMBelShop.SQLQ_Busca.FieldByName('codfornecedor').AsString)+', null, null, null, null)';
       DMBelShop.SQLC.Execute(MySql,nil,nil);
 
-      // Zera Estoques Minimos
-      MySql:=' UPDATE ES_FINAN_CURVA_ABC c'+
-             ' SET c.est_minimo=0'+
-             ',    c.usu_altera='+Cod_Usuario+
-             ',    c.dta_altera=current_date'+
-             ' WHERE c.est_minimo<>0'+
-             ' AND EXISTS (SELECT 1'+
-             '             FROM PRODUTO p'+
-             '             WHERE p.codproduto=c.cod_produto'+
-             '             AND P.PRINCIPALFOR='+QuotedStr(DMBelShop.SQLQ_Busca.FieldByName('codfornecedor').AsString)+')';
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
+// OdirApagar - 02/05/2019 - Não Zera Estoque Minimo
+//      PainelApresExp.Caption:='AGUARDE !! Zerando Estoques Mínimos do Fornecedor Selecioando...';
+//      PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
+//      PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
+//      PainelApresExp.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-PainelApresExp.Height)/2))-20;
+//      PainelApresExp.Color:=clSilver;
+//      PainelApresExp.Font.Style:=[fsBold];
+//      PainelApresExp.Parent:=FrmSolicitacoes;
+//      PainelApresExp.Visible:=True;
+//      Refresh;
+//
+//      // Zera Estoques Minimos
+//      MySql:=' UPDATE ES_FINAN_CURVA_ABC c'+
+//             ' SET c.est_minimo=0'+
+//             ',    c.usu_altera='+Cod_Usuario+
+//             ',    c.dta_altera=current_date'+
+//             ' WHERE c.est_minimo<>0'+
+//             ' AND EXISTS (SELECT 1'+
+//             '             FROM LINXPRODUTOS p'+
+//             '             WHERE p.cod_produto=c.cod_prod_linx'+
+//             '             AND   p.cod_fornecedor='+QuotedStr(DMBelShop.SQLQ_Busca.FieldByName('codfornecedor').AsString)+')';
+//      DMBelShop.SQLC.Execute(MySql,nil,nil);
 
       // Atualiza Transacao ======================================================
       DMBelShop.SQLC.Commit(TD);
@@ -9492,6 +9130,8 @@ begin
       DMBelShop.CDS_Busca.Locate('codfornecedor',DMBelShop.SQLQ_Busca.FieldByName('codfornecedor').AsString,[]);
       DMBelShop.CDS_Busca.EnableControls;
 
+// OdirApagar - 02/05/2019 - Não Zera Estoque Minimo
+//      PainelApresExp.Visible:=False;
       Screen.Cursor:=crDefault;
 
     Except
@@ -9503,6 +9143,8 @@ begin
         DateSeparator:='/';
         DecimalSeparator:=',';
 
+// OdirApagar - 02/05/2019 - Não Zera Estoque Minimo
+//        PainelApresExp.Visible:=False;
         Screen.Cursor:=crDefault;
 
         MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
@@ -9510,7 +9152,7 @@ begin
       End; // on e : Exception do
     End; // Try
 
-    EdtParamLojaReposCodForn.Text:='0';
+    EdtParamLojaReposCodForn.AsInteger:=0;
     EdtParamLojaReposCodForn.SetFocus;
   End;
 end;
@@ -9528,9 +9170,31 @@ begin
 
   Screen.Cursor:=crAppStart;
 
-  MySql:=' SELECT f.nomefornecedor, f.codfornecedor'+
-         ' FROM FORNECEDOR f'+
-         ' order by f.nomefornecedor';
+  MySql:=' SELECT f.nome_cliente NOMEFORNECEDOR,'+
+
+         ' CASE'+
+         '   WHEN CHAR_LENGTH(TRIM(f.doc_cliente))=14 THEN'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 1 FOR 2) || ''.'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 3 for 3) || ''.'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 6 for 3) || ''/'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 9 for 4) || ''-'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 13 for 2)'+
+         '   WHEN CHAR_LENGTH(TRIM(f.doc_cliente))=11 THEN'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 1 for 3) || ''.'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 4 for 3) || ''.'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 7 for 3) || ''-'' ||'+
+         '     SUBSTRING(TRIM(f.doc_cliente) FROM 10 for 2)'+
+         '   ELSE'+
+         '     TRIM(f.doc_cliente)'+
+         ' End DOC_CLIENTE,'+
+
+         ' f.cod_cliente CODFORNECEDOR'+
+         
+         ' FROM LINXCLIENTESFORNEC f'+
+         ' WHERE EXISTS (SELECT 1'+
+         '               FROM LINXPRODUTOS p'+
+         '               WHERE p.cod_fornecedor=f.cod_cliente)'+
+         ' ORDER BY 1';
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
   DMBelShop.SDS_Pesquisa.CommandText:=MySql;
@@ -9650,8 +9314,8 @@ begin
   // primeiramente verificamos se é o evento a ser tratado...
   If Msg.message = WM_MOUSEWHEEL then
   Begin
-//    If ActiveControl is TDBGrid then // If Somente DBGRID *** Testa se Classe é TDBGRID
-//    Begin
+    If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
       Msg.message := WM_KEYDOWN;
       Msg.lParam := 0;
       Sentido := HiWord(Msg.wParam);
@@ -9659,7 +9323,7 @@ begin
        Msg.wParam := VK_UP
       else
        Msg.wParam := VK_DOWN;
-//    End; // If ActiveControl is TDBGrid then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   End; // if Msg.message = WM_MOUSEWHEEL then
 
 end;
@@ -10547,7 +10211,6 @@ var
   tsArqNovo: TStringList;
   i, iPosIni, iPosFin: Integer;
   sCampo, sLinha, sLinhaNova: String;
-  MySql: String;
 
   bMoradia: Boolean; // Se proximo ENDEREÇO é Moradia
 
@@ -10575,8 +10238,6 @@ var
   sVencimentoDoContrato, sCriadoEm, sDepartamento, sCandidato,
   sBancoDeHoras, sBanco, sAgencia, sContaCorrente
   : String;
-
-  bGrava: Boolean;     // Se Data de Demissão < 01/05/2015 Não gravar
 
   Procedure LimpaTudo;
   Begin
@@ -11222,15 +10883,6 @@ procedure TFrmSolicitacoes.Dbg_ValesParcelasEnter(Sender: TObject);
 begin
   // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
   ApplicationEvents1.OnActivate:=Dbg_ValesParcelasEnter;
-  Application.OnMessage := ApplicationEvents1Message;
-  ApplicationEvents1.Activate;
-
-end;
-
-procedure TFrmSolicitacoes.Dbg_SolicitFornLojasEnter(Sender: TObject);
-begin
-  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
-  ApplicationEvents1.OnActivate:=Dbg_SolicitFornLojasEnter;
   Application.OnMessage := ApplicationEvents1Message;
   ApplicationEvents1.Activate;
 

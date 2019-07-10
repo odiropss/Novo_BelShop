@@ -1,0 +1,6 @@
+01/999 - Fornecedores que Não São Processados - 17:47:33
+02/999 - Busca Lojas do Dia - 17:47:37
+03/999 - Busca Percentuais de Cortes das Curvas - 17:47:46
+04/999 - Zera Sequencia para Novo Docto - 17:47:50
+05/999 - Cria Memo para Codigos de Lojas - 17:47:59
+06/999 - Calcula Dias do Período - 17:48:02

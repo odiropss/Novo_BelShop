@@ -38,6 +38,7 @@ type
     Lab_CodQualquer: TLabel;
     Lab_CodProduto: TLabel;
     EdtCodProduto: TEdit;
+    Bt_BuscaLojas: TJvXPButton;
     procedure Bt_BuscaMetodoClick(Sender: TObject);
     procedure EdtCodLojaExit(Sender: TObject);
 
@@ -48,6 +49,7 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure Cbx_MetodosChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure Bt_BuscaLojasClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -108,14 +110,15 @@ Var
 begin
   Dbg_Lojas.SetFocus;
 
-  If EdtCodLoja.AsInteger=0 Then
-  Begin
-    If msg('Todas as Lojas ?','C')=2 Then
-    Begin
-      EdtCodLoja.SetFocus;
-      Exit;
-    End;
-  End;
+// OdirApagar
+//  If EdtCodLoja.AsInteger=0 Then
+//  Begin
+//    If msg('Todas as Lojas ?','C')=2 Then
+//    Begin
+//      EdtCodLoja.SetFocus;
+//      Exit;
+//    End;
+//  End;
 
   If Cbx_Metodos.ItemIndex<0 Then
   Begin
@@ -123,6 +126,13 @@ begin
     Cbx_Metodos.SetFocus;
     Exit;
   End;
+
+  If DMBuscaMetodo.CDS_Busca.IsEmpty Then
+  Begin
+    msg('Favor Busca Loja(s) !!','A');
+    Bt_BuscaLojas.SetFocus;
+    Exit;
+  End; // If DMBuscaMetodo.CDS_Busca.IsEmpty Then
 
   OdirPanApres.Caption:='AGUARDE !! Atualizando WebService LINX - CLOUD';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -133,52 +143,53 @@ begin
   OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
-  
-  // Busca Lojas Linx ==========================================================
-  MySql:=' SELECT em.cod_linx, em.Razao_Social'+
-         ' FROM EMP_CONEXOES em';
 
-         If Trim(EdtDesLoja.Text)<>'' Then
-          MySql:=
-           MySql+' WHERE em.cod_linx='+EdtCodLoja.Text
-         Else
-          MySql:=
-           MySql+' WHERE em.cod_linx<>0'+
-                 ' AND   ((em.ind_ativo=''SIM'') or (em.cod_linx=2))';
-
-  MySql:=
-   MySql+' ORDER BY 1';
-
+// OdirApagar
+//  // Busca Lojas Linx ==========================================================
+//  MySql:=' SELECT em.cod_linx, em.Razao_Social'+
+//         ' FROM EMP_CONEXOES em';
+//
+//         If Trim(EdtDesLoja.Text)<>'' Then
+//          MySql:=
+//           MySql+' WHERE em.cod_linx='+EdtCodLoja.Text
+//         Else
+//          MySql:=
+//           MySql+' WHERE em.cod_linx<>0'+
+//                 ' AND   ((em.ind_ativo=''SIM'') or (em.cod_linx=2))';
+//
 //  MySql:=
-//   MySql+' and  em.cod_linx>8'+
-//         ' ORDER BY 1';
-  DMBuscaMetodo.CDS_Busca.Close;
-  DMBuscaMetodo.SDS_Busca.CommandText:=MySql;
-  DMBuscaMetodo.CDS_Busca.Open;
-
-  MontaProgressBar(True, FrmBuscaMetodo);
-  pgProgBar.Properties.Max:=DMBuscaMetodo.CDS_Busca.RecordCount;
-  pgProgBar.Position:=0;
-
-  sgDtaI:='NULL';
-  sgDtaF:='NULL';
-  If Trim(DtEdt_DtaInicio.Text)<>'' Then
-  Begin
-    sgDtaI:=DateToStr(DtEdt_DtaInicio.Date);
-  End;
-
-  If Trim(DtEdt_DtaFim.Text)<>'' Then
-  Begin
-    sgDtaF:=DateToStr(DtEdt_DtaFim.Date);
-  End;
-
-  sgCodProduto:='NULL';
-  If Trim(EdtCodProduto.Text)<>'' Then
-   sgCodProduto:=Trim(EdtCodProduto.Text);
-
-  sgCodQualquer:='NULL';
-  If Trim(EdtCodQualquer.Text)<>'' Then
-   sgCodQualquer:=Trim(EdtCodQualquer.Text);
+//   MySql+' ORDER BY 1';
+//
+////  MySql:=
+////   MySql+' and  em.cod_linx>8'+
+////         ' ORDER BY 1';
+//  DMBuscaMetodo.CDS_Busca.Close;
+//  DMBuscaMetodo.SDS_Busca.CommandText:=MySql;
+//  DMBuscaMetodo.CDS_Busca.Open;
+//
+//  MontaProgressBar(True, FrmBuscaMetodo);
+//  pgProgBar.Properties.Max:=DMBuscaMetodo.CDS_Busca.RecordCount;
+//  pgProgBar.Position:=0;
+//
+//  sgDtaI:='NULL';
+//  sgDtaF:='NULL';
+//  If Trim(DtEdt_DtaInicio.Text)<>'' Then
+//  Begin
+//    sgDtaI:=DateToStr(DtEdt_DtaInicio.Date);
+//  End;
+//
+//  If Trim(DtEdt_DtaFim.Text)<>'' Then
+//  Begin
+//    sgDtaF:=DateToStr(DtEdt_DtaFim.Date);
+//  End;
+//
+//  sgCodProduto:='NULL';
+//  If Trim(EdtCodProduto.Text)<>'' Then
+//   sgCodProduto:=Trim(EdtCodProduto.Text);
+//
+//  sgCodQualquer:='NULL';
+//  If Trim(EdtCodQualquer.Text)<>'' Then
+//   sgCodQualquer:=Trim(EdtCodQualquer.Text);
 
 //OdirApagar - 14/01/2019
 //  If Trim(Cbx_Metodos.Text)='LinxProdutosInventario' Then
@@ -190,6 +201,10 @@ begin
 //     sgCodQualquer:='NULL';
 //  End; // If Trim(Cbx_Metodos.Text)='LinxProdutosInventario' Then
 
+  MontaProgressBar(True, FrmBuscaMetodo);
+  DMBuscaMetodo.CDS_Busca.First;
+  pgProgBar.Properties.Max:=DMBuscaMetodo.CDS_Busca.RecordCount;
+  pgProgBar.Position:=0;
   Try
     While Not DMBuscaMetodo.CDS_Busca.Eof do
     Begin
@@ -429,6 +444,72 @@ begin
     { Libera a instancia da lista da memória }
     FreeAndNil(tsArquivo);
   End; // Try
+
+end;
+
+procedure TFrmBuscaMetodo.Bt_BuscaLojasClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  Dbg_Lojas.SetFocus;
+
+  If EdtCodLoja.AsInteger=0 Then
+  Begin
+    If msg('Todas as Lojas ?','C')=2 Then
+    Begin
+      EdtCodLoja.SetFocus;
+      Exit;
+    End;
+  End;
+
+  If Cbx_Metodos.ItemIndex<0 Then
+  Begin
+    msg('Favor Informar o Metodo...','A');
+    Cbx_Metodos.SetFocus;
+    Exit;
+  End;
+
+  // Busca Lojas Linx ==========================================================
+  MySql:=' SELECT em.cod_linx, em.Razao_Social'+
+         ' FROM EMP_CONEXOES em';
+
+         If Trim(EdtDesLoja.Text)<>'' Then
+          MySql:=
+           MySql+' WHERE em.cod_linx='+EdtCodLoja.Text
+         Else
+          MySql:=
+           MySql+' WHERE em.cod_linx<>0'+
+                 ' AND   ((em.ind_ativo=''SIM'') or (em.cod_linx=2))';
+
+  MySql:=
+   MySql+' ORDER BY 1';
+
+//  MySql:=
+//   MySql+' and  em.cod_linx>8'+
+//         ' ORDER BY 1';
+  DMBuscaMetodo.CDS_Busca.Close;
+  DMBuscaMetodo.SDS_Busca.CommandText:=MySql;
+  DMBuscaMetodo.CDS_Busca.Open;
+
+  sgDtaI:='NULL';
+  sgDtaF:='NULL';
+  If Trim(DtEdt_DtaInicio.Text)<>'' Then
+  Begin
+    sgDtaI:=DateToStr(DtEdt_DtaInicio.Date);
+  End;
+
+  If Trim(DtEdt_DtaFim.Text)<>'' Then
+  Begin
+    sgDtaF:=DateToStr(DtEdt_DtaFim.Date);
+  End;
+
+  sgCodProduto:='NULL';
+  If Trim(EdtCodProduto.Text)<>'' Then
+   sgCodProduto:=Trim(EdtCodProduto.Text);
+
+  sgCodQualquer:='NULL';
+  If Trim(EdtCodQualquer.Text)<>'' Then
+   sgCodQualquer:=Trim(EdtCodQualquer.Text);
 
 end;
 

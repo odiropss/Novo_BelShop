@@ -661,8 +661,9 @@ begin
   // primeiramente verificamos se é o evento a ser tratado...
   If Msg.message = WM_MOUSEWHEEL then
   Begin
-//    If ActiveControl is TDBGrid then // If Somente DBGRID *** Testa se Classe é TDBGRID
-//    Begin
+    // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    If (ActiveControl is TDBGrid) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
       Msg.message := WM_KEYDOWN;
       Msg.lParam := 0;
       Sentido := HiWord(Msg.wParam);
@@ -670,7 +671,7 @@ begin
        Msg.wParam := VK_UP
       else
        Msg.wParam := VK_DOWN;
-//    End; // If ActiveControl is TDBGrid then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   End; // if Msg.message = WM_MOUSEWHEEL then
 end;
 

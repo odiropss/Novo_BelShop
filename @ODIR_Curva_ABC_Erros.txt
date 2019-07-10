@@ -1,0 +1,36 @@
+==================================
+Processamento INÍCIO: 29/06/2019 12:48:40
+==================================
+Linx: 8 Sid: 01 - Inicio: 12:48:42 Fim: 12:51:52 - TEMPO: 00:03:10
+Linx: 1 Sid: 02 - Inicio: 12:51:52 Fim: 12:55:15 - TEMPO: 00:03:23
+Linx: 14 Sid: 03 - Inicio: 12:55:15 Fim: 12:58:39 - TEMPO: 00:03:24
+Linx: 15 Sid: 04 - Inicio: 12:58:40 Fim: 13:00:50 - TEMPO: 00:02:10
+Linx: 11 Sid: 05 - Inicio: 13:00:50 Fim: 13:04:19 - TEMPO: 00:03:29
+Linx: 13 Sid: 06 - Inicio: 13:04:19 Fim: 13:08:36 - TEMPO: 00:04:17
+Linx: 7 Sid: 07 - Inicio: 13:08:36 Fim: 13:11:35 - TEMPO: 00:02:59
+Linx: 23 Sid: 08 - Inicio: 13:11:36 Fim: 13:14:39 - TEMPO: 00:03:03
+Linx: 9 Sid: 09 - Inicio: 13:14:39 Fim: 13:18:22 - TEMPO: 00:03:43
+Linx: 10 Sid: 10 - Inicio: 13:18:23 Fim: 13:22:15 - TEMPO: 00:03:52
+Linx: 3 Sid: 11 - Inicio: 13:22:15 Fim: 13:25:53 - TEMPO: 00:03:38
+Linx: 4 Sid: 12 - Inicio: 13:25:53 Fim: 13:29:14 - TEMPO: 00:03:21
+Linx: 12 Sid: 13 - Inicio: 13:29:14 Fim: 13:32:45 - TEMPO: 00:03:31
+Linx: 16 Sid: 14 - Inicio: 13:32:45 Fim: 13:35:41 - TEMPO: 00:02:56
+Linx: 5 Sid: 15 - Inicio: 13:35:41 Fim: 13:38:44 - TEMPO: 00:03:03
+Linx: 6 Sid: 16 - Inicio: 13:38:44 Fim: 13:42:34 - TEMPO: 00:03:50
+Linx: 17 Sid: 17 - Inicio: 13:42:34 Fim: 13:45:59 - TEMPO: 00:03:25
+Linx: 18 Sid: 18 - Inicio: 13:45:59 Fim: 13:49:44 - TEMPO: 00:03:45
+Linx: 19 Sid: 19 - Inicio: 13:49:44 Fim: 13:53:31 - TEMPO: 00:03:47
+Linx: 20 Sid: 20 - Inicio: 13:53:31 Fim: 13:57:33 - TEMPO: 00:04:02
+Linx: 21 Sid: 21 - Inicio: 13:57:34 Fim: 14:00:55 - TEMPO: 00:03:21
+Linx: 22 Sid: 22 - Inicio: 14:00:55 Fim: 14:05:13 - TEMPO: 00:04:18
+Linx: 24 Sid: 24 - Inicio: 14:05:14 Fim: 14:08:42 - TEMPO: 00:03:28
+Linx: 25 Sid: 25 - Inicio: 14:08:43 Fim: 14:11:16 - TEMPO: 00:02:33
+Linx: 26 Sid: 26 - Inicio: 14:11:17 Fim: 14:11:46 - TEMPO: 00:00:29
+Linx: 27 Sid: 27 - Inicio: 14:11:46 Fim: 14:12:15 - TEMPO: 00:00:29
+Linx: 28 Sid: 28 - Inicio: 14:12:15 Fim: 14:14:16 - TEMPO: 00:02:01
+Linx: 29 Sid: 29 - Inicio: 14:14:17 Fim: 14:16:25 - TEMPO: 00:02:08
+Linx: 30 Sid: 30 - Inicio: 14:16:25 Fim: 14:18:09 - TEMPO: 00:01:44
+Linx: 2 Sid: 99 - Inicio: 14:18:09 Fim: 14:24:21 - TEMPO: 00:06:12
+==================================
+Processamento FIM: 29/06/2019 14:24:22
+==================================

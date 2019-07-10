@@ -1,8 +1,8 @@
 object DMMovtosEmpresas: TDMMovtosEmpresas
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 261
-  Top = 118
+  Left = 239
+  Top = 115
   Height = 581
   Width = 1029
   object SQLC: TSQLConnection
@@ -53,12 +53,11 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
   object SDS_EmpProcessa: TSQLDataSet
     CommandText = 
       'SELECT'#13#10'c.cod_filial, c.endereco_ip, c.endereco_ip_externo,'#13#10'c.p' +
-      'asta_base_dados, c.des_base_dados, c.cod_emp, c.razao_social, c.' +
-      'tip_emp,'#13#10'c.ind_ativo,'#13#10#39'IBDB_'#39'||c.cod_filial "DATABASE",'#13#10#39'IBT_' +
+      'asta_base_dados, c.des_base_dados, c.cod_emp,'#13#10'c.razao_social, c' +
+      '.tip_emp, c.ind_ativo,'#13#10#39'IBDB_'#39'||c.cod_filial "DATABASE",'#13#10#39'IBT_' +
       #39'||c.cod_filial  "TRANSACAO",'#13#10'c.cod_linx, c.dta_inicio_linx, c.' +
-      'ind_domingo'#13#10#13#10'FROM EMP_CONEXOES c'#13#10'WHERE (c.Ind_Ativo='#39'SIM'#39' OR ' +
-      'c.cod_filial=99)'#13#10'AND c.dta_inicio_linx IS NOT NULL'#13#10'ORDER BY c.' +
-      'ind_domingo, c.dta_inicio_linx'#13#10
+      'ind_domingo'#13#10#13#10'FROM EMP_CONEXOES c'#13#10'WHERE c.dta_inicio_linx IS N' +
+      'OT NULL'#13#10#13#10'ORDER BY c.tip_emp DESC, c.ind_domingo, c.cod_linx'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -282,14 +281,19 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     CachedUpdates = False
     SQL.Strings = (
       'SELECT'
-      
-        'l.CODLISTA, l.CODPRODUTO, l.PRECOCOMPRA, l.MARGEM, l.PRECOVENDA,' +
-        ' l.PRECOANTERIOR,'
-      
-        'l.DATAALTERACAO, l.HORAALTERACAO, l.DESCONTO, l.DESCONTOMAX, l.D' +
-        'ESATIVADO,'
-      'l.PRECODOLAR, l.ACRECIMOLISTA, '
-      'l.CUSTOSLISTA, CURRENT_DATE DTA_ATUALIZACAO'
+      'l.codlista, l.codproduto,'
+      'COALESCE(l.precocompra, 0.0000) PRECOCOMPRA,'
+      'COALESCE(l.margem, 0.0000) MARGEM,'
+      'COALESCE(l.precovenda, 0.0000) PRECOVENDA,'
+      'COALESCE(l.precoanterior, 0.0000) PRECOANTERIOR,'
+      'l.DATAALTERACAO, l.HORAALTERACAO,'
+      'COALESCE(l.desconto, 0.00) DESCONTO,'
+      'COALESCE(l.descontomax, 0.00) DESCONTOMAX,'
+      'l.DESATIVADO,'
+      'COALESCE(l.precodolar, 0.0000) PRECODOLAR,'
+      'COALESCE(l.acrecimolista, 0.00) ACRECIMOLISTA,'
+      'COALESCE(l.custoslista, 0.00) CUSTOSLISTA,'
+      'CURRENT_DATE DTA_ATUALIZACAO'
       ''
       'FROM LISTAPRE l'
       ''
@@ -298,9 +302,10 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     Top = 144
     ParamData = <
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Data'
         ParamType = ptUnknown
+        Value = '01/02/2019'
       end>
     object IBQ_ListaPrecosMPMSCODLISTA: TIBStringField
       FieldName = 'CODLISTA'

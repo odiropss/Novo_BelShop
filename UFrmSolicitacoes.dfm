@@ -1,6 +1,6 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 338
-  Top = 111
+  Left = 322
+  Top = 113
   Width = 649
   Height = 470
   AutoSize = True
@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_ProSoftImpArquivo
+    ActivePage = Ts_ParametrosGerenciador
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -5513,24 +5513,29 @@ object FrmSolicitacoes: TFrmSolicitacoes
               1C00}
             Columns = <
               item
-                Color = 14811135
+                Alignment = taRightJustify
                 Expanded = False
-                FieldName = 'CODFORNECEDOR'
-                Font.Charset = ANSI_CHARSET
-                Font.Color = clBlack
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                Title.Alignment = taCenter
-                Title.Caption = 'C'#243'digo'
-                Width = 50
+                FieldName = 'DOC_CLIENTE'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'N'#186' Docto '
+                Width = 102
                 Visible = True
               end
               item
+                Color = 8454143
                 Expanded = False
                 FieldName = 'NOMEFORNECEDOR'
                 Title.Caption = 'Nome Fornecedor'
-                Width = 520
+                Width = 410
+                Visible = True
+              end
+              item
+                Color = 14811135
+                Expanded = False
+                FieldName = 'CODFORNECEDOR'
+                Title.Alignment = taCenter
+                Title.Caption = 'C'#243'digo'
+                Width = 60
                 Visible = True
               end>
           end
@@ -7203,436 +7208,10 @@ object FrmSolicitacoes: TFrmSolicitacoes
         end
       end
     end
-    object Ts_SolicitFornLojas: TTabSheet
-      Caption = 'Fornecedores a Importar de Solicita'#231#245'es de Lojas'
+    object TabSheet1: TTabSheet
+      Caption = 'RETIRADO'
       Highlighted = True
-      ImageIndex = 15
-      object Dbg_SolicitFornLojas: TDBGridJul
-        Left = 0
-        Top = 0
-        Width = 625
-        Height = 349
-        Hint = '<Duplo Click> Marca/DesMarca'
-        Align = alClient
-        Color = 15004403
-        DataSource = DMLojaUnica.DS_V_SolicitFornLojas
-        FixedColor = clSilver
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clBlack
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
-        ParentFont = False
-        ParentShowHint = False
-        ReadOnly = True
-        ShowHint = True
-        TabOrder = 0
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clBlack
-        TitleFont.Height = -11
-        TitleFont.Name = 'MS Sans Serif'
-        TitleFont.Style = [fsBold]
-        OnDrawColumnCell = Dbg_SolicitFornLojasDrawColumnCell
-        OnDblClick = Dbg_SolicitFornLojasDblClick
-        OnEnter = Dbg_SolicitFornLojasEnter
-        OnKeyDown = Dbg_SolicitFornLojasKeyDown
-        CorComFoco = 15004403
-        SairComEnter = False
-        EditDataSetCheck = False
-        CampoCheckBox = 'PROC'
-        ValorCampoCheck = 'SIM'
-        ValorCampoUnCheck = 'NAO'
-        ImageChecked.Data = {
-          3E020000424D3E0200000000000036000000280000000D0000000D0000000100
-          180000000000080200000000000000000000000000000000000080511C80511C
-          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
-          1C0080511CF1F3F3F3F5F5F6F7F7F8F9F9F9FAFAFBFCFCFDFDFDFEFEFEFFFFFF
-          FFFFFFFFFFFF80511C0080511CEFF1F1F1F3F3F3F5F5F6F7F7F8F9F9F9FAFAFB
-          FCFCFDFDFDFEFEFEFFFFFFFFFFFF80511C0080511CECEFEFEFF1F1F1F3F3F3F5
-          F521A121F8F9F9F9FAFAFBFCFCFDFDFDFEFEFEFFFFFF80511C0080511CE9ECEC
-          ECEFEFEFF1F121A12121A12121A121F8F9F9F9FAFAFBFCFCFDFDFDFEFEFE8051
-          1C0080511CE6EAEAE9ECEC21A12121A12121A12121A12121A121F8F9F9F9FAFA
-          FBFCFCFDFDFD80511C0080511CE3E7E7E6EAEA21A12121A121EFF1F121A12121
-          A12121A121F8F9F9F9FAFAFBFCFC80511C0080511CE1E5E5E3E7E721A121E9EC
-          ECECEFEFEFF1F121A12121A12121A121F8F9F9F9FAFA80511C0080511CDFE3E3
-          E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F121A12121A121F6F7F7F8F9F98051
-          1C0080511CDDE2E2DFE3E3E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F121A121
-          F3F5F5F6F7F780511C0080511CDDE2E2DDE2E2DFE3E3E1E5E5E3E7E7E6EAEAE9
-          ECECECEFEFEFF1F1F1F3F3F3F5F580511C0080511CDDE2E2DDE2E2DDE2E2DFE3
-          E3E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F1F1F3F380511C0080511C80511C
-          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
-          1C00}
-        ImageUnChecked.Data = {
-          3E020000424D3E0200000000000036000000280000000D0000000D0000000100
-          180000000000080200000000000000000000000000000000000080511C80511C
-          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
-          1C0080511CEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFEFFFFFF
-          FFFFFFFFFFFF80511C0080511CECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FA
-          FBFBFCFDFDFEFEFEFFFFFFFFFFFF80511C0080511CE9ECECECEFEFEFF1F1F1F3
-          F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFEFFFFFF80511C0080511CE5E8E8
-          E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFE8051
-          1C0080511CE2E5E5E5E8E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9
-          FAFBFBFCFDFD80511C0080511CDEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1F1
-          F3F3F4F5F5F6F7F7F8F9F9FAFBFB80511C0080511CDBE0E0DEE2E2E2E5E5E5E8
-          E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F980511C0080511CD9DEDE
-          DBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F78051
-          1C0080511CD7DCDCD9DEDEDBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1
-          F1F3F3F4F5F580511C0080511CD7DCDCD7DCDCD9DEDEDBE0E0DEE2E2E2E5E5E5
-          E8E8E9ECECECEFEFEFF1F1F1F3F380511C0080511CD7DCDCD7DCDCD7DCDCD9DE
-          DEDBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F180511C0080511C80511C
-          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
-          1C00}
-        Columns = <
-          item
-            Color = 8454143
-            Expanded = False
-            FieldName = 'PROC'
-            Font.Charset = ANSI_CHARSET
-            Font.Color = clBlack
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            Title.Alignment = taCenter
-            Width = 70
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'COD_FORNECEDOR'
-            Title.Alignment = taRightJustify
-            Width = 50
-            Visible = True
-          end
-          item
-            Color = 13565951
-            Expanded = False
-            FieldName = 'NOMEFORNECEDOR'
-            Font.Charset = ANSI_CHARSET
-            Font.Color = clBlack
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            Width = 300
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'COD_LOJA'
-            Title.Alignment = taCenter
-            Visible = False
-          end
-          item
-            Alignment = taCenter
-            Color = 13565951
-            Expanded = False
-            FieldName = 'DTA_SOLICITACAO'
-            Font.Charset = ANSI_CHARSET
-            Font.Color = clBlack
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            Title.Alignment = taCenter
-            Width = 105
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DEM_MES1'
-            Title.Alignment = taCenter
-            Width = 80
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DEM_MES2'
-            Title.Alignment = taCenter
-            Width = 80
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DEM_MES3'
-            Title.Alignment = taCenter
-            Width = 80
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DEM_MES4'
-            Title.Alignment = taCenter
-            Width = 80
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DEM_MES5'
-            Title.Alignment = taCenter
-            Width = 80
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DEM_MES6'
-            Title.Alignment = taCenter
-            Width = 80
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DEM_MES7'
-            Title.Alignment = taCenter
-            Width = 80
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DEM_MES8'
-            Title.Alignment = taCenter
-            Width = 80
-            Visible = True
-          end>
-      end
-      object Panel43: TPanel
-        Left = 0
-        Top = 349
-        Width = 625
-        Height = 35
-        Align = alBottom
-        BevelInner = bvLowered
-        BorderStyle = bsSingle
-        Ctl3D = False
-        ParentCtl3D = False
-        TabOrder = 1
-        object Bt_SolicitFornLojasVoltar: TJvXPButton
-          Left = 521
-          Top = 2
-          Width = 100
-          Height = 29
-          Caption = 'Voltar'
-          TabOrder = 1
-          TabStop = False
-          Glyph.Data = {
-            07544269746D6170F6000000424DF60000000000000076000000280000001000
-            0000100000000100040000000000800000000000000000000000100000001000
-            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
-            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-            FF0077777700000087777777770AAAAA00877777770AAAAAA2077777770AAAAA
-            2A20777777000000A22077777777777700207777777777777700777707777777
-            77007770077777770020770A00000000A22070AAAAAAAAAA2A200AAAAAAAAAAA
-            A20770AAAAAAAAAA0077770A0000000087777770077777777777777707777777
-            7777}
-          ShowFocusRect = True
-          Align = alRight
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_SolicitFornLojasVoltarClick
-        end
-        object Bt_SolicitFornLojasImportar: TJvXPButton
-          Left = 2
-          Top = 2
-          Width = 116
-          Height = 29
-          Caption = 'Importar'
-          TabOrder = 0
-          Glyph.Data = {
-            07544269746D61701E060000424D1E0600000000000036000000280000001800
-            0000150000000100180000000000E8050000C30E0000C30E0000000000000000
-            0000BFBFBF000000000000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBF00000000FFFF000000000000000000BFBFBF00
-            0000000000000000000000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000000000000000FFFF
-            0000000000000000FFFFFFFFFF00FFFFFFFFFF00FFFF000000BFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000
-            000000000000FFFF0000000000FFFFFFFFFF00FFFFFFFFFF0000000000000000
-            00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBF000000000000000000FFFF00000000FFFFFF00FFFFFFFFFF00FFFF
-            FFFFFF00FFFFFFFFFF0000007F7F7F7F7F7F7F7F7F000000000000BFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBF000000000000000000FFFF0000000000FFFFFF
-            FFFF00FFFFFFFFFF000000000000000000000000000000000000FFFFFFFFFFFF
-            000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000000000000000FFFF
-            00000000FFFFFF00FFFFFFFFFF00FFFFFFFFFF00FFFFFFFFFF00FFFFFFFFFF00
-            FFFF000000FFFFFF000000000000000000BFBFBFBFBFBFBFBFBFBFBFBF000000
-            000000000000FFFF0000000000FFFFFFFFFF0000000000000000000000000000
-            00000000000000000000FFFFFFFFFFFF000000FFFFFF000000BFBFBFBFBFBFBF
-            BFBFBFBFBF00000000000000000000000000000000000000FFFFFFFFFF00FFFF
-            000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF0000
-            00000000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF00
-            0000000000000000FFFFFFFFFFFFFFFFFF00007F00007F00007F00007FFFFFFF
-            000000FFFFFF000000FFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00007FFFFFFFFF
-            FFFF00007FFFFFFF000000FFFFFF000000FFFFFF000000BFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBF7F7F7FFFFFFF7F00007F00007F00007F0000FFFFFFFFFF
-            FF00007FFFFFFFFFFFFF00007FFFFFFF000000FFFFFF000000FFFFFF000000BF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFF00007FFFFFFFFFFFFF00007FFFFFFF000000FFFFFF0000
-            00FFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF7F
-            00007F00007F00007F00007F0000FFFFFF00007F00007F00007F00007FFFFFFF
-            000000FFFFFF000000FFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFF000000FFFFFF000000FFFFFF000000BFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F
-            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FFFFFFF000000FFFFFF000000BF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000
-            00FFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F
-            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F
-            7F7F7F7F7F7F7F7F7FFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F7F
-            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBF}
-          Align = alLeft
-          OnClick = Bt_SolicitFornLojasImportarClick
-        end
-        object Pan_SolicitFornLojasMostraLoja: TPanel
-          Left = 398
-          Top = 2
-          Width = 123
-          Height = 29
-          Align = alRight
-          BevelInner = bvRaised
-          BevelOuter = bvLowered
-          BevelWidth = 2
-          TabOrder = 2
-          DesignSize = (
-            123
-            29)
-          object Ckb_SolicitFornLojasMostraLoja: TJvCheckBox
-            Left = 16
-            Top = 6
-            Width = 84
-            Height = 17
-            Anchors = [akTop]
-            Caption = 'Mostrar Lojas'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ParentFont = False
-            TabOrder = 0
-            OnClick = Ckb_SolicitFornLojasMostraLojaClick
-            OnKeyUp = Ckb_SolicitFornLojasMostraLojaKeyUp
-            LinkedControls = <>
-            HotTrackFont.Charset = DEFAULT_CHARSET
-            HotTrackFont.Color = clWindowText
-            HotTrackFont.Height = -11
-            HotTrackFont.Name = 'MS Sans Serif'
-            HotTrackFont.Style = []
-          end
-        end
-        object Bt_SolicitFornLojasLixeira: TJvXPButton
-          Left = 118
-          Top = 2
-          Width = 157
-          Height = 29
-          Caption = 'Enviar => Lixeira'
-          TabOrder = 3
-          Glyph.Data = {
-            07544269746D617086080000424D860800000000000036040000280000002D00
-            000017000000010008000000000050040000C30E0000C30E0000000100000000
-            0000000000007B000000FF000000007B00007B7B000000FF0000FFFF0000007B
-            7B007B7B7B00BDBDBD0000FFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-            FF00090909090909090909090909090909090909090909090909090909090909
-            0909090909090909090909090909090000000909090909090909090909090909
-            0909090909090909090909090909090909090909090909090909090909090900
-            0000090909090909090909090909090909090909090909090909090909090909
-            0909090900000000090909090909090000000909090909090909090909090909
-            0909090909090909090909090909090909090000090908080009090909090900
-            0000090909090909090909090909090909090909090909090909090909090909
-            0000090909090808000909090909090000000909090909090909090909090909
-            0909090909090909090909090909000009090309090908080009090909090900
-            0000090909090901010101010101010109090909090909090909090909090809
-            0903030303090808080009090909090000000909090909010606060606060601
-            0909090909090909090909090909080903090309030908080800090909090900
-            0000090900000001060000000000060109090909090909090909090909080909
-            0309090909090808080009090909090000000909000606010606060606060601
-            0909090909090902090909090908090303030903030908080800090909090900
-            0000090900060001060000000000060109090909090909020209090909080909
-            0309090303090808080800090909090000000909000606010606060606060601
-            090909020202020202020909090809090903030B0B0B0B080808000909090900
-            0000090900060001060000060101010109090902020202020202090908090909
-            090B0B080808080B0B0800090909090000000909000606010606060601060109
-            0909090909090902020909090809090B0B08080B080B0B080B0B000909090900
-            00000909000600010606060601010909090909090909090209090909080B0B08
-            080B0B0B080B0B08080809090909090000000909000606010101010101090909
-            0909090909090909090909090808080B0B0B0B080B0B0B080909090909090900
-            0000090900060606060000090909090909090909090909090909090909090808
-            0B0B080B0B080809090909090909090000000909000000000000090909090909
-            0909090909090909090909090909090908080B08080909090909090909090900
-            0000090909090909090909090909090909090909090909090909090909090909
-            0909090909090909090909090909090000000909090909090909090909090909
-            0909090909090909090909090909090909090909090909090909090909090900
-            0000090909090909090909090909090909090909090909090909090909090909
-            0909090909090909090909090909090000000909090909090909090909090909
-            0909090909090909090909090909090909090909090909090909090909090900
-            0000090909090909090909090909090909090909090909090909090909090909
-            090909090909090909090909090909000000}
-          Align = alLeft
-          OnClick = Bt_SolicitFornLojasLixeiraClick
-        end
-      end
-      object Sb_SelectEmpProc2: TdxStatusBar
-        Left = 0
-        Top = 384
-        Width = 625
-        Height = 20
-        Panels = <
-          item
-            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-            PanelStyle.Alignment = taCenter
-            PanelStyle.Color = 13303807
-            Fixed = False
-            Text = '<F4> Localiza Fornecedor'
-            Width = 110
-          end>
-        PaintStyle = stpsOffice11
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        Color = 13303807
-      end
+      ImageIndex = 31
     end
     object Ts_ProfSelecina: TTabSheet
       Caption = 'Sele'#231#227'o de Profissional'
@@ -8222,7 +7801,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Top = 36
         Width = 449
         Height = 281
-        ActivePage = Ts_FinanPlanFinanceiraSolicitaDatas
+        ActivePage = Ts_FinanPlanFinanceiraSolicitaTamColunas
         Anchors = [akTop]
         TabOrder = 0
         OnChange = PC_FinanPlanFinanceiraSolicitaChange
@@ -8416,7 +7995,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
               Top = 53
               Width = 437
               Height = 163
-              ActivePage = Ts_FinanPlanFinanceiraPeriodoMesAno
+              ActivePage = Ts_FinanPlanFinanceiraPeriodoData
               Align = alClient
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
@@ -11579,9 +11158,9 @@ object FrmSolicitacoes: TFrmSolicitacoes
           TabOrder = 1
         end
         object EdtAudCodLoja: TCurrencyEdit
-          Left = 464
-          Top = 16
-          Width = 45
+          Left = 48
+          Top = 8
+          Width = 33
           Height = 21
           AutoSize = False
           DecimalPlaces = 0
@@ -12724,8 +12303,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
     end
   end
   object PainelApresExp: TPanel
-    Left = 336
-    Top = 323
+    Left = 496
+    Top = 307
     Width = 99
     Height = 33
     BevelInner = bvRaised
@@ -12745,27 +12324,27 @@ object FrmSolicitacoes: TFrmSolicitacoes
   object CDS_: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 556
+    Left = 548
     Top = 216
   end
   object ADOC_Excel: TADOConnection
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'
-    Left = 452
-    Top = 288
+    Left = 572
+    Top = 48
   end
   object ADOT_Dcto: TADOTable
     Connection = ADOC_Excel
     CursorType = ctStatic
     LockType = ltReadOnly
     TableDirect = True
-    Left = 511
-    Top = 336
+    Left = 359
+    Top = 184
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 537
-    Top = 282
+    Left = 417
+    Top = 266
   end
 end

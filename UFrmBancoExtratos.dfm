@@ -1,6 +1,6 @@
 object FrmBancoExtratos: TFrmBancoExtratos
-  Left = 241
-  Top = 95
+  Left = 236
+  Top = 112
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Banco / Extratos'
@@ -406,7 +406,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Top = 0
     Width = 1047
     Height = 564
-    ActivePage = Ts_ConciliacoesManutDepAnalise
+    ActivePage = Ts_ExtratosManut
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange

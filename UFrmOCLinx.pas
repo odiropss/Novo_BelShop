@@ -1,5 +1,7 @@
 unit UFrmOCLinx;
-
+{
+IBQ_Matriz.
+}
 interface
 
 uses
@@ -19,6 +21,7 @@ uses
   JvEdit, JvValidateEdit, ToolEdit, DBCtrls, JvRadioButton, JvCheckBox,
   cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, Mask, CurrEdit,
   JvExControls, JvXPCore, JvXPButtons, ComCtrls, Menus, dxGDIPlusClasses,
+  Commctrl, // SHOW HINT EM FORMA DE BALÃO
   DBXpress, Math, AppEvnts, cxLocalization;
 
 type
@@ -110,15 +113,6 @@ type
     DtEdt_GeraOCDataDocto: TDateEdit;
     Bt_GeraOCBuscaDocto: TJvXPButton;
     Bt_GeraOCExcluir: TJvXPButton;
-    Gb_GeraOCCalculaCompra: TGroupBox;
-    Label48: TLabel;
-    EdtGeraOCDias: TJvValidateEdit;
-    Bt_GeraOCCalcular: TJvXPButton;
-    Gb_GeraOCEstoqueTransito: TGroupBox;
-    Label35: TLabel;
-    Label36: TLabel;
-    Ckb_GeraOCCalculoEstoque: TJvXPCheckbox;
-    Ckb_GeraOCCalculoTransito: TJvXPCheckbox;
     PC_GeraOCProduto: TPageControl;
     Ts_GeraOCProdutos: TTabSheet;
     Dbg_GeraOCProdutos: TDBGridJul;
@@ -245,6 +239,47 @@ type
     Ckb_FiltroProdSoNaoCompra: TJvXPCheckbox;
     Label1: TLabel;
     N1: TMenuItem;
+    Ts_OCGeraEditaOrdemCompra: TTabSheet;
+    PC_GeraOCEditaApresentacao: TPageControl;
+    Ts_GeraOCEditaGrid: TTabSheet;
+    Splitter1: TSplitter;
+    Dbg_GeraOCEditaGrid: TDBGridJul;
+    Dbg_GeraOCEditaProdutos: TDBGrid;
+    Panel43: TPanel;
+    Label62: TLabel;
+    Label63: TLabel;
+    Label64: TLabel;
+    Bevel7: TBevel;
+    Bevel8: TBevel;
+    Bevel9: TBevel;
+    EdtGeraOCEditaTotalGeral: TCurrencyEdit;
+    EdtGeraOCEditaTotalItens: TCurrencyEdit;
+    EdtGeraOCEditaTotallQtd: TCurrencyEdit;
+    Bt_GeraOCEditaVoltar: TJvXPButton;
+    Rb_GeraOCEditaTodosItens: TRadioButton;
+    Rb_GeraOCEditaComQtd: TRadioButton;
+    Rb_GeraOCEditaSemQtd: TRadioButton;
+    StB_GeraOCEdit: TdxStatusBar;
+    Panel40: TPanel;
+    Gb_GeraOCEditaDocto: TGroupBox;
+    EdtGeraOCEditaDocto: TCurrencyEdit;
+    DtEdt_GeraOCEditaDataDocto: TDateEdit;
+    Gb_GeraOCEditaEmpresa: TGroupBox;
+    Dbe_GeraOCEditaDesEmpresa: TDBEdit;
+    Dbe_GeraOCEditaCodEmpresa: TDBEdit;
+    Bt_GeraOCPreVisualizaOC: TJvXPButton;
+    Sb_GeraOCContainer0: TdxStatusBarContainerControl;
+    Sb_GeraOCContainer4: TdxStatusBarContainerControl;
+    Bt_GeraOCDoctoNaoBel: TJvXPButton;
+    Gb_GeraOCEstoqueTransito: TGroupBox;
+    Label35: TLabel;
+    Label36: TLabel;
+    Ckb_GeraOCCalculoEstoque: TJvXPCheckbox;
+    Ckb_GeraOCCalculoTransito: TJvXPCheckbox;
+    Gb_GeraOCCalculaCompra: TGroupBox;
+    Label48: TLabel;
+    EdtGeraOCDias: TJvValidateEdit;
+    Bt_GeraOCCalcular: TJvXPButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -253,11 +288,21 @@ type
 
     // Odir ====================================================================
 
+    // Hint em Fortma de Balão
+    Procedure CreateToolTips(hWnd: Cardinal); // Cria Show Hint em Forma de Balão
+    Procedure FocoToControl(Sender: TControl); // Posiciona no Componente
+
     Procedure InicializaMesesLinx;
     Procedure MontaSelectFornecedoresLinx;
     Procedure NomeMesesGridLinx;
 
     Procedure TotaisOCLinx(sNrDoc: String);
+
+    Procedure TotaisPedOC(Var svTotal_Valor: String; Var svTotal_Itens: String; Var svTotal_Qtd: String;
+                          siNumDocto, siCodEmp, sSituacaoQtd: String; siNumOC: String = ''; sCodForn: String = '');
+                          // sSituacaoQtd = 'T' Todos Itens
+                          //                'C' Com Quantidade a Comprar
+                          //                'S' Sem Quantidade a Comprar
 
     // Desabilita e Habilita Scroll do Mouse no DBGrid
     Procedure DesabilitaScrollMouse(var Msg: TMsg; var Handled: Boolean);
@@ -268,7 +313,7 @@ type
 
     Function  BuscaProdutosAnalise: Boolean;
 
-    Procedure CriaPedidoOC;
+    Function  CriaPedidoOC: Boolean;
     Procedure AtualizaNumeroDosMeses;
     Procedure MontaDemandasNovo(sFilial: String);
 
@@ -361,6 +406,24 @@ type
     procedure PopM_OCRomaneioMarcarOCsAbertasClick(Sender: TObject);
     procedure PopM_OCRomaneioDesmarcarRomaneiosDesmarcarClick(
       Sender: TObject);
+    procedure Dbg_GeraOCGridColumnMoved(Sender: TObject; FromIndex,
+      ToIndex: Integer);
+    procedure Dbg_GeraOCTotalGeralKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Bt_GeraOCEditaVoltarClick(Sender: TObject);
+    procedure Bt_GeraOCPreVisualizaOCClick(Sender: TObject);
+    procedure Dbg_GeraOCEditaProdutosEnter(Sender: TObject);
+    procedure Dbg_GeraOCEditaProdutosExit(Sender: TObject);
+    procedure Dbg_GeraOCEditaProdutosKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_GeraOCEditaGridDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Dbg_GeraOCEditaGridKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Rb_GeraOCEditaTodosItensClick(Sender: TObject);
+    procedure Rb_GeraOCEditaTodosItensKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
 
   private
     { Private declarations }
@@ -371,8 +434,20 @@ type
     sFornFoneFax, sFornEmail, sFornContato: String;
   end;
 
+const 
+  // Show Hint em Forma de Balão
+  TTS_BALLOON = $40; 
+  TTM_SETTITLE = (WM_USER + 32); 
+  //////////////////////////////
+
 var
   FrmOCLinx: TFrmOCLinx;
+
+  // Show Hint em Forma de Balão
+  hTooltip: Cardinal; 
+  ti: TToolInfo; 
+  buffer : array[0..255] of char;
+  ///////////////////////////////
 
   sgCodEmp, sgDesLoja: String;
 
@@ -397,6 +472,134 @@ uses DK_Procs1, UDMBelShop, UDMRelatorio, UDMVirtual, UPesquisa,
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // ODIR INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Show Hint em Forma de Balão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+procedure TFrmOCLinx.CreateToolTips(hWnd: Cardinal);
+begin
+  hToolTip := CreateWindowEx(0, 'Tooltips_Class32', nil, TTS_ALWAYSTIP or TTS_BALLOON,
+  Integer(CW_USEDEFAULT), Integer(CW_USEDEFAULT),Integer(CW_USEDEFAULT),
+  Integer(CW_USEDEFAULT), hWnd, 0, hInstance, nil);
+
+  if hToolTip <> 0 then
+  begin
+    SetWindowPos(hToolTip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE or  SWP_NOSIZE or SWP_NOACTIVATE);
+    ti.cbSize := SizeOf(TToolInfo);
+    ti.uFlags := TTF_SUBCLASS;
+    ti.hInst := hInstance;
+  end;
+end; // Show Hint em Forma de Balão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Show Hint em Forma de Balão - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>>>>>>
+procedure AddToolTip(hwnd: dword; lpti: PToolInfo; IconType: Integer; Text, Title: PChar);
+var
+  Item: THandle;
+  Rect: TRect;
+begin
+
+  Item := hWnd;
+
+  if (Item <> 0) and (GetClientRect(Item, Rect)) then
+  begin
+    lpti.hwnd := Item;
+    lpti.Rect := Rect;
+    lpti.lpszText := Text;
+    SendMessage(hToolTip, TTM_ADDTOOL, 0, Integer(lpti));
+    FillChar(buffer, sizeof(buffer), #0);
+    lstrcpy(buffer, Title);
+
+    if (IconType > 3) or (IconType < 0) then
+      IconType := 0;
+
+    SendMessage(hToolTip, TTM_SETTITLE, IconType, Integer(@buffer));
+  end;
+end; // Show Hint em Forma de Balão - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>
+
+// Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmOCLinx.FocoToControl(Sender: TControl);
+Var
+ NewPos: TPoint;
+Begin
+  NewPos.X:=Sender.Left+(Sender.Width div 2);
+  NewPos.y:=Sender.Top+(Sender.Height div 2);
+
+  If Sender.Parent<>Nil Then
+   NewPos:=Sender.Parent.ClientToScreen(NewPos);
+
+  SetCursorPos(NewPos.x,NewPos.y)
+End; // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>
+
+// Totais de Pedidos ou Ordem de Compra >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmOCLinx.TotaisPedOC(Var svTotal_Valor: String; Var svTotal_Itens: String; Var svTotal_Qtd: String;
+                                  siNumDocto, siCodEmp, sSituacaoQtd: String; siNumOC: String = ''; sCodForn: String = '');
+Var
+  MySql: String;
+Begin
+// sSituacaoQtd = 'T' Todos Itens
+//                'C' Com Quantidade a Comprar
+//                'S' Sem Quantidade a Comprar
+
+  Screen.Cursor:=crAppStart;
+
+  MySql:='select'+
+         ' sum(Coalesce(oc.vlr_tot_compra,0)) Total_Valor,'+
+         ' Count(oc.cod_item) Total_Itens,'+
+         ' Sum(Coalesce(oc.qtd_acomprar,0)) Total_Qtd'+
+
+         ' from OC_COMPRAR oc'+
+
+         ' Where oc.num_documento='+QuotedStr(siNumDocto)+
+         ' And   oc.cod_empresa='+QuotedStr(siCodEmp);
+
+         If (Bt_GeraOCImpEditOC.Caption='Editar OC') Then
+          MySql:=
+           MySql+' And   oc.qtd_transf=0';
+
+         If (Bt_GeraOCImpEditOC.Caption='Editar TR') Then
+          MySql:=
+           MySql+' And   oc.qtd_transf>0';
+
+         If sCodForn<>'' Then
+          MySql:=MySql+' And oc.cod_fornecedor='+QuotedStr(sCodForn);
+
+         If (Bt_GeraOCImpEditOC.Caption='Editar OC') Then
+         Begin
+           If sSituacaoQtd='C' Then
+            MySql:=MySql+' And oc.qtd_acomprar<>0';
+
+           If sSituacaoQtd='S' Then
+            MySql:=MySql+' And oc.qtd_acomprar=0';
+         End; // If (Bt_GeraOCImpEditOC.Caption='Editar OC') Then
+
+         If siNumOC<>'' Then
+          MySql:=
+           MySql+' And oc.num_oc_gerada='+QuotedStr(siNumOC)
+         Else
+          MySql:=MySql+' And oc.ind_oc_gerada= ''N''';
+
+  MySql:=
+   MySql+' AND   EXISTS (SELECT 1'+
+         '               FROM OC_COMPRAR_DOCS d'+
+         '               WHERE d.num_docto=oc.num_documento'+
+         '               AND   UPPER(TRIM(d.origem))='+QuotedStr('LINX')+')';
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql;
+  DMBelShop.CDS_Busca.Open;
+
+  svTotal_Valor :='0';
+  svTotal_Itens :='0';
+  svTotal_Qtd   :='0';
+  If Trim(DMBelShop.CDS_Busca.FieldBYName('Total_Valor').AsString)<>'' Then
+  Begin
+    svTotal_Valor :=DMBelShop.CDS_Busca.FieldBYName('Total_Valor').AsString;
+    svTotal_Itens :=DMBelShop.CDS_Busca.FieldBYName('Total_Itens').AsString;
+    svTotal_Qtd   :=DMBelShop.CDS_Busca.FieldBYName('Total_Qtd').AsString;
+  End;
+
+  DMBelShop.CDS_Busca.Close;
+
+  Screen.Cursor:=crDefault;
+
+End; // Totais de Pedidos ou Ordem de Compra >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // ORDEM DE COMPRA - Calcula Sugestões / Transferencias / Estoque Excedente >>>>
 Procedure TFrmOCLinx.OCCalculaSugTransfExc(sNrDoc, sDtaDoc: String);
@@ -1026,8 +1229,10 @@ Begin
 End; // ORDEM DE COMPRA - Atualiza Numero dos Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // ORDEM DE COMPRA - Novo Calculode Pedido de Compra do Linx >>>>>>>>>>>>>>>>>>>
-Procedure TFrmOCLinx.CriaPedidoOC;
+Function TFrmOCLinx.CriaPedidoOC: Boolean;
 Var
+  MySql: String;
+
   i: Integer;
 
   iQtdMediaDia, iQtdMediaMes: Integer; // Indices dos Campos para Calcular Depois
@@ -1041,8 +1246,7 @@ Var
   sSomaDespesaBaseST: String;
   cAliquota, cReducao, cSubstMargem, cSubstAliquota, cAliqRepasse: Currency;
 Begin
-  // Atualiza Numero dos Meses =================================================
-  AtualizaNumeroDosMeses;
+  Result:=True;
 
   //============================================================================
   // Novo Processo de Calculo Usando IBQ_OC_ComprarAdd =========================
@@ -1050,6 +1254,9 @@ Begin
   Try // IBQ_OC_ComprarAdd
     If Not DMBelShop.IBT_BelShop.Active Then
      DMBelShop.IBT_BelShop.StartTransaction;
+
+    // Atualiza Numero dos Meses =================================================
+    AtualizaNumeroDosMeses;
 
     pgProgBar.Properties.Max:=DMLinx.CDS_OCProdLinx.RecordCount;
     pgProgBar.Position:=0;
@@ -1266,6 +1473,10 @@ Begin
   Except // Try // IBQ_OC_ComprarAdd
     On e : Exception do
     Begin
+      MySql:=' DELETE FROM OC_COMPRAR_MESES m'+
+             ' WHERE m.num_documento='+sgNumPed;
+      DMBelShop.SQLC.Execute(MySql,Nil,Nil);
+
       // Abandona Transacao ====================================================
       OdirPanApres.Visible:=False;
       DMBelShop.IBT_BelShop.Rollback;
@@ -1275,6 +1486,7 @@ Begin
       DMLinx.CDS_OCProdLinx.Close;
 
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Result:=False;
     End; // On e : Exception do
   End; // Try // IBQ_OC_ComprarAdd
 
@@ -1286,25 +1498,40 @@ Begin
   Result:=False;
 
   // ODIR 1
-  // Busca Produtos MPMS =======================================================
-  MySqlSelect:=' SELECT 0 NUM_SEQ, 0 NUM_DOCUMENTO, current_timestamp DTA_DOCUMENTO,'+
+  // Busca Produtos ============================================================
+  MySqlSelect:=' SELECT'+
+               ' 0 NUM_SEQ, 0 NUM_DOCUMENTO, current_timestamp DTA_DOCUMENTO,'+
                ' ''N'' IND_OC_GERADA, NULL DTA_OC_GERADA, NULL NUM_OC_GERADA,'+
-               QuotedStr('Calculado em: '+DateTimeToStr(DataHoraServidorFI(
-                                          DMBelShop.SDS_DtaHoraServidor))+' por '+Des_Usuario)+' OBS_OC,'+
-               ' fi.empresa COD_EMPRESA, TRIM(fi.nome_emp) DES_EMPRESA,'+
+               QuotedStr('Calculado em: '+DateTimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor))+
+                         ' por '+Des_Usuario)+' OBS_OC,'+
+
+               ' fi.cod_loja COD_EMPRESA, TRIM(fi.nome_emp) DES_EMPRESA,'+
                ' pr.cod_produto COD_ITEM, TRIM(pr.nome) DES_ITEM,'+
+
                ' 0 QTD_SUGERIDA, 0 QTD_ACOMPRAR, COALESCE(es.quantidade,0) QTD_SALDO,'+
                ' 0 QTD_TRANSITO, COALESCE(es.quantidade,0) QTD_DISPONIVEL,'+
+
                ' 0 QTD_MEDIA_MES, 0 QTD_MEDIA_DIA, 0 QTD_DEM_MES1, 0 QTD_DEM_MES2, 0 QTD_DEM_MES3,'+
                ' 0 QTD_DEM_MES4, 0 QTD_DEM_MES5, 0 QTD_DEM_MES6, 0 QTD_DEM_MES7, 0 QTD_DEM_MES8,'+
-               ' 1 UNI_COMPRA,'+ // LINX ?
-               ' 1 UNI_VENDA,'+ // LINX ?
+
+               ' 0 UNI_COMPRA,'+ // LINX ?
+               ' 0 UNI_VENDA,'+ // LINX ?
+
                ' TRIM(pr.cod_barra) COD_BARRAS,'+
+
                ' pr.id_setor COD_GRUPO, TRIM(pr.desc_setor) DES_GRUPO,'+
                ' pr.id_linha COD_SUBGRUPO, TRIM(pr.desc_linha) DES_SUBGRUPO,'+
-               ' NULL DES_GENERICO, pr.id_classificacao COD_APLICACAO,'+
-               ' pr.desc_classificacao DES_APLICACAO, TRIM(pr.referencia) COD_REFERENCIA,'+
-               ' NULL CLA_CURVA_ABC,'+
+               ' NULL DES_GENERICO,'+
+               ' pr.id_classificacao COD_APLICACAO, pr.desc_classificacao DES_APLICACAO,'+
+               ' TRIM(pr.referencia) COD_REFERENCIA,'+
+
+               ' CASE'+
+               '   WHEN COALESCE(cl.ind_curva,'''')<>'''' THEN'+
+               '     cl.ind_curva'+
+               '   ELSE'+
+               '     ''C'''+
+               ' END CLA_CURVA_ABC,'+
+
                ' NULL COD_FAMILIA_PRECO, NULL DES_FAMILIA_PRECO,'+
 
                ' uc.DTA_ULT_COMPRA, uc.COD_FOR_ULT_COMPRA, uc.DES_FOR_ULT_COMPRA,'+
@@ -1323,10 +1550,11 @@ Begin
                ' END VLR_UNI_COMPRA,'+
 
                ' 0 PER_DESCONTO,'+
+
                ' NULL DTA_ULT_VENDA, NULL COD_CLI_ULT_VENDA, NULL DES_CLI_ULT_VENDA,'+
                ' NULL QTD_ULT_VENDA, NULL VLR_UNI_ULT_VENDA, NULL VLR_TOT_ULT_VENDA,'+
-
                ' CAST(ROUND(COALESCE(es.PRECO_VENDA,0.00),2) AS NUMERIC(12,2)) VLR_UNI_VENDA,'+
+
                ' NULL COD_LISTA_VENDA, NULL DES_LISTA_VENDA,'+
                ' NULL COD_LISTA_COMPRA, NULL DES_LISTA_COMPRA,'+
 
@@ -1345,37 +1573,47 @@ Begin
                ' 0.00 PER_MARGEM_ST, NULL IND_ST, 0.00 VLR_BASE_ST, 0.00 PER_ST,'+
                ' 0.00 VLR_ST, 0.00 PER_REPASSE, 0.00 VLR_REPASSE,'+
                ' NULL COD_COMPROVANTE_ICMS,'+
+
                ' SUBSTRING(TRIM(pr.referencia) FROM 1 FOR 30) COD_REFERENCIA_FORN,'+
                ' pr.cod_fornecedor COD_FORNECEDOR, TRIM(fo.nome_cliente) DES_FORNECEDOR,'+
                ' fo.tipo_cliente TIP_PESSOA, TRIM(fo.email_cliente) DES_EMAIL,'+
                ' 0 QTD_NR_DIAS,'+
                ' 0 QTD_NR_MESES,'+
                ' 0 QTD_TOT_MESES,'+
+
                QuotedStr(Cod_Usuario)+' COD_COMPRADOR,'+
                QuotedStr('Calculado em: '+DateTimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor))+
-                                          ' por '+Des_Usuario)+' BLOB_TEXTO,'+
+                         ' por '+Des_Usuario)+' BLOB_TEXTO,'+
+
                ' ''N'' IND_TRANSF, NULL DTA_LIM_TRANSF, 0 QTD_TRANSF,'+
-               ' ''SIM'' IND_USAR, 0 IND_QTD_ACIMA, 0 QTD_SUGERIDA_ANO,'+
-               ' 0 QTD_TRANSF_PERIODO, 0 QTD_TRANSF_ANO,'+
-               ' 0 EST_MINIMO, 0 DIAS_ESTOCAGEM, 0 QTD_DEMANDA_DIA,'+
+               ' ''SIM'' IND_USAR, 0 IND_QTD_ACIMA,'+
+
+               ' 0 QTD_SUGERIDA_ANO, 0 QTD_TRANSF_PERIODO, 0 QTD_TRANSF_ANO,'+
+
+               ' COALESCE(cl.est_minimo, 0) EST_MINIMO,'+
+
+               ' 0 DIAS_ESTOCAGEM, 0 QTD_DEMANDA_DIA,'+
                ' 0 QTD_DEMANDA_ANO, 0 QTD_DIAS_ANO,'+
-               ' pr.dt_update DATAINCLUSAO,'+
+
+               ' pr.dt_inclusao DATAINCLUSAO,'+
                ' TRIM(fo.uf_cliente) ESTADO,'+
                ' pr.dt_update DATAALTERACAO';
 
   MySqlClausula1:=' FROM LINXPRODUTOS pr'+
-                  '          LEFT JOIN LINXLOJAS fi              on fi.empresa='+IntToStr(igCodLojaLinx)+
-                  '          LEFT JOIN linxprodutosdetalhes es   on es.cod_produto=pr.cod_produto'+
-                  '                                             and es.empresa = fi.empresa'+
-                  '          LEFT JOIN linxclientesfornec fo     on fo.cod_cliente=pr.cod_fornecedor'+
-                  '                                             and fo.tipo_cliente in (''F'',''A'',''J'')'+
-                  '          LEFT JOIN (select ml.cod_produto, ml.empresa,'+  // Ultima Compra
-                  '                     cast(ml.data_documento as Date) DTA_ULT_COMPRA,'+
+                  '          LEFT JOIN LINXLOJAS fi              ON fi.empresa='+IntToStr(igCodLojaLinx)+
+                  '          LEFT JOIN LINXPRODUTOSDETALHES es   ON es.cod_produto=pr.cod_produto'+
+                  '                                             AND es.empresa = fi.empresa'+
+                  '          LEFT JOIN LINXCLIENTESFORNEC fo     ON fo.cod_cliente=pr.cod_fornecedor'+
+                  '                                             AND fo.tipo_cliente in (''F'',''A'',''J'')'+
+                  '          LEFT JOIN ES_FINAN_CURVA_ABC cl     ON cl.cod_loja=fi.cod_loja'+
+                  '                                             AND cl.cod_produto=pr.cod_auxiliar'+
+                  '          LEFT JOIN (SELECT ml.cod_produto, ml.empresa,'+  // Ultima Compra
+                  '                     CAST(ml.data_documento AS DATE) DTA_ULT_COMPRA,'+
                   '                     ml.codigo_cliente COD_FOR_ULT_COMPRA,'+
                   '                     cl.nome_cliente DES_FOR_ULT_COMPRA,'+
-                  '                     cast(ml.quantidade as Numeric(12,2)) QTD_ULT_COMPRA,'+
-                  '                     Cast(COALESCE(ml.preco_unitario,0.00) as Numeric(12,2)) VLR_UNI_ULT_COMPRA,'+
-                  '                     Cast(ml.valor_total as Numeric(12,2)) VLR_TOT_ULT_COMPRA'+
+                  '                     CAST(ml.quantidade AS NUMERIC(12,2)) QTD_ULT_COMPRA,'+
+                  '                     CAST(COALESCE(ml.preco_unitario,0.00) AS NUMERIC(12,2)) VLR_UNI_ULT_COMPRA,'+
+                  '                     CAST(ml.valor_total AS NUMERIC(12,2)) VLR_TOT_ULT_COMPRA'+
                   '                     FROM LINXMOVIMENTO ml, LINXCLIENTESFORNEC cl'+
                   '                     WHERE ml.codigo_cliente=cl.cod_cliente'+
                   '                     AND   cl.tipo_cliente in (''F'',''A'',''J'')'+
@@ -1383,14 +1621,14 @@ Begin
                   '                     AND   ((ml.tipo_transacao=''E'') OR (ml.tipo_transacao IS NULL))'+
                   '                     AND   ml.cancelado=''N'''+
                   '                     AND   ml.excluido=''N'''+
-                  '                     AND   ml.data_lancamento=(SELECT max(ml1.data_lancamento)'+
+                  '                     AND   ml.data_lancamento=(SELECT MAX(ml1.data_lancamento)'+
                   '                                               FROM LINXMOVIMENTO ml1'+
                   '                                               WHERE ml1.cod_produto=ml.cod_produto'+
                   '                                               AND   ml1.empresa = ml.empresa'+
                   '                                               AND   ml1.operacao = ml.operacao'+
                   '                                               AND   ((ml1.tipo_transacao=''E'') OR (ml1.tipo_transacao IS NULL))'+
                   '                                               AND   ml1.cancelado=ml.cancelado'+
-                  '                                               AND   ml1.excluido=ml.excluido)) uc  on uc.cod_produto=pr.cod_produto'+
+                  '                                               AND   ml1.excluido=ml.excluido)) uc  ON uc.cod_produto=pr.cod_produto'+
                   '                                                                                   AND uc.empresa=fi.empresa'+
 
                   ' WHERE pr.desativado=''N''';
@@ -1405,10 +1643,10 @@ Begin
                  // Produtos Codigos e/ou Produtos Like ---------------------
                  If (Trim(sgProdutosLinx)<>'') And (Trim(sgLikeProdutosLinx)<>'') Then
                   MySqlClausula1:=
-                   MySqlClausula1+' AND (pr.cod_produto in ('+sgProdutosLinx+') Or '+sgLikeProdutosLinx+')'
+                   MySqlClausula1+' AND (pr.cod_produto IN ('+sgProdutosLinx+') OR '+sgLikeProdutosLinx+')'
                  Else If Trim(sgProdutosLinx)<>'' Then
                   MySqlClausula1:=
-                   MySqlClausula1+' and pr.cod_produto in ('+sgProdutosLinx+')'
+                   MySqlClausula1+' AND pr.cod_produto IN ('+sgProdutosLinx+')'
                  Else If Trim(sgLikeProdutosLinx)<>'' Then
                   MySqlClausula1:=
                    MySqlClausula1+' AND'+sgLikeProdutosLinx;
@@ -1416,7 +1654,7 @@ Begin
                  // Fornecedores --------------------------------------------
                  If Trim(sgFornecedoresLinx)<>'' Then
                   MySqlClausula1:=
-                   MySqlClausula1+' and pr.cod_fornecedor in ('+sgFornecedoresLinx+')';
+                   MySqlClausula1+' AND pr.cod_fornecedor IN ('+sgFornecedoresLinx+')';
 
   MySqlOrderGrup:=' ORDER BY pr.nome';
   DMLinx.CDS_OCProdLinx.Close;
@@ -1895,7 +2133,7 @@ var
 begin
   // primeiramente verificamos se é o evento a ser tratado...
   if Msg.message = WM_MOUSEWHEEL then
-  if ActiveControl is TDBGrid then // *** <=== AQUI você testa se classe é TDBGRID
+  If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   begin
     Msg.message := WM_KEYDOWN;
     Msg.lParam := 0;
@@ -1905,7 +2143,7 @@ begin
      Msg.wParam := VK_UP
     else
      Msg.wParam := VK_DOWN;
-  end;
+  end; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
 end; // DIVERSOS - Habilita o Scroll do Mouse no DBGrid >>>>>>>>>>>>>>>>>>>>>>>>
 
 // Busca Totais das OCs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2218,6 +2456,8 @@ begin
 end;
 
 procedure TFrmOCLinx.FormCreate(Sender: TObject);
+const  
+  TipoDoIcone = 1; // Show Hint em Forma de Balão
 begin
   bgEnterTab:=True;
 
@@ -2235,6 +2475,20 @@ begin
     Trad_Localizer.Active := TRUE;     {Ativa o componente / a tradução}
   end;
 
+  // Show Hint em Forma de Balão
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_GeraOCBuscaDocto.Handle, @ti, TipoDoIcone, 'Busca Doctos do Dia', 'DOCTOS PARA ANALISE');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_GeraOCExcluir.Handle, @ti, TipoDoIcone, 'Exclui Docto Selecionado', 'DOCTOS PARA ANALISE');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_GeraOCDoctoNaoBel.Handle, @ti, TipoDoIcone, 'Busca Doctos Aberto', 'DOCTOS FORA REDE BELSHOP');
+  ///////////////////////////////
+
+  Ts_OCGeraEditaOrdemCompra.TabVisible:=False;
+  EdtGeraOCBuscaDocto.Value:=0;
+  EdtGeraOCDias.Value:=0;
 end;
 
 procedure TFrmOCLinx.FormKeyPress(Sender: TObject; var Key: Char);
@@ -2398,6 +2652,12 @@ begin
       EdtGeraOCBuscaDocto.SetFocus
     Else
      PC_GeraOCApresentacaoChange(Self);
+  End;
+
+  If (PC_OrdemCompra.ActivePage=Ts_OCGeraEditaOrdemCompra) And (Ts_OCGeraEditaOrdemCompra.CanFocus) Then
+  Begin
+    Dbg_GeraOCEditaGrid.SelectedIndex:=2;
+    Dbg_GeraOCEditaGrid.SetFocus;
   End;
 
 end;
@@ -2695,15 +2955,56 @@ begin
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
 
-  MySql:=' SELECT CAST(d.num_docto AS VARCHAR(15)) Num_Documento,'+
-         '        d.des_comprador, d.origem, d.dta_docto Dta_Documento, d.cod_comprador'+
-         ' FROM OC_COMPRAR_DOCS d'+
-         ' WHERE d.dta_docto='+QuotedStr(f_Troca('/','.',(f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date)))))+
-         ' AND   UPPER(TRIM(d.origem))='+QuotedStr('LINX')+
-         ' AND   EXISTS (SELECT 1'+
-         ' FROM  OC_COMPRAR c'+
-         ' WHERE c.num_documento=d.num_docto)'+
-         ' ORDER BY 1';
+  If (Sender is TJvXPButton) Then
+  Begin
+    MySql:=' SELECT DISTINCT'+
+           '        d.num_docto NR_DOCTO,'+
+           '        d.dta_docto DTA_DOCTO,'+
+           '        f.nome_cliente FORNECEDOR,'+
+           '        d.cod_fornecedor COD_FORN,'+
+           '        d.des_comprador COMPRADOR,'+
+           ' CASE'+
+           '   WHEN c.ind_oc_gerada=''S'' THEN'+
+           '     ''OC GERADA'''+
+           '   WHEN UPPER(TRIM(d.origem)) = ''LINX'' THEN'+
+           '     ''FECHADO'''+
+           '   ELSE'+
+           '     ''ABERTO'''+
+           ' END SITUACAO'+
+
+           ' FROM OC_COMPRAR_DOCS d'+
+           '       LEFT JOIN LINXCLIENTESFORNEC f  ON f.cod_cliente=d.cod_fornecedor'+
+           '       LEFT JOIN OC_COMPRAR c          ON c.num_documento=d.num_docto'+
+           '                                      AND CAST(c.dta_documento AS DATE) = d.dta_docto'+
+           '                                      AND c.cod_comprador=d.cod_comprador'+
+           '                                      AND ((c.qtd_sugerida<>0) or (c.qtd_acomprar<>0))'+
+
+           ' WHERE UPPER(TRIM(d.origem)) LIKE '+QuotedStr('LINX');
+
+           If (Sender as TJvXPButton).Name='Bt_GeraOCBuscaDocto' Then
+           Begin
+             MySql:=
+              MySql+' AND d.dta_docto='+QuotedStr(f_Troca('/','.',(f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date)))))+
+                    ' ORDER BY 1';
+           End; // If (Sender as TJvXPButton).Name='Bt_GeraOCBuscaDocto' Then
+
+           If (Sender as TJvXPButton).Name='Bt_GeraOCDoctoNaoBel' Then
+           Begin
+             MySql:=
+              MySql+' AND   d.cod_comprador>999'+
+                    ' AND   c.qtd_acomprar>0'+
+                    ' AND   c.ind_oc_gerada=''N'''+
+// odirapagar - 20/06/2019
+//                    ' AND   EXISTS (SELECT 1'+
+//                    '               FROM OC_COMPRAR oc'+
+//                    '               WHERE c.num_documento=d.num_docto'+
+//                    '               AND   cast(c.dta_documento AS DATE)=d.dta_docto'+
+//                    '               AND   c.cod_comprador=d.cod_comprador'+
+//                    '               AND   c.qtd_acomprar>0'+
+//                    '               AND   c.ind_oc_gerada=''N'')'+
+                    ' ORDER BY 1,3';
+           End; // If (Sender as TJvXPButton).Name='Bt_GeraOCDoctoNaoBel' Then
+  End; // If (Sender is TJvXPButton) Then
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
   DMBelShop.SDS_Pesquisa.CommandText:=MySql;
@@ -2712,7 +3013,7 @@ begin
   Screen.Cursor:=crDefault;
 
   // ============== Verifica Existencia de Dados ===============================
-  If Trim(DMBelShop.CDS_Pesquisa.FieldByName('Num_Documento').AsString)='' Then
+  If Trim(DMBelShop.CDS_Pesquisa.FieldByName('NR_DOCTO').AsString)='' Then
   Begin
     msg('Sem Documento a Listar !!','A');
     DMBelShop.CDS_Pesquisa.Close;
@@ -2722,13 +3023,22 @@ begin
   End;
 
   // Dbg_Pesquisa para Pesquisa de Documentos de OC ============================
-  FrmPesquisa.Dbg_PesquisaPesquisaDoctosOC;
+  FrmPesquisa.Dbg_PesquisaPesquisaDoctosOC('L');
 
   // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
-  FrmPesquisa.Campo_pesquisa:='Num_Documento';
-  FrmPesquisa.Campo_Codigo:='Num_Documento';
-  FrmPesquisa.Campo_Descricao:='Num_Documento';//Dta_Documento';
+  FrmPesquisa.Campo_pesquisa:='NR_DOCTO';
+  FrmPesquisa.Campo_Codigo:='NR_DOCTO';
+  FrmPesquisa.Campo_Descricao:='NR_DOCTO';//Dta_Documento';
   //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
+
+  // Campos Qualquer de Retorno ================================================
+  // Variavel de Entrada  - Variavel de Retorno
+  // Campo_Retorno1       - Retorno1
+  // Campo_Retorno2       - Retorno2
+  // Campo_Retorno3       - Retorno3
+  FrmPesquisa.Campo_Retorno1:='DTA_DOCTO';
+  FrmPesquisa.Campo_Retorno2:='';
+  FrmPesquisa.Campo_Retorno3:='';
 
   // ============= ABRE FORM DE PESQUISA =======================================
   FrmPesquisa.ShowModal;
@@ -2738,6 +3048,7 @@ begin
   If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
    Begin
      EdtGeraOCBuscaDocto.Text:=FrmPesquisa.EdtCodigo.Text;
+     DtEdt_GeraOCDataDocto.Date:=StrToDate(FrmPesquisa.Retorno1);
    End
   Else
    Begin
@@ -2767,6 +3078,8 @@ begin
   MySql:=' SELECT FIRST 1 o.num_oc_gerada'+
          ' FROM OC_COMPRAR o, OC_COMPRAR_DOCS d'+
          ' WHERE o.num_documento=d.num_docto'+
+         ' AND   cast(o.dta_documento AS DATE)=d.dta_docto'+
+         ' AND   o.cod_comprador=d.cod_comprador'+
          ' AND   o.num_oc_gerada is not null'+
          ' AND   UPPER(TRIM(d.origem))='+QuotedStr('LINX')+
          ' AND   o.num_documento='+VarToStr(EdtGeraOCBuscaDocto.Value);
@@ -2808,8 +3121,11 @@ begin
            ' AND   EXISTS (SELECT 1'+
            '               FROM OC_COMPRAR_DOCS d'+
            '               WHERE d.num_docto=o.num_documento'+
+           '               AND   d.dta_docto= CAST(o.dta_documento  AS DATE)'+
+           '               AND   d.cod_comprador=o.cod_comprador'+
            '               AND   UPPER(TRIM(d.origem))='+QuotedStr('LINX')+')';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
+
 
     MySql:=' DELETE FROM OC_COMPRAR_MESES m'+
            ' WHERE m.num_documento='+VarToStr(EdtGeraOCBuscaDocto.Value)+
@@ -3370,13 +3686,16 @@ begin
   // primeiramente verificamos se é o evento a ser tratado...
   If Msg.message = WM_MOUSEWHEEL then
   Begin
-    Msg.message := WM_KEYDOWN;
-    Msg.lParam := 0;
-    Sentido := HiWord(Msg.wParam);
-    if Sentido > 0 then
-      Msg.wParam := VK_UP
-    else
-     Msg.wParam := VK_DOWN;
+    If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
+      Msg.message := WM_KEYDOWN;
+      Msg.lParam := 0;
+      Sentido := HiWord(Msg.wParam);
+      if Sentido > 0 then
+        Msg.wParam := VK_UP
+      else
+       Msg.wParam := VK_DOWN;
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   End; // if Msg.message = WM_MOUSEWHEEL then
 end;
 
@@ -3397,6 +3716,11 @@ procedure TFrmOCLinx.Dbg_GeraOCProdutosKeyDown(Sender: TObject; var Key: Word; S
 Var
   s: String;
 begin
+
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   If DMBelShop.CDS_AComprarItens.IsEmpty Then
    Exit;
 
@@ -3459,6 +3783,11 @@ procedure TFrmOCLinx.Dbg_GeraOCFiliaisKeyDown(Sender: TObject; var Key: Word; Sh
 Var
   s: String;
 begin
+
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   If DMBelShop.CDS_AComprarItens.IsEmpty Then
    Exit;
 
@@ -3646,55 +3975,165 @@ end;
 procedure TFrmOCLinx.Bt_GeraOCImpEditOCClick(Sender: TObject);
 Var
   MySql, dir_relat: String;
+
+  sTotal_Valor, sTotal_Itens, sTotal_Qtd,
+  s: String;
 Begin
+  igRecNoOCs:=DMBelShop.CDS_AComprarOCs.RecNo;
+
   Dbg_GeraOCTotalGeral.SetFocus;
 
   If DMBelShop.CDS_AComprarOCs.IsEmpty Then
    Exit;
 
-   If DMBelShop.CDS_AComprarOCsIND_OC_GERADA.AsString='N' Then
-   Begin
-     If msg('Ordem de Compra Ainda Não Gerada !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
-      Exit;
-   End;
+  //============================================================================
+  // Edit OC ===================================================================
+  //============================================================================
+  If (Bt_GeraOCImpEditOC.Caption='Editar OC') Or (Bt_GeraOCImpEditOC.Caption='Editar TR') Then
+  Begin
+    Screen.Cursor:=crAppStart;
 
+    sgCodEmp:=DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString;
+
+    Ts_OCBuscaProdutos.TabVisible:=False;
+    Ts_OCGeraOrdemCompra.TabVisible:=False;
+    Ts_OCGeraEditaOrdemCompra.TabVisible:=True;
+
+    // Busca Pedido -------------------------------------------------
+    MySql:=' SELECT *'+
+           ' FROM  OC_COMPRAR OC'+
+           ' WHERE oc.ind_oc_gerada='+QuotedStr('N')+
+           ' AND   oc.num_documento='+QuotedStr(IntToStr(EdtGeraOCBuscaDocto.AsInteger))+
+           ' AND   Cast(oc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))))+
+           ' AND   oc.cod_empresa='+QuotedStr(sgCodEmp)+
+           ' AND   oc.cod_fornecedor='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_FORNECEDOR.AsString);
+
+           If (Bt_GeraOCImpEditOC.Caption='Editar OC') Then
+           Begin
+             MySql:=
+              MySql+' AND   oc.qtd_transf=0';
+
+             Rb_GeraOCEditaComQtd.Visible:=True;
+             Rb_GeraOCEditaSemQtd.Visible:=True;
+             Rb_GeraOCEditaTodosItens.Visible:=True;
+             StB_GeraOCEdit.Visible:=True;
+
+             Dbg_GeraOCEditaGrid.Columns[2].Title.Caption:='A Comprar';
+           End;
+
+           If (Bt_GeraOCImpEditOC.Caption='Editar TR') Then
+           Begin
+             MySql:=
+              MySql+' AND   oc.qtd_transf>0';
+
+             Rb_GeraOCEditaComQtd.Visible:=False;
+             Rb_GeraOCEditaSemQtd.Visible:=False;
+             Rb_GeraOCEditaTodosItens.Visible:=False;
+
+             StB_GeraOCEdit.Visible:=False;
+             Dbg_GeraOCEditaGrid.Columns[2].Title.Caption:='A Transf';
+           End;
+
+    MySql:=
+     MySql+' ORDER BY oc.cla_curva_abc, oc.Des_Item';
+    DMBelShop.IBQ_AComprarEdita.Close;
+    DMBelShop.IBQ_AComprarEdita.SQL.Clear;
+    DMBelShop.IBQ_AComprarEdita.SQL.Add(MySql);
+    DMBelShop.IBQ_AComprarEdita.Open;
+
+    If DMBelShop.IBQ_AComprarEdita.IsEmpty Then
+    Begin
+      msg('Documento Número: '+VarToStr(EdtGeraOCBuscaDocto.Value)+cr+cr+'Sem Produto a Listar !!','A');
+
+      DMBelShop.IBQ_AComprarEdita.Close;
+      sgCodEmp:='';
+
+      EdtGeraOCEditaDocto.Clear;
+      DtEdt_GeraOCEditaDataDocto.Clear;
+
+      Ts_OCBuscaProdutos.TabVisible:=True;
+      Ts_OCGeraOrdemCompra.TabVisible:=True;
+      Ts_OCGeraEditaOrdemCompra.TabVisible:=False;
+
+      PC_OrdemCompra.TabIndex:=1;
+      PC_OrdemCompraChange(Sender);
+      EdtGeraOCBuscaDoctoExit(Self);
+
+      Screen.Cursor:=crDefault;
+      Exit;
+    End; // If DMBelShop.IBQ_AComprarEdita.IsEmpty Then
+
+    EdtGeraOCEditaDocto.Value:=EdtGeraOCBuscaDocto.Value;
+    DtEdt_GeraOCEditaDataDocto.Date:=DtEdt_GeraOCDataDocto.Date;
+
+    // Fecha Consultas Anteriores -----------------------------------
+    DMBelShop.CDS_AComprarItens.Close;
+    DMBelShop.IBQ_AComprar.Close;
+
+    // Busca Totais do Pedido ---------------------------------------
+    If Rb_GeraOCEditaComQtd.Checked Then s:='C';
+    If Rb_GeraOCEditaSemQtd.Checked Then s:='S';
+    If Rb_GeraOCEditaTodosItens.Checked Then s:='T';
+
+    TotaisPedOC(sTotal_Valor, sTotal_Itens, sTotal_Qtd,
+                DMBelShop.IBQ_AComprarEditaNUM_DOCUMENTO.AsString,
+                DMBelShop.IBQ_AComprarEditaCOD_EMPRESA.AsString, s, '', DMBelShop.IBQ_AComprarEditaCOD_FORNECEDOR.AsString);
+
+    EdtGeraOCEditaTotalGeral.Value  :=StrToCurr(sTotal_Valor);
+    EdtGeraOCEditaTotalItens.Value  :=StrToCurr(sTotal_Itens);
+    EdtGeraOCEditaTotallQtd.Value   :=StrToCurr(sTotal_Qtd);
+
+    Rb_GeraOCEditaTodosItens.Checked:=True;
+
+    Screen.Cursor:=crDefault;
+  End; // If Bt_GeraOCImpEditOC.Caption='Editar OC' Then
+  // Edit OC ===================================================================
+  //============================================================================
+
+  //============================================================================
   // Imprime OC ================================================================
+  //============================================================================
   If Bt_GeraOCImpEditOC.Caption='Imprimir OC' Then
   Begin
+    If DMBelShop.CDS_AComprarOCsIND_OC_GERADA.AsString='N' Then
+    Begin
+      If msg('Ordem de Compra Ainda Não Gerada !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
+       Exit;
+    End;
+
     Screen.Cursor:=crAppStart;
 
     OdirPanApres.Caption:='AGUARDE !! Montando Relatório...';
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmOCLinx.Width-OdirPanApres.Width)/2));
-    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmOCLinx.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
     OdirPanApres.Font.Style:=[fsBold];
-    OdirPanApres.Parent:=FrmOCLinx;
+    OdirPanApres.Parent:=FrmBelShop;
     OdirPanApres.BringToFront();
     OdirPanApres.Visible:=True;
     Refresh;
 
     // Busca OC -----------------------------------------------------
     MySql:=' SELECT oc.des_empresa, oc.num_oc_gerada,'+
-           ' Case co.complement_emp'+
+           ' Case co.compl_endereco'+
            '   when '''' Then'+
-           '      co.endereco_emp ||'', ''|| co.num_emp'+
+           '      co.des_endereco ||'', ''|| co.num_endereco'+
            '   Else'+
-           '      co.endereco_emp ||'', ''|| co.num_emp ||'' - ''|| co.complement_emp'+
+           '      co.des_endereco ||'', ''|| co.num_endereco ||'' - ''|| co.compl_endereco'+
            ' End Endereco,'+
-           ' co.bairro_emp des_bairro,'+
-           ' Cast(co.cidade_emp as varchar(60)) des_cidade,'+
-           ' co.estado_emp cod_uf,'+
-           ' cast(co.cep_emp as varchar(9)) cod_cep,'+
+           ' co.des_bairro, co.des_cidade, co.cod_uf,'+
+
+           ' cast((substring(co.cod_cep from 1 for 5) ||''-''|| substring(co.cod_cep from 6 for 3)) as varchar(9)) cod_cep,'+
 
            ' CAST(('+
-           ' substring(co.cnpj_emp from 1 for 2) ||''.''||'+
-           ' substring(co.cnpj_emp from 3 for 3) ||''.''||'+
-           ' substring(co.cnpj_emp from 6 for 3) ||''/''||'+
-           ' substring(co.cnpj_emp from 9 for 4) ||''-''||'+
-           ' substring(co.cnpj_emp from 13 for 2'+
+           ' substring(co.num_cnpj from 1 for 2) ||''.''||'+
+           ' substring(co.num_cnpj from 3 for 3) ||''.''||'+
+           ' substring(co.num_cnpj from 6 for 3) ||''/''||'+
+           ' substring(co.num_cnpj from 9 for 4) ||''-''||'+
+           ' substring(co.num_cnpj from 13 for 2'+
            ' )) AS VARCHAR(18)) num_cnpj,'+
 
-           ' co.inscricao_emp inscr_estadual,'+
+           ' co.inscr_estadual,'+
            ' case oc.ind_oc_gerada'+
            '   When ''N'' Then'+
            '      ''ABERTA'''+
@@ -3711,66 +4150,61 @@ Begin
            ' ''000.000.000.0000'' Enderecamento'+
 
            ' FROM OC_COMPRAR oc'+
-           '    LEFT JOIN LINXLOJAS    co ON co.empresa=oc.cod_empresa'+
-           '    LEFT JOIN PS_USUARIOS  us ON us.cod_usuario=oc.cod_comprador'+
+           '    LEFT JOIN EMP_CONEXOES co ON oc.cod_empresa=co.cod_filial'+
+           '    LEFT JOIN PS_USUARIOS  us ON oc.cod_comprador=us.cod_usuario'+
 
            ' WHERE oc.num_documento='+QuotedStr(IntToStr(EdtGeraOCBuscaDocto.AsInteger))+
-           ' AND   Cast(oc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))))+
-           ' AND   oc.cod_empresa='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString);
+           ' And   Cast(oc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))))+
+           ' and   oc.cod_empresa='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString)+
+           ' and   oc.num_oc_gerada='+ QuotedStr(DMBelShop.CDS_AComprarOCsNUM_OC_GERADA.AsString)+
 
-           If Trim(DMBelShop.CDS_AComprarOCsNUM_OC_GERADA.AsString)<>'' Then
-            MySql:=
-             MySql+' AND   oc.num_oc_gerada='+QuotedStr(DMBelShop.CDS_AComprarOCsNUM_OC_GERADA.AsString)
-           Else
-            MySql:=
-             MySql+' AND   oc.num_oc_gerada IS NULL';
-    MySql:=
-     MySql+' ORDER BY oc.des_item';
+           ' order by oc.des_item';
     DMBelShop.IBQ_OrdemCompra.Close;
     DMBelShop.IBQ_OrdemCompra.SQL.Clear;
     DMBelShop.IBQ_OrdemCompra.SQL.Add(MySql);
     DMBelShop.IBQ_OrdemCompra.Open;
 
     // Dados da Filial ----------------------------------------------
-    MySql:=' SELECT lo.fone_emp telefone, null contato, lo.email_emp email'+
-           ' FROM LINXLOJAS lo'+
-           ' WHERE lo.empresa='+DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString;
-    DMBelShop.CDS_BuscaRapida.Close;
-    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-    DMBelShop.CDS_BuscaRapida.Open;
-
-    sEmpTelefone  :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Telefone').AsString);
-    sEmpCcontato  :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Contato').AsString);
-    sEmpEmail     :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Email').AsString);
-    DMBelShop.CDS_BuscaRapida.Close;
+    MySql:=' SELECT l.fone_cliente TELEFONE, NULL CONTATO, l.email_cliente EMAIL'+
+           ' FROM LINXCLIENTESFORNEC l'+
+           ' WHERE l.cod_cliente=(SELECT em.cod_cli_linx'+
+           '                      FROM EMP_CONEXOES em'+
+           '                      WHERE em.cod_linx='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString)+')';
+    DMBelShop.SQLQuery1.Close;
+    DMBelShop.SQLQuery1.SQL.Clear;
+    DMBelShop.SQLQuery1.SQL.Add(MySql);
+    DMBelShop.SQLQuery1.Open;
+    sEmpTelefone  :=Trim(DMBelShop.SQLQuery1.FieldByName('Telefone').AsString);
+    sEmpCcontato  :=Trim(DMBelShop.SQLQuery1.FieldByName('Contato').AsString);
+    sEmpEmail     :=Trim(DMBelShop.SQLQuery1.FieldByName('Email').AsString);
+    DMBelShop.SQLQuery1.Close;
 
     // Dados do Fornecedor ------------------------------------------
     MySql:=' SELECT'+
-           ' CASE'+
-           '   WHEN TRIM(fo.complement_end_cli) <> '''' THEN'+
-           '     fo.endereco_cliente || '', '' || fo.numero_rua_cliente || ''/'' || fo.complement_end_cli'+
-           '   ELSE'+
-           '     fo.endereco_cliente || '','' || fo.numero_rua_cliente'+
-           ' END Endereco,'+
-           ' fo.cidade_cliente cidade, fo.uf_cliente estado, fo.cep_cliente cod_cep,'+
-           ' fo.fone_cliente fone1, NULL fonefax, fo.email_cliente email, NULL contato'+
-
+           ' TRIM(fo.endereco_cliente)||'', ''||TRIM(fo.numero_rua_cliente) ENDERECO,'+
+           ' TRIM(fo.cidade_cliente) CIDADE,'+
+           ' TRIM(fo.uf_cliente) ESTADO,'+
+           ' (substring(fo.cep_cliente from 1 for 5) ||''-''||'+
+           '  substring(fo.cep_cliente from 6 for 3)) COD_CEP,'+
+           ' TRIM(fo.fone_cliente) FONE1,'+
+           ' TRIM(fo.fax_cliente) FONEFAX,'+
+           ' TRIM(fo.email_cliente) EMAIL,'+
+           ' null CONTATO'+
            ' FROM LINXCLIENTESFORNEC fo'+
-           ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
-           ' AND   fo.cod_cliente='+DMBelShop.CDS_AComprarOCsCOD_FORNECEDOR.AsString;
-    DMBelShop.CDS_BuscaRapida.Close;
-    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-    DMBelShop.CDS_BuscaRapida.Open;
-
-    sFornEndereco :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Endereco').AsString);
-    sFornCidade   :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cidade').AsString);
-    sFornEstado   :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Estado').AsString);
-    sFornCodCep   :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Cep').AsString);
-    sFornFone1    :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Fone1').AsString);
-    sFornFoneFax  :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('FoneFax').AsString);
-    sFornEmail    :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('EMail').AsString);
-    sFornContato  :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Contato').AsString);
-    DMBelShop.CDS_BuscaRapida.Close;
+           ' WHERE fo.cod_cliente='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_FORNECEDOR.AsString);
+    DMBelShop.SQLQuery1.Close;
+    DMBelShop.SQLQuery1.SQL.Clear;
+    DMBelShop.SQLQuery1.SQL.Add(MySql);
+    DMBelShop.SQLQuery1.Open;
+    sFornEndereco :=Trim(DMBelShop.SQLQuery1.FieldByName('Endereco').AsString);
+    sFornCidade   :=Trim(DMBelShop.SQLQuery1.FieldByName('Cidade').AsString);
+    sFornEstado   :=Trim(DMBelShop.SQLQuery1.FieldByName('Estado').AsString);
+    sFornCodCep   :=Trim(DMBelShop.SQLQuery1.FieldByName('Cod_Cep').AsString);
+    sFornFone1    :=Trim(DMBelShop.SQLQuery1.FieldByName('Fone1').AsString);
+    sFornFoneFax  :=Trim(DMBelShop.SQLQuery1.FieldByName('FoneFax').AsString);
+    sFornEmail    :=Trim(DMBelShop.SQLQuery1.FieldByName('EMail').AsString);
+    sFornContato  :=Trim(DMBelShop.SQLQuery1.FieldByName('Contato').AsString);
+    DMBelShop.SQLQuery1.Close;
 
     // Imprime Ordem de Compra --------------------------------------
     sgTipoImpressao:='ImpOC';
@@ -3796,14 +4230,186 @@ Begin
     DMRelatorio.frReport1.Dictionary.Variables.Variable['FoneFaxForn']:=#39+sFornFonefax+#39;
     DMRelatorio.frReport1.Dictionary.Variables.Variable['EmailForn']:=#39+sFornEmail+#39;
     DMRelatorio.frReport1.Dictionary.Variables.Variable['ContatoForn']:=#39+sFornContato+#39;
-
     DMRelatorio.frReport1.PrepareReport;
+
+    //odiropss
+//    DMRelatorio.frReport1.ExportTo(DMRelatorio.frBMPExport1,'C:\Projetos\BelShop\@@Enviar\OS_'+DMBelShop.CDS_AComprarOCsNUM_OC_GERADA.AsString+'.bmp');
+//    DMRelatorio.frReport1.ExportTo(DMRelatorio.frJPEGExport1,'C:\Projetos\BelShop\@@Enviar\OS_'+DMBelShop.CDS_AComprarOCsNUM_OC_GERADA.AsString+'.jpg');
+//    DMRelatorio.frReport1.ExportTo(DMRelatorio.frRtfAdvExport1,'C:\Projetos\BelShop\@@Enviar\OS_'+DMBelShop.CDS_AComprarOCsNUM_OC_GERADA.AsString+'.doc');
+//    DMRelatorio.frReport1.ExportTo(DMRelatorio.frRTFExport1,'C:\Projetos\BelShop\@@Enviar\OS_'+DMBelShop.CDS_AComprarOCsNUM_OC_GERADA.AsString+'.etf');
+//    DMRelatorio.frReport1.ExportTo(DMRelatorio.frTIFFExport1,'C:\Projetos\BelShop\@@Enviar\OS_'+DMBelShop.CDS_AComprarOCsNUM_OC_GERADA.AsString+'.tif');
+
     DMRelatorio.frReport1.ShowReport;
 
     Screen.Cursor:=crDefault;
     OdirPanApres.Visible:=False;
     Refresh;
   End; // If Bt_GeraOCImpEditOC.Caption='Imprimir OC' Then
+  // Imprime OC ================================================================
+  //============================================================================
+
+
+// OdirApagar - 27/05/2019
+//  igRecNoOCs:=DMBelShop.CDS_AComprarOCs.RecNo;
+//
+//  Dbg_GeraOCTotalGeral.SetFocus;
+//
+//  If DMBelShop.CDS_AComprarOCs.IsEmpty Then
+//   Exit;
+//
+//   If DMBelShop.CDS_AComprarOCsIND_OC_GERADA.AsString='N' Then
+//   Begin
+//     If msg('Ordem de Compra Ainda Não Gerada !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
+//      Exit;
+//   End;
+//
+//  // Imprime OC ================================================================
+//  If Bt_GeraOCImpEditOC.Caption='Imprimir OC' Then
+//  Begin
+//    Screen.Cursor:=crAppStart;
+//
+//    OdirPanApres.Caption:='AGUARDE !! Montando Relatório...';
+//    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+//    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmOCLinx.Width-OdirPanApres.Width)/2));
+//    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmOCLinx.Height-OdirPanApres.Height)/2))-20;
+//    OdirPanApres.Font.Style:=[fsBold];
+//    OdirPanApres.Parent:=FrmOCLinx;
+//    OdirPanApres.BringToFront();
+//    OdirPanApres.Visible:=True;
+//    Refresh;
+//
+//    // Busca OC -----------------------------------------------------
+//    MySql:=' SELECT oc.des_empresa, oc.num_oc_gerada,'+
+//           ' Case co.complement_emp'+
+//           '   when '''' Then'+
+//           '      co.endereco_emp ||'', ''|| co.num_emp'+
+//           '   Else'+
+//           '      co.endereco_emp ||'', ''|| co.num_emp ||'' - ''|| co.complement_emp'+
+//           ' End Endereco,'+
+//           ' co.bairro_emp des_bairro,'+
+//           ' Cast(co.cidade_emp as varchar(60)) des_cidade,'+
+//           ' co.estado_emp cod_uf,'+
+//           ' cast(co.cep_emp as varchar(9)) cod_cep,'+
+//
+//           ' CAST(('+
+//           ' substring(co.cnpj_emp from 1 for 2) ||''.''||'+
+//           ' substring(co.cnpj_emp from 3 for 3) ||''.''||'+
+//           ' substring(co.cnpj_emp from 6 for 3) ||''/''||'+
+//           ' substring(co.cnpj_emp from 9 for 4) ||''-''||'+
+//           ' substring(co.cnpj_emp from 13 for 2'+
+//           ' )) AS VARCHAR(18)) num_cnpj,'+
+//
+//           ' co.inscricao_emp inscr_estadual,'+
+//           ' case oc.ind_oc_gerada'+
+//           '   When ''N'' Then'+
+//           '      ''ABERTA'''+
+//           '   Else'+
+//           '      ''ABERTA - PENDENTE FORNECEDOR'''+
+//           ' End Situacao,'+
+//           ' Cast(oc.dta_oc_gerada as Date) Dta_Pedido,'+
+//           ' Cast(oc.dta_oc_gerada as Date) Dta_Entrega,'+
+//           ' oc.cod_fornecedor, oc.des_fornecedor,'+
+//           ' oc.cod_item, oc.cod_barras, oc.cod_referencia_forn,'+
+//           ' oc.des_item, oc.uni_compra, oc.uni_venda,'+
+//           ' oc.qtd_acomprar, oc.vlr_uni_compra, oc.per_desconto,'+
+//           ' oc.vlr_tot_compra, oc.obs_oc, oc.cod_comprador, us.des_usuario,'+
+//           ' ''000.000.000.0000'' Enderecamento'+
+//
+//           ' FROM OC_COMPRAR oc'+
+//           '    LEFT JOIN LINXLOJAS    co ON co.empresa=oc.cod_empresa'+
+//           '    LEFT JOIN PS_USUARIOS  us ON us.cod_usuario=oc.cod_comprador'+
+//
+//           ' WHERE oc.num_documento='+QuotedStr(IntToStr(EdtGeraOCBuscaDocto.AsInteger))+
+//           ' AND   Cast(oc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))))+
+//           ' AND   oc.cod_empresa='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString)+
+//           ' AND   oc.cod_fornecedor='+DMBelShop.CDS_AComprarOCsCOD_FORNECEDOR.AsString;
+//
+//           If Trim(DMBelShop.CDS_AComprarOCsNUM_OC_GERADA.AsString)<>'' Then
+//            MySql:=
+//             MySql+' AND   oc.num_oc_gerada='+QuotedStr(DMBelShop.CDS_AComprarOCsNUM_OC_GERADA.AsString)
+//           Else
+//            MySql:=
+//             MySql+' AND   oc.num_oc_gerada IS NULL';
+//    MySql:=
+//     MySql+' ORDER BY oc.des_item';
+//    DMBelShop.IBQ_OrdemCompra.Close;
+//    DMBelShop.IBQ_OrdemCompra.SQL.Clear;
+//    DMBelShop.IBQ_OrdemCompra.SQL.Add(MySql);
+//    DMBelShop.IBQ_OrdemCompra.Open;
+//
+//    // Dados da Filial ----------------------------------------------
+//    MySql:=' SELECT lo.fone_emp telefone, null contato, lo.email_emp email'+
+//           ' FROM LINXLOJAS lo'+
+//           ' WHERE lo.empresa='+DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString;
+//    DMBelShop.CDS_BuscaRapida.Close;
+//    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+//    DMBelShop.CDS_BuscaRapida.Open;
+//
+//    sEmpTelefone  :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Telefone').AsString);
+//    sEmpCcontato  :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Contato').AsString);
+//    sEmpEmail     :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Email').AsString);
+//    DMBelShop.CDS_BuscaRapida.Close;
+//
+//    // Dados do Fornecedor ------------------------------------------
+//    MySql:=' SELECT'+
+//           ' CASE'+
+//           '   WHEN TRIM(fo.complement_end_cli) <> '''' THEN'+
+//           '     fo.endereco_cliente || '', '' || fo.numero_rua_cliente || ''/'' || fo.complement_end_cli'+
+//           '   ELSE'+
+//           '     fo.endereco_cliente || '','' || fo.numero_rua_cliente'+
+//           ' END Endereco,'+
+//           ' fo.cidade_cliente cidade, fo.uf_cliente estado, fo.cep_cliente cod_cep,'+
+//           ' fo.fone_cliente fone1, NULL fonefax, fo.email_cliente email, NULL contato'+
+//
+//           ' FROM LINXCLIENTESFORNEC fo'+
+//           ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
+//           ' AND   fo.cod_cliente='+DMBelShop.CDS_AComprarOCsCOD_FORNECEDOR.AsString;
+//    DMBelShop.CDS_BuscaRapida.Close;
+//    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+//    DMBelShop.CDS_BuscaRapida.Open;
+//
+//    sFornEndereco :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Endereco').AsString);
+//    sFornCidade   :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cidade').AsString);
+//    sFornEstado   :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Estado').AsString);
+//    sFornCodCep   :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Cep').AsString);
+//    sFornFone1    :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Fone1').AsString);
+//    sFornFoneFax  :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('FoneFax').AsString);
+//    sFornEmail    :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('EMail').AsString);
+//    sFornContato  :=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Contato').AsString);
+//    DMBelShop.CDS_BuscaRapida.Close;
+//
+//    // Imprime Ordem de Compra --------------------------------------
+//    sgTipoImpressao:='ImpOC';
+//
+//    // Diretorio dos Relatórios -------------------------------------
+//    {$IFDEF MSWINDOWS}
+//      dir_relat       :=  ExtractFilePath(Application.ExeName)+'Relatorios\';
+//    {$ENDIF}
+//
+//    DMRelatorio.frDBDataSet1.DataSet:=DMBelShop.IBQ_OrdemCompra;
+//    DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'OrdemCompra.frf');
+//
+//    // Atualiza Variaveis -------------------------------------------
+//    DMRelatorio.frReport1.Dictionary.Variables.Variable['Telefone']:=#39+sEmpTelefone+#39;
+//    DMRelatorio.frReport1.Dictionary.Variables.Variable['Contato']:=#39+sEmpCcontato+#39;
+//    DMRelatorio.frReport1.Dictionary.Variables.Variable['EMail']:=#39+sEmpEmail+#39;
+//
+//    DMRelatorio.frReport1.Dictionary.Variables.Variable['EnderecoForn']:=#39+sFornEndereco+#39;
+//    DMRelatorio.frReport1.Dictionary.Variables.Variable['CidadeForn']:=#39+sFornCidade+#39;
+//    DMRelatorio.frReport1.Dictionary.Variables.Variable['EstadoForn']:=#39+sFornEstado+#39;
+//    DMRelatorio.frReport1.Dictionary.Variables.Variable['CepForn']:=#39+sFornCodCep+#39;
+//    DMRelatorio.frReport1.Dictionary.Variables.Variable['FoneForn']:=#39+sFornFone1+#39;
+//    DMRelatorio.frReport1.Dictionary.Variables.Variable['FoneFaxForn']:=#39+sFornFonefax+#39;
+//    DMRelatorio.frReport1.Dictionary.Variables.Variable['EmailForn']:=#39+sFornEmail+#39;
+//    DMRelatorio.frReport1.Dictionary.Variables.Variable['ContatoForn']:=#39+sFornContato+#39;
+//
+//    DMRelatorio.frReport1.PrepareReport;
+//    DMRelatorio.frReport1.ShowReport;
+//
+//    Screen.Cursor:=crDefault;
+//    OdirPanApres.Visible:=False;
+//    Refresh;
+//  End; // If Bt_GeraOCImpEditOC.Caption='Imprimir OC' Then
 end;
 
 procedure TFrmOCLinx.Dbg_GeraOCTotalGeralDblClick(Sender: TObject);
@@ -4072,9 +4678,20 @@ begin
            DMBelShop.CDS_Busca.Close;
          End; // If sgNumPed='0' Then
 
-         CriaPedidoOC;
+         If Not CriaPedidoOC Then
+         Begin
+           Screen.Cursor:=crDefault;
+           FrmBelShop.MontaProgressBar(False, FrmOCLinx);
+           OdirPanApres.Visible:=False;
+           DecimalSeparator:=',';
+           DateSeparator:='/';
+
+           PC_Filtros.TabIndex:=0;
+           EdtFiltroCodForn.SetFocus;
+           Exit;
+         End; // If Not CriaPedidoOC Then
          bCriouPed:=True;
-       End;
+       End; // If bCriaPedidoOC Then
 
       FrmBelShop.MontaProgressBar(False, FrmOCLinx);
     End; // if DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
@@ -4829,6 +5446,782 @@ end;
 procedure TFrmOCLinx.PopM_OCRomaneioDesmarcarRomaneiosDesmarcarClick(Sender: TObject);
 begin
   FrmBelShop.PopM_OCRomaneioDesmarcarRomaneiosDesmarcarClick(Self);
+end;
+
+procedure TFrmOCLinx.Dbg_GeraOCGridColumnMoved(Sender: TObject; FromIndex,
+  ToIndex: Integer);
+begin
+  If FromIndex<5 Then
+   Dbg_GeraOCGrid.Columns[ToIndex].Index := FromIndex // impede de mover
+  Else If ToIndex<5 Then
+   Dbg_GeraOCGrid.Columns[ToIndex].Index := FromIndex; // impede de mover
+
+end;
+
+procedure TFrmOCLinx.Dbg_GeraOCTotalGeralKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmOCLinx.Bt_GeraOCEditaVoltarClick(Sender: TObject);
+begin
+  DMBelShop.IBQ_AComprarEdita.Close;
+
+  EdtGeraOCEditaDocto.Clear;
+  DtEdt_GeraOCEditaDataDocto.Clear;
+
+  Ts_OCBuscaProdutos.TabVisible:=True;
+  Ts_OCGeraOrdemCompra.TabVisible:=True;
+  Ts_OCGeraEditaOrdemCompra.TabVisible:=False;
+
+  PC_OrdemCompra.TabIndex:=1;
+  PC_OrdemCompraChange(Sender);
+
+  If EdtGeraOCBuscaDocto.AsInteger=0 Then
+    EdtGeraOCBuscaDocto.SetFocus
+  Else
+   PC_GeraOCApresentacaoChange(Self);
+
+  If PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid Then
+   Dbg_GeraOCGrid.SetFocus;
+
+  If PC_GeraOCApresentacao.ActivePage=Ts_GeraOCOrdensCompra Then
+   Dbg_GeraOCTotalGeral.SetFocus;
+
+  If igRecNoOCs<>0 Then
+  Begin
+    DMBelShop.CDS_AComprarOCs.RecNo:=igRecNoOCs;
+  End;
+
+  igRecNoOCs:=0;
+
+
+end;
+
+procedure TFrmOCLinx.Bt_GeraOCPreVisualizaOCClick(Sender: TObject);
+Var
+  MySql, dir_relat: String;
+begin
+  Dbg_GeraOCEditaGrid.SetFocus;
+  
+  Screen.Cursor:=crAppStart;
+
+  OdirPanApres.Caption:='AGUARDE !! Montando Pré-Visualização...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Busca OC -----------------------------------------------------
+  If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
+   MySql:=' SELECT oc.des_empresa, oc.num_oc_gerada,';
+
+  If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização TR' Then
+   MySql:=' SELECT ''TR-''||oc.des_empresa des_empresa, oc.num_oc_gerada,';
+
+  MySql:=
+   MySql+' Case co.compl_endereco'+
+         '   when '''' Then'+
+         '      co.des_endereco ||'', ''|| co.num_endereco'+
+         '   Else'+
+         '      co.des_endereco ||'', ''|| co.num_endereco ||'' - ''|| co.compl_endereco'+
+         ' End Endereco,'+
+         ' co.des_bairro, co.des_cidade, co.cod_uf,'+
+
+         ' cast((substring(co.cod_cep from 1 for 5) ||''-''|| substring(co.cod_cep from 6 for 3)) as varchar(9)) cod_cep,'+
+
+         ' CAST(('+
+         ' substring(co.num_cnpj from 1 for 2) ||''.''||'+
+         ' substring(co.num_cnpj from 3 for 3) ||''.''||'+
+         ' substring(co.num_cnpj from 6 for 3) ||''/''||'+
+         ' substring(co.num_cnpj from 9 for 4) ||''-''||'+
+         ' substring(co.num_cnpj from 13 for 2'+
+         ' )) AS VARCHAR(18)) num_cnpj,'+
+
+         ' co.inscr_estadual,'+
+         ' case oc.ind_oc_gerada'+
+         '   When ''N'' Then'+
+         '      ''ABERTA'''+
+         '   Else'+
+         '      ''ABERTA - PENDENTE FORNECEDOR'''+
+         ' End Situacao,'+
+         ' Cast(oc.dta_oc_gerada as Date) Dta_Pedido,'+
+         ' Cast(oc.dta_oc_gerada as Date) Dta_Entrega,'+
+         ' oc.cod_fornecedor, oc.des_fornecedor,'+
+         ' oc.cod_item, oc.cod_barras, oc.cod_referencia_forn,'+
+         ' oc.des_item, oc.uni_compra, oc.uni_venda,'+
+         ' oc.qtd_acomprar, oc.vlr_uni_compra, oc.per_desconto,'+
+         ' oc.vlr_tot_compra,'+
+         ' lpad(''=====>> ORDEM DE COMPRA PARA SIMPLES CONFERÊNCIA <<====='',2000,'''') obs_oc,'+
+         ' oc.cod_comprador, us.des_usuario,'+
+         ' ''000.000.000.0000'' Enderecamento'+
+
+         ' FROM OC_COMPRAR oc'+
+         '    LEFT JOIN EMP_CONEXOES co ON oc.cod_empresa=co.cod_filial'+
+         '    LEFT JOIN PS_USUARIOS  us ON oc.cod_comprador=us.cod_usuario'+
+
+         ' where oc.num_documento='+VarToStr(EdtGeraOCEditaDocto.Value)+
+         ' And   oc.cod_empresa='+QuotedStr(DMBelShop.IBQ_AComprarEditaCOD_EMPRESA.AsString)+
+         ' And   oc.ind_oc_gerada='+QuotedStr('N')+
+         ' And   oc.cod_fornecedor='+QuotedStr(DMBelShop.IBQ_AComprarEditaCOD_FORNECEDOR.AsString);
+
+         If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
+         Begin
+           MySql:=
+            MySql+' And   oc.qtd_transf=0';
+
+          If Rb_GeraOCEditaComQtd.Checked Then
+           MySql:=
+            MySql+' And oc.qtd_acomprar<>0';
+
+          If Rb_GeraOCEditaSemQtd.Checked Then
+           MySql:=
+            MySql+' And oc.qtd_acomprar=0';
+         End; // If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
+
+         If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização TR' Then
+         Begin
+           MySql:=
+            MySql+' And   oc.qtd_transf>0';
+         End; // If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização TR' Then
+
+         MySql:=
+          MySql+' AND   EXISTS (SELECT 1'+
+                '               FROM OC_COMPRAR_DOCS d'+
+                '               WHERE d.num_docto=oc.num_documento'+
+                '               AND   UPPER(TRIM(d.origem))='+QuotedStr('LINX')+')'+
+                ' ORDER BY oc.des_item';
+  DMBelShop.IBQ_OrdemCompra.Close;
+  DMBelShop.IBQ_OrdemCompra.SQL.Clear;
+  DMBelShop.IBQ_OrdemCompra.SQL.Add(MySql);
+  DMBelShop.IBQ_OrdemCompra.Open;
+
+  // Dados da Filial ----------------------------------------------
+  MySql:=' SELECT l.fone_cliente TELEFONE, NULL CONTATO, l.email_cliente EMAIL'+
+         ' FROM LINXCLIENTESFORNEC l'+
+         ' WHERE l.cod_cliente=(SELECT em.cod_cli_linx'+
+         '                      FROM EMP_CONEXOES em'+
+         '                      WHERE em.cod_linx='+QuotedStr(DMBelShop.IBQ_AComprarEditaCOD_EMPRESA.AsString)+')';
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
+  sEmpTelefone  :=Trim(DMBelShop.SQLQuery1.FieldByName('Telefone').AsString);
+  sEmpCcontato  :=Trim(DMBelShop.SQLQuery1.FieldByName('Contato').AsString);
+  sEmpEmail     :=Trim(DMBelShop.SQLQuery1.FieldByName('Email').AsString);
+  DMBelShop.SQLQuery1.Close;
+
+  // Dados do Fornecedor ------------------------------------------
+  MySql:=' SELECT'+
+         ' TRIM(fo.endereco_cliente)||'', ''||TRIM(fo.numero_rua_cliente) ENDERECO,'+
+         ' TRIM(fo.cidade_cliente) CIDADE,'+
+         ' TRIM(fo.uf_cliente) ESTADO,'+
+         ' (substring(fo.cep_cliente from 1 for 5) ||''-''||'+
+         '  substring(fo.cep_cliente from 6 for 3)) COD_CEP,'+
+         ' TRIM(fo.fone_cliente) FONE1,'+
+         ' TRIM(fo.fax_cliente) FONEFAX,'+
+         ' TRIM(fo.email_cliente) EMAIL,'+
+         ' null CONTATO'+
+         ' FROM LINXCLIENTESFORNEC fo'+
+         ' WHERE fo.cod_cliente='+QuotedStr(DMBelShop.IBQ_AComprarEditaCOD_FORNECEDOR.AsString);
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
+  sFornEndereco :=Trim(DMBelShop.SQLQuery1.FieldByName('Endereco').AsString);
+  sFornCidade   :=Trim(DMBelShop.SQLQuery1.FieldByName('Cidade').AsString);
+  sFornEstado   :=Trim(DMBelShop.SQLQuery1.FieldByName('Estado').AsString);
+  sFornCodCep   :=Trim(DMBelShop.SQLQuery1.FieldByName('Cod_Cep').AsString);
+  sFornFone1    :=Trim(DMBelShop.SQLQuery1.FieldByName('Fone1').AsString);
+  sFornFoneFax  :=Trim(DMBelShop.SQLQuery1.FieldByName('FoneFax').AsString);
+  sFornEmail    :=Trim(DMBelShop.SQLQuery1.FieldByName('EMail').AsString);
+  sFornContato  :=Trim(DMBelShop.SQLQuery1.FieldByName('Contato').AsString);
+  DMBelShop.SQLQuery1.Close;
+
+  // Imprime Ordem de Compra --------------------------------------
+  sgTipoImpressao:='ImpOC';
+
+  // Diretorio dos Relatórios -------------------------------------
+  {$IFDEF MSWINDOWS}
+    dir_relat       :=  ExtractFilePath(Application.ExeName)+'Relatorios\';
+  {$ENDIF}
+
+  DMRelatorio.frDBDataSet1.DataSet:=DMBelShop.IBQ_OrdemCompra;
+  DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'OrdemCompra.frf');
+
+  // Atualiza Variaveis -------------------------------------------
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['Telefone']:=#39+sEmpTelefone+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['Contato']:=#39+sEmpCcontato+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['EMail']:=#39+sEmpEmail+#39;
+
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['EnderecoForn']:=#39+sFornEndereco+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['CidadeForn']:=#39+sFornCidade+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['EstadoForn']:=#39+sFornEstado+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['CepForn']:=#39+sFornCodCep+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['FoneForn']:=#39+sFornFone1+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['FoneFaxForn']:=#39+sFornFonefax+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['EmailForn']:=#39+sFornEmail+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['ContatoForn']:=#39+sFornContato+#39;
+
+  DMRelatorio.frReport1.PrepareReport;
+  DMRelatorio.frReport1.ShowReport;
+
+  Screen.Cursor:=crDefault;
+  OdirPanApres.Visible:=False;
+  Refresh;
+end;
+
+procedure TFrmOCLinx.Dbg_GeraOCEditaProdutosEnter(Sender: TObject);
+begin
+  // Desabilita Mouse No Grid ===================================================
+  Application.OnMessage:=DesabilitaScrollMouse;
+
+end;
+
+procedure TFrmOCLinx.Dbg_GeraOCEditaProdutosExit(Sender: TObject);
+begin
+  // Habilita Mouse No Grid ===================================================
+  Application.OnMessage:=HabilitaScrollMouse;
+
+end;
+
+procedure TFrmOCLinx.Dbg_GeraOCEditaProdutosKeyDown(Sender: TObject;var Key: Word; Shift: TShiftState);
+Var
+  s: String;
+  bk: TBookmarkStr;
+  i: Integer;
+
+  MySql: String;
+  sCodEmp, sNumSeq: String;
+  sValorNew, sValorOld: String;
+  bLinx: Boolean;
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+  If key=Vk_Return Then
+  Begin
+    DMBelShop.IBQ_AComprarEdita.Next;
+    Dbg_GeraOCEditaGrid.SetFocus;
+    Dbg_GeraOCEditaGrid.SelectedIndex:=2;
+
+    Exit;
+  End;
+
+  // Localiza Produto ==========================================================
+  If Key=VK_F4 Then
+  Begin
+    s:='';
+    If InputQuery('Localizar Produto','',s) then
+    Begin
+      if Trim(s)<>'' then
+      Begin
+        Try
+          StrToInt(s);
+          DMBelShop.IBQ_AComprarEdita.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
+        Except
+          s:=AnsiUpperCase(s);
+          DMBelShop.IBQ_AComprarEdita.Locate('Des_Item',s,[loPartialKey]);
+        End;
+      End; // if Trim(s)<>'' then
+    End; // If InputQuery('Localizar Produto','',s) then
+  End; // If Key=VK_F4 Then
+
+  If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
+  Begin
+    //==========================================================================
+    // Altera Preco Unitário ===================================================
+    //==========================================================================
+    If (key=Vk_F2) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      For i:=0 to Dbg_GeraOCEditaProdutos.SelectedRows.Count-1 do
+      Begin
+        // Posiciona no ClientDataSet
+        DMBelShop.IBQ_AComprarEdita.GotoBookmark(Pointer(Dbg_GeraOCEditaProdutos.SelectedRows.Items[i]));
+
+        // Solicita Novo Preço Unitario
+        If i=0 Then
+        Begin
+          // Verifica se é Linx Puro ===================================================
+          MySql:=' SELECT d.origem'+
+                 ' FROM OC_COMPRAR_DOCS d'+
+                 ' WHERE d.num_docto='+VarToStr(EdtGeraOCBuscaDocto.Value)+
+                 ' AND   d.dta_docto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))));
+          DMBelShop.CDS_BuscaRapida.Close;
+          DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+          DMBelShop.CDS_BuscaRapida.Open;
+          bLinx:=(AnsiUpperCase(DMBelShop.CDS_BuscaRapida.FieldByName('origem').AsString)='LINX');
+          DMBelShop.CDS_BuscaRapida.Close;
+
+          sCodEmp:=DMBelShop.IBQ_AComprarEdita.FieldByName('COD_EMPRESA').AsString;
+          sNumSeq:=DMBelShop.IBQ_AComprarEdita.FieldByName('NUM_SEQ').AsString;
+
+          sValorNew:=DMBelShop.IBQ_AComprarEdita.FieldByName('VLR_UNI_COMPRA').AsString;
+          sValorOld:=DMBelShop.IBQ_AComprarEdita.FieldByName('VLR_UNI_COMPRA').AsString;
+          If InputQuery('Novo Preço Unitário do Produto...','',sValorNew) then
+          Begin
+            Try
+              StrToCurr(sValorNew);
+              If StrToCurr(sValorNew)=0 Then
+              Begin
+                sValorNew:='';
+                Exit;
+              End;
+            Except
+              msg('Valor Inválido !!','A');
+              sValorNew:='';
+              Exit;
+            End;
+          End; // If InputQuery('Informe a Quantidade a COMPRAR...','',sQtdComprar) then
+        End; // If i=0 Then
+
+        If (Trim(sValorNew)<>'') And (DMBelShop.IBQ_AComprarEdita.FieldByName('IND_OC_GERADA').AsString<>'S')Then
+        Begin
+          DecimalSeparator:='.';
+          MySql:=' UpDate OC_COMPRAR oc'+
+                 ' Set oc.Vlr_Uni_Compra='+QuotedStr(f_Troca(',','.',sValorNew))+
+                 ', oc.VLR_DESCONTOS=((oc.QTD_ACOMPRAR*oc.VLR_UNI_COMPRA)*(oc.PER_DESCONTO/100))'+
+                 ', oc.VLR_BRUTO=(oc.QTD_ACOMPRAR*oc.VLR_UNI_COMPRA)-oc.VLR_DESCONTOS'+
+                 ', oc.VLR_BASE_ICMS=oc.VLR_BRUTO'+
+                 ', oc.VLR_ICMS=Cast(((oc.VLR_BASE_ICMS*oc.PER_ICMS)/100) as Numeric(12,2))'+
+                 ', oc.VLR_IPI=Cast(((oc.VLR_BRUTO*oc.PER_IPI)/100) as Numeric(12,2))'+
+                 ', oc.VLR_BASE_ST=oc.VLR_BRUTO+(Cast(((oc.VLR_BRUTO*oc.PER_MARGEM_ST)/100) as Numeric(12,2)))'+
+                 ', oc.VLR_ST=(Cast(((oc.VLR_BASE_ST*oc.PER_ST)/100) as Numeric(12,2))-oc.VLR_ICMS)'+
+                 ', oc.VLR_TOT_COMPRA=oc.VLR_BRUTO+oc.VLR_ST+oc.VLR_IPI'+
+
+                 ', oc.BLOB_TEXTO=oc.BLOB_TEXTO||ascii_char(13)||'+
+                     QuotedStr('Aberturta do Aplicativo: '+sgDataHoraAplicativo)+
+                               '|| ascii_char(13) ||'+
+                               QuotedStr('Alterado em: '+DateTimeToStr(
+                               DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor))+
+                               ' por '+Des_Usuario+
+                               ' - Preço Anterior: '+sValorOld+
+                               ' - Preço Atual: '+sValorNew)+
+
+                 ' Where oc.Ind_OC_Gerada=''N'''+
+                 ' And   oc.Num_Documento='+QuotedStr(VarToStr(EdtGeraOCBuscaDocto.Value))+
+                 ' And   Cast(oc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))))+
+                 ' And   oc.Cod_Item='+QuotedStr(DMBelShop.IBQ_AComprarEdita.FieldByName('COD_ITEM').AsString);
+          DMBelShop.IBQ_Executa.Close;
+          DMBelShop.IBQ_Executa.SQL.Clear;
+          DMBelShop.IBQ_Executa.SQL.Add(MySql);
+          DMBelShop.IBQ_Executa.ExecSQL;
+
+          DMBelShop.IBT_BelShop.CommitRetaining;
+
+          DecimalSeparator:=',';
+        End; // If Trim(sValorNew)<> '' Then
+      End; // For i:=0 to Dbg_GeraOCEditaProdutos.SelectedRows.Count-1 do
+      Dbg_GeraOCEditaProdutos.SelectedRows.Clear;
+
+      // Reabre IBQ_Comprar ====================================================
+      DMBelShop.IBQ_AComprarEdita.DisableControls;
+      DMBelShop.IBQ_AComprarEdita.Close;
+      DMBelShop.IBQ_AComprarEdita.Open;
+      DMBelShop.IBQ_AComprarEdita.Locate('Num_Seq', sNumSeq,[]);
+      DMBelShop.IBQ_AComprarEdita.EnableControls;
+
+      // Busca Totais das OCs ==================================================
+      TotaisOCLinx(VarToStr(EdtGeraOCBuscaDocto.Value))
+    End; // Altera Preco Unitário - If (key=Vk_F2) and (StB_GeraOCEdit.Visible) Then
+    // Altera Preco Unitário ===================================================
+    //==========================================================================
+
+    //==========================================================================
+    // Altera Desconto Individual ==============================================
+    //==========================================================================
+    If (key=Vk_F3) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      FrmBelShop.AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DI', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+    End;
+    // Altera Desconto Individual ==============================================
+    //==========================================================================
+
+    //==========================================================================
+    // Altera Desconto no Mix ==================================================
+    //==========================================================================
+    If (key=Vk_F5) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      FrmBelShop.AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DM', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+    End;
+    // Altera Desconto no Mix ==================================================
+    //==========================================================================
+
+    //==========================================================================
+    // (F6) Marca Todos Produtos Para Alteração ================================
+    //==========================================================================
+    If (Key=VK_F6) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      With Dbg_GeraOCEditaProdutos, Datasource.Dataset do
+      Begin
+        bk := Bookmark;
+        DisableControls;
+        Try
+          SelectedRows.Clear;
+          First;
+          While not EOF do
+          Begin
+            SelectedRows.CurrentRowSelected := True;
+            Next;
+          End;
+          Bookmark := bk;
+        Finally
+          EnableControls;
+        End;
+      End; // With Dbg_GeraOCEditaProdutos, Datasource.Dataset do
+      // OdirApagar - 21/11/2018
+      // VerTransito(DMBelShop.IBQ_AComprarEdita, DMBelShop.DS_AComprarEdita, False);
+    End; // Transito - If (Key=VK_F6) and (StB_GeraOCEdit.Visible) Then
+    // (F6) Marca Todos Produtos Para Alteração ================================
+    //==========================================================================
+
+    //==========================================================================
+    // (F7) DesMarca Todos Produtos Para Alteração =============================
+    //==========================================================================
+    If (Key=VK_F7) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      Dbg_GeraOCEditaProdutos.SelectedRows.Clear;
+    End; // If (Key=VK_F7) and (StB_GeraOCEdit.Visible) Then
+    // (F7) DesMarca Todos Produtos Para Alteração =============================
+    //==========================================================================
+
+  End; // If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
+end;
+
+procedure TFrmOCLinx.Dbg_GeraOCEditaGridDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+begin
+  If (Column.FieldName='QTD_SALDO') Or (Column.FieldName='IND_QTD_ACIMA')Then
+  Begin
+    If DMBelShop.IBQ_AComprarEditaIND_QTD_ACIMA.AsCurrency>0 Then
+     Begin
+       Dbg_GeraOCEditaGrid.Canvas.Font.Color:=clRed;
+       Dbg_GeraOCEditaGrid.Canvas.Font.Style:=[fsBold];
+     End
+    Else
+     Begin
+       Dbg_GeraOCEditaGrid.Canvas.Font.Color:=clWindowText;
+       Dbg_GeraOCEditaGrid.Canvas.Font.Style:=[];
+     End; // If DMBelShop.IBQ_AComprarEditaIND_QTD_ACIMA.AsCurrency>0 Then
+  End; // If (Column.FieldName='QTD_SALDO') Or (Column.FieldName='IND_QTD_ACIMA')Then
+
+  If (Column.FieldName='QTD_ACOMPRAR') Then
+  Begin
+    If DMBelShop.IBQ_AComprarEditaQTD_ACOMPRAR.AsCurrency=0 Then
+     Dbg_GeraOCEditaGrid.Canvas.Font.Style:=[]
+    Else
+     Dbg_GeraOCEditaGrid.Canvas.Font.Style:=[fsBold];
+  End; // If (Column.FieldName='QTD_ACOMPRAR') Then
+
+  If (Column.FieldName='VLR_UNI_COMPRA') Then
+  Begin
+    If DMBelShop.IBQ_AComprarEditaVLR_UNI_COMPRA.AsCurrency=0 Then
+     Dbg_GeraOCEditaGrid.Canvas.Font.Style:=[]
+    Else
+     Dbg_GeraOCEditaGrid.Canvas.Font.Style:=[fsBold];
+  End; // If (Column.FieldName='VLR_UNI_COMPRA') Then
+
+  if not (gdSelected in State) Then
+  Begin
+    if DMBelShop.IBQ_AComprarEditaCOD_EMPRESA.AsString='99' Then
+      Dbg_GeraOCEditaGrid.Canvas.Brush.Color:=$0080FFFF; //$00DDFFDD;
+
+    If DMBelShop.IBQ_AComprarEditaIND_USAR.AsString='NAO'  Then
+     Dbg_GeraOCEditaGrid.Canvas.Brush.Color:=$00C6FFC6;
+
+    if DMBelShop.IBQ_AComprarEditaIND_OC_GERADA.AsString='S' Then
+      Dbg_GeraOCEditaGrid.Canvas.Brush.Color:=clSkyBlue;
+
+  End;
+
+  Dbg_GeraOCEditaGrid.Canvas.FillRect(Rect);
+  Dbg_GeraOCEditaGrid.DefaultDrawDataCell(Rect,Column.Field,state);
+end;
+
+procedure TFrmOCLinx.Dbg_GeraOCEditaGridKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+Var
+  s: String;
+  bk: TBookmarkStr;
+  i: Integer;
+
+  MySql: String;
+  sCodEmp, sNumSeq: String;
+  sValorNew, sValorOld: String;
+  bLinx: Boolean;
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+  If key=Vk_Return Then
+  Begin
+    DMBelShop.IBQ_AComprarEdita.Next;
+    Dbg_GeraOCEditaGrid.SetFocus;
+    Dbg_GeraOCEditaGrid.SelectedIndex:=2;
+
+    Exit;
+  End;
+
+  // Localiza Produto ==========================================================
+  If Key=VK_F4 Then
+  Begin
+    s:='';
+    If InputQuery('Localizar Produto','',s) then
+    Begin
+      if Trim(s)<>'' then
+      Begin
+        Try
+          StrToInt(s);
+          DMBelShop.IBQ_AComprarEdita.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
+        Except
+          s:=AnsiUpperCase(s);
+          DMBelShop.IBQ_AComprarEdita.Locate('Des_Item',s,[loPartialKey]);
+        End;
+      End; // if Trim(s)<>'' then
+    End; // If InputQuery('Localizar Produto','',s) then
+  End; // If Key=VK_F4 Then
+
+  If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
+  Begin
+    //==========================================================================
+    // Altera Preco Unitário ===================================================
+    //==========================================================================
+    If (key=Vk_F2) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      For i:=0 to Dbg_GeraOCEditaProdutos.SelectedRows.Count-1 do
+      Begin
+        // Posiciona no ClientDataSet
+        DMBelShop.IBQ_AComprarEdita.GotoBookmark(Pointer(Dbg_GeraOCEditaProdutos.SelectedRows.Items[i]));
+
+        // Solicita Novo Preço Unitario
+        If i=0 Then
+        Begin
+          // Verifica se é Linx Puro ===================================================
+          MySql:=' SELECT d.origem'+
+                 ' FROM OC_COMPRAR_DOCS d'+
+                 ' WHERE d.num_docto='+VarToStr(EdtGeraOCBuscaDocto.Value)+
+                 ' AND   d.dta_docto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))));
+          DMBelShop.CDS_BuscaRapida.Close;
+          DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+          DMBelShop.CDS_BuscaRapida.Open;
+          bLinx:=(AnsiUpperCase(DMBelShop.CDS_BuscaRapida.FieldByName('origem').AsString)='LINX');
+          DMBelShop.CDS_BuscaRapida.Close;
+
+          sCodEmp:=DMBelShop.IBQ_AComprarEdita.FieldByName('COD_EMPRESA').AsString;
+          sNumSeq:=DMBelShop.IBQ_AComprarEdita.FieldByName('NUM_SEQ').AsString;
+
+          sValorNew:=DMBelShop.IBQ_AComprarEdita.FieldByName('VLR_UNI_COMPRA').AsString;
+          sValorOld:=DMBelShop.IBQ_AComprarEdita.FieldByName('VLR_UNI_COMPRA').AsString;
+          If InputQuery('Novo Preço Unitário do Produto...','',sValorNew) then
+          Begin
+            Try
+              StrToCurr(sValorNew);
+              If StrToCurr(sValorNew)=0 Then
+              Begin
+                sValorNew:='';
+                Exit;
+              End;
+            Except
+              msg('Valor Inválido !!','A');
+              sValorNew:='';
+              Exit;
+            End;
+          End; // If InputQuery('Informe a Quantidade a COMPRAR...','',sQtdComprar) then
+        End; // If i=0 Then
+
+        If (Trim(sValorNew)<>'') And (DMBelShop.IBQ_AComprarEdita.FieldByName('IND_OC_GERADA').AsString<>'S')Then
+        Begin
+          DecimalSeparator:='.';
+          MySql:=' UpDate OC_COMPRAR oc'+
+                 ' Set oc.Vlr_Uni_Compra='+QuotedStr(f_Troca(',','.',sValorNew))+
+                 ', oc.VLR_DESCONTOS=((oc.QTD_ACOMPRAR*oc.VLR_UNI_COMPRA)*(oc.PER_DESCONTO/100))'+
+                 ', oc.VLR_BRUTO=(oc.QTD_ACOMPRAR*oc.VLR_UNI_COMPRA)-oc.VLR_DESCONTOS'+
+                 ', oc.VLR_BASE_ICMS=oc.VLR_BRUTO'+
+                 ', oc.VLR_ICMS=Cast(((oc.VLR_BASE_ICMS*oc.PER_ICMS)/100) as Numeric(12,2))'+
+                 ', oc.VLR_IPI=Cast(((oc.VLR_BRUTO*oc.PER_IPI)/100) as Numeric(12,2))'+
+                 ', oc.VLR_BASE_ST=oc.VLR_BRUTO+(Cast(((oc.VLR_BRUTO*oc.PER_MARGEM_ST)/100) as Numeric(12,2)))'+
+                 ', oc.VLR_ST=(Cast(((oc.VLR_BASE_ST*oc.PER_ST)/100) as Numeric(12,2))-oc.VLR_ICMS)'+
+                 ', oc.VLR_TOT_COMPRA=oc.VLR_BRUTO+oc.VLR_ST+oc.VLR_IPI'+
+
+                 ', oc.BLOB_TEXTO=oc.BLOB_TEXTO||ascii_char(13)||'+
+                     QuotedStr('Aberturta do Aplicativo: '+sgDataHoraAplicativo)+
+                               '|| ascii_char(13) ||'+
+                               QuotedStr('Alterado em: '+DateTimeToStr(
+                               DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor))+
+                               ' por '+Des_Usuario+
+                               ' - Preço Anterior: '+sValorOld+
+                               ' - Preço Atual: '+sValorNew)+
+
+                 ' Where oc.Ind_OC_Gerada=''N'''+
+                 ' And   oc.Num_Documento='+QuotedStr(VarToStr(EdtGeraOCBuscaDocto.Value))+
+                 ' And   Cast(oc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))))+
+                 ' And   oc.Cod_Item='+QuotedStr(DMBelShop.IBQ_AComprarEdita.FieldByName('COD_ITEM').AsString);
+          DMBelShop.IBQ_Executa.Close;
+          DMBelShop.IBQ_Executa.SQL.Clear;
+          DMBelShop.IBQ_Executa.SQL.Add(MySql);
+          DMBelShop.IBQ_Executa.ExecSQL;
+
+          DMBelShop.IBT_BelShop.CommitRetaining;
+
+          DecimalSeparator:=',';
+        End; // If Trim(sValorNew)<> '' Then
+      End; // For i:=0 to Dbg_GeraOCEditaProdutos.SelectedRows.Count-1 do
+      Dbg_GeraOCEditaProdutos.SelectedRows.Clear;
+
+      // Reabre IBQ_Comprar ====================================================
+      DMBelShop.IBQ_AComprarEdita.DisableControls;
+      DMBelShop.IBQ_AComprarEdita.Close;
+      DMBelShop.IBQ_AComprarEdita.Open;
+      DMBelShop.IBQ_AComprarEdita.Locate('Num_Seq', sNumSeq,[]);
+      DMBelShop.IBQ_AComprarEdita.EnableControls;
+
+      // Busca Totais das OCs ==================================================
+      FrmOCLinx.TotaisOCLinx(VarToStr(EdtGeraOCBuscaDocto.Value))
+    End; // Altera Preco Unitário - If (key=Vk_F2) and (StB_GeraOCEdit.Visible) Then
+    // Altera Preco Unitário ===================================================
+    //==========================================================================
+
+    //==========================================================================
+    // Altera Desconto Individual ==============================================
+    //==========================================================================
+    If (key=Vk_F3) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      FrmBelShop.AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DI', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+    End;
+    // Altera Desconto Individual ==============================================
+    //==========================================================================
+
+    //==========================================================================
+    // Altera Desconto no Mix ==================================================
+    //==========================================================================
+    If (key=Vk_F5) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      FrmBelShop.AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DM', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+    End;
+    // Altera Desconto no Mix ==================================================
+    //==========================================================================
+
+    //==========================================================================
+    // (F6) Marca Todos Produtos Para Alteração ================================
+    //==========================================================================
+    If (Key=VK_F6) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      With Dbg_GeraOCEditaProdutos, Datasource.Dataset do
+      Begin
+        bk := Bookmark;
+        DisableControls;
+        Try
+          SelectedRows.Clear;
+          First;
+          While not EOF do
+          Begin
+            SelectedRows.CurrentRowSelected := True;
+            Next;
+          End;
+          Bookmark := bk;
+        Finally
+          EnableControls;
+        End;
+      End; // With Dbg_GeraOCEditaProdutos, Datasource.Dataset do
+      // OdirApagar - 21/11/2018
+      // VerTransito(DMBelShop.IBQ_AComprarEdita, DMBelShop.DS_AComprarEdita, False);
+    End; // Transito - If (Key=VK_F6) and (StB_GeraOCEdit.Visible) Then
+    // (F6) Marca Todos Produtos Para Alteração ================================
+    //==========================================================================
+
+    //==========================================================================
+    // (F7) DesMarca Todos Produtos Para Alteração =============================
+    //==========================================================================
+    If (Key=VK_F7) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      Dbg_GeraOCEditaProdutos.SelectedRows.Clear;
+    End; // If (Key=VK_F7) and (StB_GeraOCEdit.Visible) Then
+    // (F7) DesMarca Todos Produtos Para Alteração =============================
+    //==========================================================================
+  End; // If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
+
+end;
+
+procedure TFrmOCLinx.Rb_GeraOCEditaTodosItensClick(Sender: TObject);
+Var
+  MySql: String;
+  sTotal_Valor, sTotal_Itens, sTotal_Qtd: String;
+  s: String;
+begin
+
+  If Not Rb_GeraOCEditaTodosItens.Visible Then
+   Exit;
+
+  AcertaRb_Style(Rb_GeraOCEditaTodosItens);
+  AcertaRb_Style(Rb_GeraOCEditaComQtd);
+  AcertaRb_Style(Rb_GeraOCEditaSemQtd);
+
+  // Busca Pedido -------------------------------------------------
+  MySql:='Select *'+
+         ' From OC_COMPRAR oc'+
+         ' Where oc.ind_oc_gerada=''N'''+
+         ' And   oc.qtd_transf=0'+
+         ' And   oc.num_documento='+QuotedStr(IntToStr(EdtGeraOCBuscaDocto.AsInteger))+
+         ' And   Cast(oc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))))+
+         ' And   oc.cod_empresa='+QuotedStr(sgCodEmp)+
+         ' And   oc.cod_fornecedor='+QuotedStr(DMBelShop.IBQ_AComprarEditaCOD_FORNECEDOR.AsString);
+
+         If Rb_GeraOCEditaComQtd.Checked Then
+          MySql:=MySql+' And oc.qtd_acomprar<>0';
+
+         If Rb_GeraOCEditaSemQtd.Checked Then
+          MySql:=MySql+' And oc.qtd_acomprar=0';
+
+         MySql:=MySql+' Order By oc.Des_Item';
+  DMBelShop.IBQ_AComprarEdita.Close;
+  DMBelShop.IBQ_AComprarEdita.SQL.Clear;
+  DMBelShop.IBQ_AComprarEdita.SQL.Add(MySql);
+  DMBelShop.IBQ_AComprarEdita.Open;
+
+  If DMBelShop.IBQ_AComprarEdita.IsEmpty Then
+  Begin
+    msg('Documento Número: '+VarToStr(EdtGeraOCBuscaDocto.Value)+cr+cr+'Sem Produto a Listar !!','A');
+
+    DMBelShop.IBQ_AComprarEdita.Close;
+
+    Exit;
+  End; // If DMBelShop.IBQ_AComprarEdita.IsEmpty Then
+
+  // Busca Totais do Pedido ===================================================
+  If Rb_GeraOCEditaComQtd.Checked Then s:='C';
+  If Rb_GeraOCEditaSemQtd.Checked Then s:='S';
+  If Rb_GeraOCEditaTodosItens.Checked Then s:='T';
+
+  TotaisPedOC(sTotal_Valor, sTotal_Itens, sTotal_Qtd,
+              DMBelShop.IBQ_AComprarEditaNUM_DOCUMENTO.AsString,
+              DMBelShop.IBQ_AComprarEditaCOD_EMPRESA.AsString, s, '', DMBelShop.IBQ_AComprarEditaCOD_FORNECEDOR.AsString);
+
+  EdtGeraOCEditaTotalGeral.Value  :=StrToCurr(sTotal_Valor);
+  EdtGeraOCEditaTotalItens.Value  :=StrToCurr(sTotal_Itens);
+  EdtGeraOCEditaTotallQtd.Value   :=StrToCurr(sTotal_Qtd);
+
+  Dbg_GeraOCEditaGrid.SelectedIndex:=2;
+  Dbg_GeraOCEditaGrid.SetFocus;
+
+end;
+
+procedure TFrmOCLinx.Rb_GeraOCEditaTodosItensKeyUp(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  Rb_GeraOCEditaTodosItensClick(Self);
+
 end;
 
 end.

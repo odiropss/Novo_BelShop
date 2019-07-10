@@ -17,7 +17,7 @@ uses
   dxSkinsdxStatusBarPainter, dxStatusBar, Grids, DBGrids, DBGridJul,
   StdCtrls, JvExStdCtrls, JvCheckBox, JvExControls, JvXPCore, JvXPButtons,
   ExtCtrls,
-  Clipbrd; // PrintScreen
+  Clipbrd, AppEvnts; // PrintScreen
 //  Último: Clipbrd;
 
 type
@@ -35,6 +35,7 @@ type
     Panel3: TPanel;
     Pan_SelectEmpProcECommerce: TPanel;
     Ckb_SelectEmpProcECommerce: TJvCheckBox;
+    ApplicationEvents1: TApplicationEvents;
     procedure FormShow(Sender: TObject);
     procedure Dbg_SelectEmpProcDblClick(Sender: TObject);
     procedure Bt_SelectEmpProcFecharClick(Sender: TObject);
@@ -48,12 +49,19 @@ type
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure Ckb_SelectEmpProcECommerceClick(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure Dbg_SelectEmpProcTitleClick(Column: TColumn);
+    procedure Dbg_SelectEmpProcKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure ApplicationEvents1Message(var Msg: tagMSG;
+      var Handled: Boolean);
+    procedure Dbg_SelectEmpProcEnter(Sender: TObject);
   private
     { Private declarations }
   public
     bUsarMatriz: Boolean; // Se Seleciona Matriz como Ancora
     iNrEmpProc: Integer;
-    sEmpProc: String; // Codigos das Empresas a Processar (01,02,06,11) ou (Todas as Lojas)
+    sEmpProc: String; // Codigos das Lojas a Processar (01,02,06,11) ou (Todas as Lojas)
 
     { Public declarations }
   end;
@@ -65,7 +73,7 @@ var
 
 implementation
 
-uses UDMBelShop, DK_Procs1, UFrmBelShop;
+uses UDMBelShop, DK_Procs1, UFrmBelShop, DB;
 
 {$R *.dfm}
 
@@ -73,11 +81,10 @@ procedure TFrmSelectEmpProcessamento.FormShow(Sender: TObject);
 begin
   Screen.Cursor:=crSQLWait;
 
-
   If DMBelShop.CDS_EmpProcessa.Eof Then
   Begin
     Screen.Cursor:=crDefault;
-    msg('Problema no SISTEMA !!'+cr+cr+'SEM Empresa a Listar !!','A');
+    msg('Problema no SISTEMA !!'+cr+cr+'SEM Loja a Listar !!','A');
 
     Bt_SelectEmpProcFecharClick(Self);
   End;
@@ -98,7 +105,7 @@ begin
 
   If (bUsarMatriz) and (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString='M') Then
   Begin
-    msg('Empresa BelShop_CD é Ancora de Calculos !!'+cr+cr+'Impossível Alterar !!','A');
+    msg('Loja BelShop_CD é Ancora de Calculos !!'+cr+cr+'Impossível Alterar !!','A');
     Dbg_SelectEmpProc.SetFocus;
     Exit;
   End;
@@ -122,7 +129,7 @@ procedure TFrmSelectEmpProcessamento.Bt_SelectEmpProcOKClick(Sender: TObject);
 Var
   b: Boolean;
 begin
-  // Verifica se Existe Empresa a Processar ====================================
+  // Verifica se Existe Loja a Processar =======================================
   iNrEmpProc:=0;
   sEmpProc:='';
   b:=True;
@@ -154,7 +161,7 @@ begin
   If b Then
    sEmpProc:='Todas';
 
-  // Verifica se Existe Empresa a Processar ====================================
+  // Verifica se Existe Loja a Processar =======================================
   If iNrEmpProc=0 Then
   Begin
    Bt_SelectEmpProcFecharClick(Self);
@@ -226,12 +233,6 @@ begin
          DMBelShop.CDS_EmpProcessaPROC.AsString:='Não';
          DMBelShop.CDS_EmpProcessa.Post;
        End; // If DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M' Then
-     End
-    Else if sgCodLojaUnica=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString Then
-     Begin
-       DMBelShop.CDS_EmpProcessa.Edit;
-       DMBelShop.CDS_EmpProcessaPROC.AsString:='SIM';
-       DMBelShop.CDS_EmpProcessa.Post;
      End
     Else  // If bUsarMatriz Then
      Begin
@@ -306,8 +307,9 @@ begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
-  Ckb_SelectEmpProcECommerce.Checked:=False;
+  Application.OnMessage := ApplicationEvents1Message;
 
+  Ckb_SelectEmpProcECommerce.Checked:=False;
 
   If bgSelectSoLinx Then
    Dbg_SelectEmpProc.Columns[1].Visible:=False;
@@ -424,32 +426,6 @@ begin
   DMBelShop.SDS_EmpProcessa.CommandText:=MySql;
   DMBelShop.CDS_EmpProcessa.Open;
 
-  If sgCodLojaUnica<>'' Then
-  Begin
-    Application.ShowMainForm:=False;
-
-    DMBelShop.CDS_EmpProcessa.First;
-    DMBelShop.CDS_EmpProcessa.DisableControls;
-    While Not DMBelShop.CDS_EmpProcessa.Eof do
-    Begin
-      DMBelShop.CDS_EmpProcessa.Edit;
-
-      DMBelShop.CDS_EmpProcessaPROC.AsString:='NAO';
-      If DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString=sgCodLojaUnica Then
-       DMBelShop.CDS_EmpProcessaPROC.AsString:='SIM';
-
-      DMBelShop.CDS_EmpProcessa.Post;
-
-      DMBelShop.CDS_EmpProcessa.Next;
-    End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
-    DMBelShop.CDS_EmpProcessa.EnableControls;
-
-    bOK:=True;
-    DMBelShop.CDS_EmpProcessa.First;
-
-    // Fecha o Form no OnCreate ================================================
-    PostMessage(self.handle, WM_CLOSE, 0, 0);
-  End; // If sgCodLojaUnica<>'' Then
 end;
 
 procedure TFrmSelectEmpProcessamento.Ckb_SelectEmpProcECommerceClick(Sender: TObject);
@@ -482,6 +458,98 @@ begin
     DMBelShop.CDS_EmpProcessa.EnableControls;
     DMBelShop.CDS_EmpProcessa.First;
   End; // If Ckb_SelectEmpProcECommerce.Checked Then
+end;
+
+procedure TFrmSelectEmpProcessamento.FormResize(Sender: TObject);
+begin
+  FrmSelectEmpProcessamento.AutoSize:=False;
+  FrmSelectEmpProcessamento.Top:=0;
+  FrmSelectEmpProcessamento.Height  :=FrmBelShop.Height;
+  FrmSelectEmpProcessamento.AutoSize:=True;
+
+end;
+
+procedure TFrmSelectEmpProcessamento.Dbg_SelectEmpProcTitleClick(Column: TColumn);
+Var
+  sColunaName, sPesquisa: String;
+  i: Integer;
+  b: Boolean;
+begin
+  sColunaName:=DMBelShop.CDS_EmpProcessa.FieldByName(Column.FieldName).FieldName;
+
+  If Pos(sColunaName, 'COD_FILIAL COD_LINX RAZAO_SOCIAL NUM_CNPJ')<>0 Then
+  Begin
+    If Not DMBelShop.CDS_EmpProcessa.IsEmpty Then
+    Begin
+      i:=DMBelShop.CDS_EmpProcessa.RecNo;
+      sPesquisa:='';
+      b:=True;
+      While b do
+      Begin
+        If InputQuery('Localizar '+sColunaName+':','',sPesquisa) then
+         Begin
+           Try
+             If Not DMBelShop.CDS_EmpProcessa.Locate(Column.FieldName, sPesquisa,[]) Then
+             Begin
+               If Not LocalizaRegistro(DMBelShop.CDS_EmpProcessa, Column.FieldName, sPesquisa) Then
+               Begin
+                 DMBelShop.CDS_EmpProcessa.RecNo:=i;
+                 msg('Não Localizado !!','A');
+                 Exit;
+               End;
+             End; // If Not DMBelShop.CDS_EmpProcessa.Locate(Column.FieldName, sPesquisa,[]) Then
+             Break;
+           Except
+             msg('Informação Inválida !!','A');
+             Break;
+           End;
+         End
+        Else // If InputQuery('Localizar '+sColunaName+':','',sPesquisa) then
+         Begin
+           Break;
+         End; // If InputQuery('Localizar '+sColunaName+':','',sPesquisa) then
+      End; // While b do
+    End; // If Not DMBelShop.CDS_EmpProcessa.IsEmpty Then
+  End; // If Pos(sColunaName, 'COD_FILIAL COD_LINX RAZAO_SOCIAL NUM_CNPJ')<>0 Then
+end;
+
+procedure TFrmSelectEmpProcessamento.Dbg_SelectEmpProcKeyDown(
+  Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmSelectEmpProcessamento.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
+var
+  Sentido: SmallInt;
+begin
+  // (ERRO) ACERTA ROLAGEM DO MOUSE (SCROLL)
+  If Msg.message = WM_MOUSEWHEEL then // primeiramente verificamos se é o evento a ser tratado...
+  Begin
+    If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
+      Msg.message := WM_KEYDOWN;
+      Msg.lParam := 0;
+      Sentido := HiWord(Msg.wParam);
+      if Sentido > 0 then
+       Msg.wParam := VK_UP
+      else
+       Msg.wParam := VK_DOWN;
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+  End; // if Msg.message = WM_MOUSEWHEEL then
+
+end;
+
+procedure TFrmSelectEmpProcessamento.Dbg_SelectEmpProcEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_SelectEmpProcEnter; // Nome do Evento do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
 end;
 
 end.

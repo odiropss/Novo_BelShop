@@ -160,4 +160,11 @@ object DMAtualizaSeteHoras: TDMAtualizaSeteHoras
     Left = 365
     Top = 232
   end
+  object SQLQuery1: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 312
+    Top = 16
+  end
 end

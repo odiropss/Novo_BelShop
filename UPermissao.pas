@@ -83,10 +83,6 @@ type
     Image3: TImage;
     Lb_CapsLock: TLabel;
     Timer1: TTimer;
-    Gb_SuaLoja: TcxGroupBox;
-    Cklb_Lojas: TRxCheckListBox;
-    Panel2: TPanel;
-    Bt_SelecionaLoja: TJvXPButton;
     Image4: TImage;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -100,13 +96,6 @@ type
       Shift: TShiftState);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-
-    // Odir
-    // Odir
-
-    // Codigo da Loja Se Unica =================================================
-    procedure Bt_SelecionaLojaClick(Sender: TObject);
-    procedure Cklb_LojasClickCheck(Sender: TObject);
 
     procedure FormActivate(Sender: TObject);
 
@@ -164,33 +153,6 @@ begin
   EdtLogin.Clear;
   EdtSenha.Clear;
 
-  // Nome do Servidor e Codigo da Loja Se Unica ================================
-  If sgCodLojaUnica='999999' Then
-  Begin
-    MySql:=' SELECT ''Bel_''||e.cod_filial Loja, e.razao_social, e.num_cnpj'+
-           ' FROM emp_conexoes e'+
-           ' ORDER BY 1';
-    DMBelShop.CDS_BuscaRapida.Close;
-    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-    DMBelShop.CDS_BuscaRapida.Open;
-
-    While not DMBelShop.CDS_BuscaRapida.Eof do
-    Begin
-      Cklb_Lojas.Items.Add(DMBelShop.CDS_BuscaRapida.FieldByName('Loja').AsString+' - '+
-                           DMBelShop.CDS_BuscaRapida.FieldByName('Razao_Social').AsString);
-
-      DMBelShop.CDS_BuscaRapida.Next;
-    End; // While not DMBelShop.CDS_BuscaRapida.Eof do
-    DMBelShop.CDS_BuscaRapida.Close;
-
-    FrmLogin.ClientHeight:=400;
-    FrmLogin.ClientWidth:=411;
-
-    Gb_SuaLoja.Align:=alClient;
-    Gb_SuaLoja.Visible:=True;
-    Cklb_Lojas.SetFocus;
-    Exit;
-  End;
   EdtLogin.SetFocus;
 end;
 
@@ -216,11 +178,21 @@ Var
   MySql: String;
 begin
 {
-  if (Shift = [ssCtrl, ssAlt])   and (Key=VK_F9) then PEDRO - Logistica
-  if (Shift = [ssAlt, ssShift])  and (Key=VK_F12) then ZILANDRA - COMPRAS
-  if (Shift = [ssCtrl, ssShift]) and (Key=VK_F5)   then MANUELA
-  if (Shift = [ssCtrl, ssShift]) and (Key=VK_F11)  then RENATO
-  if (Shift = [ssCtrl, ssShift]) and (Key=VK_F9)   then ODIR
+== PEDRO - Logistica
+  If (Shift = [ssCtrl, ssAlt])   And (Key=VK_F9)  Then
+
+== MANUELLA
+  If (Shift = [ssCtrl, ssShift]) And (Key=VK_F5)  Then
+
+== ZILANDRA
+  If (Shift = [ssAlt, ssShift])  And (Key=VK_F12) Then
+
+== RENATO
+  If (Shift = [ssCtrl, ssShift]) and (Key=VK_F11)  Then ->> Vale até 10/04/2049
+  If (Shift = [ssAlt, ssShift]) and (Key=82)  Then // 82 = R
+
+== ODIR
+  If (Shift = [ssCtrl, ssShift]) and (Key=VK_F9)  Then
 }
   //============================================================================
   // PEDRO - LOGISTICA =========================================================
@@ -249,10 +221,8 @@ begin
     // Conecta Matriz ==========================================================
     If Not FrmBelShop.ConectaMatriz Then
     Begin
-      If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados MATRIZ'+cr+cr+'Não CONECTADO !!','A')
-      Else
-       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      msg('Impossível Continuar...'+cr+'Banco de Dados MATRIZ'+cr+cr+'Não CONECTADO !!','A');
+      ShowMessage('Odir@2');
       Application.Terminate;
       Exit;
     End;
@@ -262,10 +232,8 @@ begin
     Refresh;
     If Not FrmBelShop.ConectaMPMS Then
     Begin
-      If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
-      Else
-       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A');
+      ShowMessage('Odir@3');
       Application.Terminate;
       Exit;
     End;
@@ -316,10 +284,8 @@ begin
     // Conecta Matriz ==========================================================
     If Not FrmBelShop.ConectaMatriz Then
     Begin
-      If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados MATRIZ'+cr+cr+'Não CONECTADO !!','A')
-      Else
-       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      msg('Impossível Continuar...'+cr+'Banco de Dados MATRIZ'+cr+cr+'Não CONECTADO !!','A');
+      ShowMessage('Odir@4');
       Application.Terminate;
       Exit;
     End;
@@ -329,10 +295,8 @@ begin
     Refresh;
     If Not FrmBelShop.ConectaMPMS Then
     Begin
-      If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
-      Else
-       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A');
+      ShowMessage('Odir@5');
       Application.Terminate;
       Exit;
     End;
@@ -383,10 +347,8 @@ begin
     // Conecta Matriz ==========================================================
     If Not FrmBelShop.ConectaMatriz Then
     Begin
-      If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados MATRIZ'+cr+cr+'Não CONECTADO !!','A')
-      Else
-       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      msg('Impossível Continuar...'+cr+'Banco de Dados MATRIZ'+cr+cr+'Não CONECTADO !!','A');
+      ShowMessage('Odir@6');
       Application.Terminate;
       Exit;
     End;
@@ -396,10 +358,8 @@ begin
     Refresh;
     If Not FrmBelShop.ConectaMPMS Then
     Begin
-      If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD (Administração)'+cr+cr+'Não CONECTADO !!','A')
-      Else
-       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD (Administração)'+cr+cr+'Não CONECTADO !!','A');
+      ShowMessage('Odir@7');
       Application.Terminate;
       Exit;
     End;
@@ -426,7 +386,16 @@ begin
   //============================================================================
   // RENATO ====================================================================
   //============================================================================
-  if (Shift = [ssCtrl, ssShift]) and (Key=VK_F11) then
+  bgSiga:=False;
+  If ((Shift = [ssCtrl, ssShift]) And (Key=VK_F11)) And (Date<StrToDate('11/04/2019')) Then
+  Begin
+    bgSiga:=True;
+  End;
+
+  If (Shift = [ssAlt, ssShift]) And (Key=82)  Then // 82 = R
+   bgSiga:=True;
+
+  If bgSiga Then
   Begin
     bgSiga:=True;
 
@@ -450,10 +419,8 @@ begin
     // Conecta Matriz ==========================================================
     If Not FrmBelShop.ConectaMatriz Then
     Begin
-      If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados MATRIZ'+cr+cr+'Não CONECTADO !!','A')
-      Else
-       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      msg('Impossível Continuar...'+cr+'Banco de Dados MATRIZ'+cr+cr+'Não CONECTADO !!','A');
+      ShowMessage('Odir@8');
       Application.Terminate;
       Exit;
     End;
@@ -463,10 +430,8 @@ begin
     Refresh;
     If Not FrmBelShop.ConectaMPMS Then
     Begin
-      If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
-      Else
-       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A');
+      ShowMessage('Odir@9');
       Application.Terminate;
       Exit;
     End;
@@ -516,10 +481,8 @@ begin
     // Conecta Matriz ==========================================================
     If Not FrmBelShop.ConectaMatriz Then
     Begin
-      If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
-      Else
-       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A');
+      ShowMessage('Odir@10');
       Application.Terminate;
       Exit;
     End;
@@ -529,10 +492,8 @@ begin
     Refresh;
     If Not FrmBelShop.ConectaMPMS Then
     Begin
-      If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
-      Else
-       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A');
+      ShowMessage('Odir@11');
       Application.Terminate;
       Exit;
     End;
@@ -562,6 +523,13 @@ Var
   s, MySql: String;
   b, bTestaConexao: Boolean;
 begin
+  EdtLogin.SetFocus;
+  If Trim(EdtLogin.Text)='' Then
+  Begin
+    msg('Favor Informar o Login !!','A');
+    Exit;
+  End;
+
   PainelApresLogin.Caption:='AGUARDE !! Inicializando Usuário ...';
   PainelApresLogin.Width:=Length(PainelApresLogin.Caption)*10;
   PainelApresLogin.Left:=ParteInteiro(FloatToStr((FrmLogin.Width-PainelApresLogin.Width)/2));
@@ -583,6 +551,7 @@ begin
   // Verifica se Existe Usuário ================================================
   If Trim(DMBelShop.IBQ_Busca.FieldByName('Cod_Usuario').AsString)='' Then
   Begin
+    DMBelShop.IBQ_Busca.Close;
     msg('Usuário Inexistente !!','A');
 
     Inc(Num_Vezes);
@@ -600,6 +569,7 @@ begin
   s:=DecriptaSTR(DMBelShop.IBQ_Busca.FieldByName('Des_Senha').AsString,40,30,20);
   If s<>Trim(EdtSenha.Text) Then
   Begin
+    DMBelShop.IBQ_Busca.Close;
     msg('Senha Inválida !!','A');
 
     Inc(Num_Vezes);
@@ -616,6 +586,7 @@ begin
   // Verifica se Ativo =========================================================
   If Trim(DMBelShop.IBQ_Busca.FieldByName('Ind_Ativo').AsString)='NAO'Then
   Begin
+    DMBelShop.IBQ_Busca.Close;
     msg('Usuário INATIVO !!','A');
 
     Inc(Num_Vezes);
@@ -641,39 +612,28 @@ begin
   End; // If Not bgSiga Then
 
   // Apresenta o Processamento =================================================
-  If sgCodLojaUnica='' Then
-   PainelApresLogin.Caption:='AGUARDE !! Conectando MATRIZ ...'
-  Else
-   PainelApresLogin.Caption:='AGUARDE !! Conectando SIDICOM ...';
+  PainelApresLogin.Caption:='AGUARDE !! Conectando MATRIZ ...';
 
   Refresh;
 
   // Conecta MPMS ============================================================
   If Not FrmBelShop.ConectaMatriz Then
   Begin
-    If sgCodLojaUnica='' Then
-     msg('Impossível Continuar...'+cr+'Banco de Dados MATRIZ (Adiminitração)'+cr+cr+'Não CONECTADO !!','A')
-    Else
-     msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
-
+    msg('Impossível Continuar...'+cr+'Banco de Dados MATRIZ (Adiminitração)'+cr+cr+'Não CONECTADO !!','A');
+    ShowMessage('Odir@12');
     Application.Terminate;
     Exit;
   End;
 
   // Conecta MPMS ============================================================
   // Apresenta o Processamento =================================================
-  If sgCodLojaUnica='' Then
-   PainelApresLogin.Caption:='AGUARDE !! Conectando BelShop CD...'
-  Else
-   PainelApresLogin.Caption:='AGUARDE !! Conectando SIDICOM ...';
+  PainelApresLogin.Caption:='AGUARDE !! Conectando BelShop CD...';
 
   Refresh;
   If Not FrmBelShop.ConectaMPMS Then
   Begin
-    If sgCodLojaUnica='' Then
-     msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
-    Else
-     msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+    msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A');
+    ShowMessage('Odir@13');
     Application.Terminate;
     Exit;
   End;
@@ -800,58 +760,6 @@ Var
   MySql, sOrigem, sDestino: String;
 begin
 
-//opss - 06/10/2014 - INICIO
-  // Acerta Loja Unica Como Matriz =============================================
-  If Trim(sgCodLojaUnica)<>'' Then
-  Begin
-    // Verificva se Transação esta Ativa
-    If DMBelShop.SQLC.InTransaction Then
-     DMBelShop.SQLC.Rollback(TD);
-
-    // Monta Transacao =========================================================
-    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-    TD.IsolationLevel:=xilREADCOMMITTED;
-    DMBelShop.SQLC.StartTransaction(TD);
-    Try
-      Screen.Cursor:=crAppStart;
-      DateSeparator:='.';
-      DecimalSeparator:='.';
-
-      MySql:=' UPDATE emp_conexoes ec'+
-             ' SET ec.tip_emp=''F'''+
-             ' WHERE ec.tip_emp=''M''';
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-      MySql:=' UPDATE emp_conexoes ec'+
-             ' SET ec.tip_emp=''M'''+
-             ' where ec.cod_filial='+QuotedStr(sgCodLojaUnica);
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-      // Atualiza Transacao =======================================
-      DMBelShop.SQLC.Commit(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-      Screen.Cursor:=crDefault;
-
-    Except
-      on e : Exception do
-      Begin
-        // Abandona Transacao =====================================
-        DMBelShop.SQLC.Rollback(TD);
-
-        DateSeparator:='/';
-        DecimalSeparator:=',';
-        Screen.Cursor:=crDefault;
-
-        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-        Application.Terminate;
-        Exit;
-      End; // on e : Exception do
-    End; // Try
-  End; // If Trim(sgCodLojaUnica)<>'' Then
-//opss - 06/10/2014 - FIM
-
   MySql:=' SELECT p.FTP_Usar, p.computer_master, p.computer_server,'+
          ' p.IP_Server, p.IP_Internet_Server,'+
          ' p.FTP_User, p.FTP_Password'+
@@ -871,176 +779,7 @@ begin
   sgFTPSenha        :=AnsiUpperCase(DMBelShop.CDS_BuscaRapida.FieldByName('FTP_Password').AsString);
   sgPastaAreaFTP    :='C:\Projetos\BelShop\AreaFTP\';
 
-  //ODIROPSS - INICIO - Comentar para Passar por Usuário Diferente de Odir no Computador do Odir
-//  If (Login<>'ODIR') And (sgCodLojaUnica='') Then
-//  Begin
-//    If (Trim(sgParamAplicativo)='') and ((AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer)) Then
-//    Begin
-//      ShowMessage('Sistema Não Autorizada para Este Computador !!'+cr+cr+'Ligue para o ODIR...');
-//
-//      Application.Terminate;
-//      Exit;
-//    End; // If (Trim(sgParamAplicativo)='') and ((AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer)) Then
-//
-//    If (AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer) Then
-//    Begin
-//      sOrigem:=Copy(DateTimeToStr(FileDateToDateTime(
-//                    FileAge(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+
-//                    ExtractFileName(Application.ExeName)))),1,19);
-//
-//      sDestino:=Copy(DateTimeToStr(FileDateToDateTime(FileAge(sgParamAplicativo))),1,19);
-//
-//      If sDestino<>sOrigem Then
-//      Begin
-//        If MessageDlg('Versão do Sistema Diferente da Atual !!'+cr+cr+
-//                      'Existe uma Nova Versão !'+cr+cr+
-//                      '- Para usar a Nova  Versão Feche Todos os Gerenciador BelShop'+cr+
-//                      '  Abertos em seu Computador e Entre Novamente !!'+cr+cr+
-//                      '- Deseja Continuar na Versão que estas Usando ??', mtConfirmation, [mbYes, mbAbort], 0)=mrAbort Then
-//        Begin
-//          Application.Terminate;
-//          Exit;
-//        End;
-//      End;
-//    End; // If (AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer) Then
-//  End; // If Login<>'ODIR' Then
-//ODIROPSS - FIM - Comentar para Passar por Usuário Diferente de Odir no Computador do Odir
-
   DMBelShop.CDS_BuscaRapida.Close;
-end;
-
-procedure TFrmLogin.Bt_SelecionaLojaClick(Sender: TObject);
-Var
-  tsArquivo: TStringList;
-  iPos, i, ii: Integer;
-  MySql: String;
-begin
-
-  bgSiga:=False;
-
-  // Apresenta Lojas Para Seleção de Loja Unica ================================
-  for i:=0 to Cklb_Lojas.Items.Count - 1 do
-  Begin
-   If Cklb_Lojas.Checked[i] Then
-   Begin
-     If Application.MessageBox(PChar('A Loja de Trabalho Selecionada esta CORRETA ??'+cr+cr+Cklb_Lojas.Items[i]), 'ATENÇÃO !!', 292) = IdNo Then
-     Begin
-       Exit;
-     End;
-
-     bgSiga:=True;
-     iPos:=pos('-',Cklb_Lojas.Items[i]);
-     sgCodLojaUnica:=Trim(copy(Cklb_Lojas.Items[i],5,(iPos-1)-5));
-
-     tsArquivo:= TStringList.Create;
-     Try
-       { Carrega o conteúdo do arquivo texto para a   memória }
-       tsArquivo.LoadFromFile(IncludeTrailingPathDelimiter(sPath_Local)+'Servidor_Adm.ini');
-
-       { Realiza um loop em toda a lista }
-       For ii:=0 to tsArquivo.Count-1 do
-       Begin
-         If ii=1 Then
-         Begin
-           tsArquivo[ii]:=sgCodLojaUnica;
-           tsArquivo.SaveToFile(IncludeTrailingPathDelimiter(sPath_Local)+'Servidor_Adm.ini');
-           Break;
-         End;
-       End; // For ii := 0 to tsArquivo.Count - 1 do
-     Finally // Try
-       { Libera a instancia da lista da memória }
-       FreeAndNil(tsArquivo);
-     End; // Try
-     tsArquivo.Free;
-
-     Break;
-   End; // If Cklb_Lojas.Checked[i] Then
-  End; // for i:=0 to Cklb_Lojas.Items.Count - 1 do
-
-  If Not bgSiga Then
-  Begin
-    msg('Favor Seleciona a Loja'+cr+cr+'de Trabalho...','A');
-    Cklb_Lojas.SetFocus;
-    Exit;
-  End;
-
-  If sgCodLojaUnica<>'' Then
-   FrmLogin.Caption:='Gerenciador Belshop - Bel_'+sgCodLojaUnica;
-
-  // Atualiza EMP_CONEXOES =====================================================
-  // Verificva se Transação esta Ativa
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-  Try
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    MySql:=' UPDATE emp_conexoes ec'+
-           ' SET ec.tip_emp='+QuotedStr('F')+
-           ' WHERE ec.tip_emp='+QuotedStr('M');
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    MySql:=' UPDATE emp_conexoes ec'+
-           ' SET ec.tip_emp='+QuotedStr('M')+
-           ', ec.endereco_ip_externo=ec.endereco_ip'+
-           ', ec.endereco_ip='+QuotedStr(sgNomeServidor)+
-           ' WHERE ec.cod_filial='+QuotedStr(sgCodLojaUnica);
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    MySql:=' DELETE FROM PARAMETROS_LOJAS p'+
-           ' WHERE NOT ((p.cod_loja IS NULL) OR (p.cod_loja='+QuotedStr(sgCodLojaUnica)+'))';
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    // Atualiza Transacao =======================================
-    DMBelShop.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-    Screen.Cursor:=crDefault;
-
-  Except
-    on e : Exception do
-    Begin
-      // Abandona Transacao =====================================
-      DMBelShop.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      Application.Terminate;
-      Exit;
-    End; // on e : Exception do
-  End; // Try
-
-  FrmLogin.ClientHeight:=241;
-  FrmLogin.ClientWidth:=411;
-  Gb_SuaLoja.Visible:=False;
-
-  msg(' O Sistema Será Encerrado !!'+cr+cr+'Entre Novamente para'+cr+'Atualização de Parâmetros...','A');
-  Application.Terminate;
-  Exit;
-
-end;
-
-procedure TFrmLogin.Cklb_LojasClickCheck(Sender: TObject);
-Var
-  iIndex, i: Integer;
-begin
-  iIndex:=Cklb_Lojas.ItemIndex;
-
-  for i:=0 to Cklb_Lojas.Items.Count - 1 do
-   Cklb_Lojas.Checked[i]:=False;
-
-  Cklb_Lojas.Items[iIndex];
-  Cklb_Lojas.Checked[iIndex]:=True;
 end;
 
 procedure TFrmLogin.FormActivate(Sender: TObject);

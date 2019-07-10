@@ -1,3 +1,13 @@
+{
+ - Tamanho Padrão do Form:
+          Width  = 565
+          Height = 388
+    - Automaticos os Doia a Baixo;      
+    ClientHeight = 350
+    ClientWidth  = 549
+
+}
+
 //  // ========== EFETUA A CONEXÃO ===============================================
 //  FrmPesquisa:=TFrmPesquisa.Create(Self);
 //
@@ -74,9 +84,15 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, JvExControls, JvXPCore, JvXPButtons, Grids, DBGrids, StdCtrls,
-  Clipbrd,
-  Qt, ExtCtrls;
+  Clipbrd, StrUtils, Math,
+  DB, // ==> Qt, Trocado
+  ExtCtrls, AppEvnts;
 
+        {
+
+   // SHOW HINT EM FORMA DE BALÃO
+
+}
 type
   TFrmPesquisa = class(TForm)
     Panel1: TPanel;
@@ -87,12 +103,11 @@ type
     EdtCodigo: TEdit;
     Bt_PesquisaOK: TJvXPButton;
     Bt_PesquisaRetorna: TJvXPButton;
+    ApplicationEvents1: TApplicationEvents;
     procedure EdtDescricaoChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure Dbg_PesquisaTitleClick(Column: TColumn);
-    procedure Dbg_PesquisaKeyUp(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure Dbg_PesquisaDblClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -104,17 +119,16 @@ type
 
     // Odir ====================================================================
 
-    // Dbg_Pesquisa para Pesquisa de Documentos de OC ==============================
+    // Acerta Celulas em Dbg_Pesquisa ==========================================
     Procedure Dbg_PesquisaPesquisaDoctosOC;
+    // Odir ====================================================================
+
     procedure Dbg_PesquisaKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-
-    // Odir ====================================================================
+    procedure ApplicationEvents1Message(var Msg: tagMSG;
+      var Handled: Boolean);
   private
     { Private declarations }
-    // Rolagem no Grid com Mouse
-    procedure MouseAppEventsMessage(var Msg: TMsg; var Handled: Boolean);
-
   public
     { Public declarations }
     Campo_Pesquisa: String;
@@ -139,67 +153,52 @@ uses DK_Procs1, UDMBelShopPedidos;
 
 {$R *.dfm}
 
-// Dbg_Pesquisa para Pesquisa de Documentos de OC ==============================
+// Acerta Celulas em Dbg_Pesquisa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmPesquisa.Dbg_PesquisaPesquisaDoctosOC;
 Begin
   FrmPesquisa.AutoSize:=False;
-  FrmPesquisa.Width:=700;
+  FrmPesquisa.Width:=790;
   FrmPesquisa.AutoSize:=True;
 
   Dbg_Pesquisa.Columns[0].Alignment:=taRightJustify;
   Dbg_Pesquisa.Columns[0].Title.Alignment:=taRightJustify;
   Dbg_Pesquisa.Columns[0].Title.Caption:='Nº Docto';
-  Dbg_Pesquisa.Columns[0].Width:=70;
+  Dbg_Pesquisa.Columns[0].Width:=66;
   Dbg_Pesquisa.Columns[0].Color:=clYellow;
   Dbg_Pesquisa.Columns[0].Font.Style:=[fsBold];
 
-  Dbg_Pesquisa.Columns[1].Alignment:=taLeftJustify;
-  Dbg_Pesquisa.Columns[1].Title.Alignment:=taLeftJustify;
-  Dbg_Pesquisa.Columns[1].Title.Caption:='Comprador';
-  Dbg_Pesquisa.Columns[1].Width:=100;
+  Dbg_Pesquisa.Columns[1].Alignment:=taCenter;
+  Dbg_Pesquisa.Columns[1].Title.Alignment:=taCenter;
+  Dbg_Pesquisa.Columns[1].Title.Caption:='Data Docto';
+  Dbg_Pesquisa.Columns[1].Width:=74;
 
   Dbg_Pesquisa.Columns[2].Alignment:=taLeftJustify;
   Dbg_Pesquisa.Columns[2].Title.Alignment:=taLeftJustify;
-  Dbg_Pesquisa.Columns[2].Title.Caption:='Origem do Docto';
-  Dbg_Pesquisa.Columns[2].Width:=300;
+  Dbg_Pesquisa.Columns[2].Title.Caption:='Nome Fornecedor';
+  Dbg_Pesquisa.Columns[2].Width:=310;
   Dbg_Pesquisa.Columns[2].Color:=clYellow;
   Dbg_Pesquisa.Columns[2].Font.Style:=[fsBold];
 
-  Dbg_Pesquisa.Columns[3].Alignment:=taCenter;
-  Dbg_Pesquisa.Columns[3].Title.Alignment:=taCenter;
-  Dbg_Pesquisa.Columns[3].Title.Caption:='Data Docto';
-  Dbg_Pesquisa.Columns[3].Width:=80;
+  Dbg_Pesquisa.Columns[3].Alignment:=taRightJustify;
+  Dbg_Pesquisa.Columns[3].Title.Alignment:=taRightJustify;
+  Dbg_Pesquisa.Columns[3].Title.Caption:='Cód Forn';
+  Dbg_Pesquisa.Columns[3].Width:=60;
 
-  Dbg_Pesquisa.Columns[4].Alignment:=taRightJustify;
-  Dbg_Pesquisa.Columns[4].Title.Alignment:=taRightJustify;
-  Dbg_Pesquisa.Columns[4].Title.Caption:='Cód Comprador';
-  Dbg_Pesquisa.Columns[4].Width:=100;
-End;
+  Dbg_Pesquisa.Columns[4].Alignment:=taLeftJustify;
+  Dbg_Pesquisa.Columns[4].Title.Alignment:=taLeftJustify;
+  Dbg_Pesquisa.Columns[4].Title.Caption:='Comprador';
+  Dbg_Pesquisa.Columns[4].Width:=150;
 
-// Rolagem no Grid com Mouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-procedure TFrmPesquisa.MouseAppEventsMessage(var Msg: TMsg; var Handled: Boolean);
-var
-  Sentido: SmallInt;
-begin
- // primeiramente verificamos se é o evento a ser tratado...
- if Msg.message = WM_MOUSEWHEEL then
- Begin
-   if ActiveControl is TDBGrid then   // <=== AQUI você testa se classe é TDBGRID
-   begin
-     Msg.message := WM_KEYDOWN;
-     Msg.lParam := 0;
-     Sentido := HiWord(Msg.wParam);
-     if Sentido > 0 then
-      Msg.wParam := VK_UP
-     else
-      Msg.wParam := VK_DOWN;
-   end; // if ActiveControl is TDBGrid then
- End; // if Msg.message = WM_MOUSEWHEEL then
-end; // // Rolagem no Grid com Mouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+  Dbg_Pesquisa.Columns[5].Alignment:=taCenter;
+  Dbg_Pesquisa.Columns[5].Title.Alignment:=taCenter;
+  Dbg_Pesquisa.Columns[5].Title.Caption:='Situação';
+  Dbg_Pesquisa.Columns[5].Width:=70;
+
+End; // Acerta Celulas em Dbg_Pesquisa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmPesquisa.EdtDescricaoChange(Sender: TObject);
 begin
- Try            
+ Try
    DMBelShopPedidos.CDS_Pesquisa.Filtered:=False;
    DMBelShopPedidos.CDS_Pesquisa.Filter:=AnsiUpperCase(Campo_Pesquisa)+' LIKE ''%'+AnsiUpperCase(EdtDescricao.Text)+'%''';
    DMBelShopPedidos.CDS_Pesquisa.Filtered:=True;
@@ -233,12 +232,6 @@ begin
   Label1.Caption:='Campo de Pesquisa: '+Campo_Pesquisa;
   EdtDescricao.SetFocus;
 
-end;
-
-procedure TFrmPesquisa.Dbg_PesquisaKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  If key=Key_Enter Then
-   Bt_PesquisaOKClick(Sender);
 end;
 
 procedure TFrmPesquisa.Dbg_PesquisaDblClick(Sender: TObject);
@@ -289,10 +282,10 @@ begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
-  Application.OnMessage := MouseAppEventsMessage;
-
   bgIncluirNovo:=False;
 
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  Application.OnMessage := ApplicationEvents1Message;
 end;
 
 procedure TFrmPesquisa.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -308,6 +301,30 @@ begin
   if (Shift = [ssCtrl]) and (Key = 46) then
     Key := 0;
 
+  If key=Vk_Return Then
+   Bt_PesquisaOKClick(Sender);
+
+end;
+
+procedure TFrmPesquisa.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
+var
+  Sentido: SmallInt;
+begin
+  // (ERRO) ACERTA ROLAGEM DO MOUSE (SCROLL)
+  If Msg.message = WM_MOUSEWHEEL then // primeiramente verificamos se é o evento a ser tratado...
+  Begin
+    // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    If (ActiveControl is TDBGrid) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
+      Msg.message := WM_KEYDOWN;
+      Msg.lParam := 0;
+      Sentido := HiWord(Msg.wParam);
+      if Sentido > 0 then
+       Msg.wParam := VK_UP
+      else
+       Msg.wParam := VK_DOWN;
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+  End; // if Msg.message = WM_MOUSEWHEEL then
 
 end;
 

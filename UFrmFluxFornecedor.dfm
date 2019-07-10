@@ -1,6 +1,6 @@
 object FrmFluxoFornecedor: TFrmFluxoFornecedor
-  Left = 253
-  Top = 106
+  Left = 234
+  Top = 114
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -191,7 +191,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Top = 56
     Width = 977
     Height = 479
-    ActivePage = Ts_FluxFornApres
+    ActivePage = Ts_FluxFornCaixa
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1034,7 +1034,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         Left = 0
         Top = 0
         Width = 969
-        Height = 448
+        Height = 428
         Align = alClient
         Color = 15004403
         Ctl3D = False
@@ -1056,6 +1056,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_FluFornCaixaDrawColumnCell
+        OnDblClick = Dbg_FluFornCaixaDblClick
         OnEnter = Dbg_FluFornCaixaEnter
         OnKeyUp = Dbg_FluFornCaixaKeyUp
         OnTitleClick = Dbg_FluFornCaixaTitleClick
@@ -1207,6 +1208,41 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             Visible = True
           end>
       end
+      object dxStatusBar1: TdxStatusBar
+        Left = 0
+        Top = 428
+        Width = 969
+        Height = 20
+        Panels = <
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            BiDiMode = bdLeftToRight
+            Fixed = False
+            ParentBiDiMode = False
+            Width = 50
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            BiDiMode = bdLeftToRight
+            Fixed = False
+            MinWidth = 20
+            ParentBiDiMode = False
+            Text = '<Duplo Clique> Apresenta Observa'#231#227'o'
+            Width = 410
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            Fixed = False
+          end>
+        PaintStyle = stpsOffice11
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+      end
     end
     object Ts_FluxFornLanctos: TTabSheet
       Caption = ' Lan'#231'amentos '
@@ -1323,6 +1359,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           AutoSize = False
           DisplayFormat = ',0.00'
           TabOrder = 3
+          OnKeyDown = EdtValorDocKeyDown
         end
         object EdtCodLojaDoc: TCurrencyEdit
           Left = 124
@@ -1543,7 +1580,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             Style.IsFontAssigned = True
             StyleDisabled.ButtonStyle = btsDefault
             StyleFocused.Color = clSilver
-            TabOrder = 0
+            TabOrder = 1
             Width = 95
           end
           object EdtDtOrigemDoc: TcxDateEdit
@@ -1563,7 +1600,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             Style.IsFontAssigned = True
             StyleDisabled.ButtonStyle = btsDefault
             StyleFocused.Color = clSilver
-            TabOrder = 1
+            TabOrder = 0
             Width = 95
           end
         end
@@ -2457,7 +2494,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         Glyph.Data = {
           0B546478504E47496D61676589504E470D0A1A0A0000000D4948445200000016
           00000011080200000056D3CBD4000000017352474200AECE1CE9000000046741
-          4D410000B18F0BFC6105000000097048597300000EBF00000EBF013805532400
+          4D410000B18F0BFC6105000000097048597300000EBC00000EBC0195BC724900
           00009B49444154384FA591D101802008449BCB819AA7695CC661AC10912351AB
           F749F0E468CBBFA98A7484ADB1472E0BFC3D1C890B0D52C49D0601B4948E9E80
           14B240E9A83ED53F1290C2CC18A3149EE198A962269807196720C6E75C10B0E2

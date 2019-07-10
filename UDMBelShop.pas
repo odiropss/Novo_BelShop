@@ -3,12 +3,10 @@
 // Todos os Controles estão em: C:\Projetos\BelShop\Outras Pastas\Documentos\@Coisas BelShop.doc
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-Apagar:
- DMBelShop.DS_FechaDiarioMov
- DMBelShop.DS_FechaDiarioTot
-
+If FrmOCLinx=nil Then
+ Dbg_GeraOCEditaGrid
 }
-                                       
+
 unit UDMBelShop;
 
 interface
@@ -699,30 +697,6 @@ type
     CDS_FechaCaixaTotaisVLR_DIFERENCA: TFMTBCDField;
     CDS_FechaCaixaTotaisIND_INFORMADO: TStringField;
     CDS_FechaCaixaTotaisUSU_INCLUI: TIntegerField;
-    SDS_FechaDiarioMov: TSQLDataSet;
-    DSP_FechaDiarioMov: TDataSetProvider;
-    CDS_FechaDiarioMov: TClientDataSet;
-    DS_FechaDiarioMov: TDataSource;
-    CDS_FechaDiarioMovNUM_SEQ: TIntegerField;
-    CDS_FechaDiarioMovTIP_DOCTO: TIntegerField;
-    CDS_FechaDiarioMovDES_TIPO: TStringField;
-    CDS_FechaDiarioMovNUM_DOCTO: TStringField;
-    CDS_FechaDiarioMovDES_DOCTO: TStringField;
-    CDS_FechaDiarioMovNUM_NOTA: TStringField;
-    CDS_FechaDiarioMovDTA_VENCIMENTO: TDateField;
-    CDS_FechaDiarioMovVLR_DOCTO: TFMTBCDField;
-    CDS_FechaDiarioMovIND_REALIZADO: TStringField;
-    CDS_FechaDiarioMovVLR_REALIZADO: TFMTBCDField;
-    CDS_FechaDiarioMovVLR_DIFERENCA: TFMTBCDField;
-    SDS_FechaDiarioTot: TSQLDataSet;
-    DSP_FechaDiarioTot: TDataSetProvider;
-    CDS_FechaDiarioTot: TClientDataSet;
-    DS_FechaDiarioTot: TDataSource;
-    CDS_FechaDiarioTotNUM_SEQ: TIntegerField;
-    CDS_FechaDiarioTotTIP_DOCTO: TIntegerField;
-    CDS_FechaDiarioTotNUM_DOCTO: TStringField;
-    CDS_FechaDiarioTotDES_DOCTO: TStringField;
-    CDS_FechaDiarioTotVLR_DOCTO: TFMTBCDField;
     CDS_FechaCaixaTotaisOBS: TStringField;
     DS_Geral: TDataSource;
     CDS_EmpresaDTA_LIM_TRANSF: TDateField;
@@ -1038,18 +1012,6 @@ type
     CDS_FluxoFornecedoresORDEM: TIntegerField;
     CDS_FluxoFornecedoresLIMITE: TStringField;
     CDS_FluxoFornecedorVLR_SALDO: TFloatField;
-    SDS_EstoquePrevisao: TSQLDataSet;
-    DSP_EstoquePrevisao: TDataSetProvider;
-    CDS_EstoquePrevisao: TClientDataSet;
-    DS_EstoquePrevisao: TDataSource;
-    CDS_EstoquePrevisaoNUM_DIAS_ESTOCAGEM: TIntegerField;
-    CDS_EstoquePrevisaoQTD_ESTOQUE: TIntegerField;
-    CDS_EstoquePrevisaoEST_PC_CUSTO: TFMTBCDField;
-    CDS_EstoquePrevisaoEST_PC_VENDA: TFMTBCDField;
-    CDS_EstoquePrevisaoDM_PREVISTA: TIntegerField;
-    CDS_EstoquePrevisaoDM_PREV_PC_CUSTO: TFMTBCDField;
-    CDS_EstoquePrevisaoDM_PREV_PC_VENDA: TFMTBCDField;
-    CDS_EstoquePrevisaoQTD_VENDA_DIA: TFMTBCDField;
     CDS_FluxoFornHistoricoDES_HISTORICO: TStringField;
     CDS_FluxoFornHistoricoDEB_CRE: TStringField;
     CDS_FluxoFornHistoricoCOD_HISTORICO: TIntegerField;
@@ -1171,6 +1133,9 @@ type
     CDS_ComprasEstoqueCDDESC_SETOR: TStringField;
     CDS_ComprasEstoqueCDDESC_COLECAO: TStringField;
     CDS_ComprasEstoqueCDORDEM: TIntegerField;
+    CDS_EmpresaSEP_ORDEM: TSmallintField;
+    CDS_EmpresaDES_EMAIL: TStringField;
+    CDS_EmpresaEST_MINIMO: TStringField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -1203,9 +1168,6 @@ type
     // Colocar Dentro de Uma Transação ==========================
     Procedure AtualizaTransfCD(sDoc, sDtaDocto: String);
 
-    // Atualiza Endereçamento dos Produtos (Colocar Dentro de Uma Transação) ===
-    Procedure AtualizaEnderecamentoProduto(sCodLoja, sCodProd, sQuemExecuta: String);
-
     // Seleciona OC ou Romaneiros ==============================================
     Procedure SelecionaOCRomaneiro(sTipo: String; bMarcar, bAberto: Boolean);
 
@@ -1235,7 +1197,6 @@ type
     procedure IBQ_AComprarEditaAfterPost(DataSet: TDataSet);
     procedure IBQ_AComprarEditaBeforePost(DataSet: TDataSet);
     procedure IBQ_AComprarEditaAfterScroll(DataSet: TDataSet);
-    procedure IBQ_AComprarAfterScroll(DataSet: TDataSet);
     procedure CDS_Gr_FinanceiroAfterScroll(DataSet: TDataSet);
     procedure CDS_ObjetivosAfterScroll(DataSet: TDataSet);
     procedure CDS_ObjetivosEmpresasAfterScroll(DataSet: TDataSet);
@@ -1267,7 +1228,11 @@ Const
 var
   DMBelShop: TDMBelShop;
 
+  bgUsaSIDICOM: Boolean; // Se é para Usar SIDICOM
+
   sgMensagemERRO: String;
+
+  sgCodLjLINX, sgCodLjSIDI: String;
 
   sgPastaWebService, // Pasta WebService
   sgPastaRelatorios, // Pasta de Relatórios
@@ -1275,12 +1240,12 @@ var
   sgPastaExecutavelServer, // Pasta e Executável no Servidor (FrmBelShop)
   sgPastaBancoBelShop: String; // Pasta do Banco de Dados BelShop.FDB
 
-  sgCodLojaUnica: String;
   sgPCTConect_IB: String;
   sgNomeServidor: String; // Cointem IP ou Nome do Servidor
                           // Contem Drive onde esta a Plasta Principal (BelShop).
                           // \\192.168.0.252\E:\
 
+  sgDia, sgMes, sgAno,
   sgTpConexao   : String;
   igTentaConexao: Integer;
 
@@ -1384,7 +1349,7 @@ var
 implementation
 
 uses DK_Procs1, UFrmBelShop, UDMConexoes,  UFrmSolicitacoes, UDMVirtual,
-     UFrmGeraPedidosComprasLojas, UWindowsFirewall, UEntrada,
+     UWindowsFirewall, UEntrada,
      UDMBancosConciliacao, UFrmOCLinx, UFrmFluxFornecedor;
      // DBGrids, Variants, RTLConsts,
 
@@ -1555,15 +1520,20 @@ Begin
                    ' SELECT b.codproduto'+
                    ' FROM PRODUTOSBARRA b'+
                    ' WHERE ((b.codproduto='+QuotedStr(Result)+') OR (Trim(b.codbarra) in ('+sCodBarras+')))';
-    FrmBelShop.IBQ_MPMS.Close;
-    FrmBelShop.IBQ_MPMS.SQL.Clear;
-    FrmBelShop.IBQ_MPMS.SQL.Add(MySql);
-    FrmBelShop.IBQ_MPMS.Open;
+    SQLQuery1.Close;
+    SQLQuery1.SQL.Clear;
+    SQLQuery1.SQL.Add(MySql);
+    SQLQuery1.Open;
+// OdirApagar
+//    FrmBelShop.IBQ_MPMS.Close;
+//    FrmBelShop.IBQ_MPMS.SQL.Clear;
+//    FrmBelShop.IBQ_MPMS.SQL.Add(MySql);
+//    FrmBelShop.IBQ_MPMS.Open;
 
-    If Trim(FrmBelShop.IBQ_MPMS.FieldByName('CodProduto').AsString)<>'' Then
-     Result:=Trim(FrmBelShop.IBQ_MPMS.FieldByName('CodProduto').AsString);
+    If Trim(SQLQuery1.FieldByName('CodProduto').AsString)<>'' Then
+     Result:=Trim(SQLQuery1.FieldByName('CodProduto').AsString);
 
-    FrmBelShop.IBQ_MPMS.Close;
+    SQLQuery1.Close;
   End; // If Trim(sCodProdutoLINX)<>'' Then
 
 End; // Busca Codigo SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2158,81 +2128,6 @@ Begin
    End;
 End; // Acerta Compra para CD (Conforme Transferencias >>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Atualiza Endereçamento dos Produtos (Colocar Dentro de Uma Transação) >>>>>>>
-Procedure TDMBelShop.AtualizaEnderecamentoProduto(sCodLoja, sCodProd, sQuemExecuta: String);
-Var
-  MySql: String;
-Begin
-  // Colocar Dentro de Uma Transação <<<<<<<<<<<<<<
-  // Conectar MPMS Antes de Iniciar Processo - ConectaMPMS;
-
-  MySql:=' SELECT COALESCE(lc.zonaendereco, ''000'') Zona,'+
-         '        COALESCE(lc.corredor, ''000'') corredor,'+
-         '        COALESCE(lc.prateleira, ''000'') prateleira,'+
-         '        COALESCE(lc.gaveta, ''0000'') gaveta'+
-         ' FROM estoque lc'+
-         ' WHERE lc.codfilial='+QuotedStr(sCodLoja)+
-         ' AND   lc.codproduto ='+QuotedStr(sCodProd);
-  FrmBelShop.IBQ_MPMS.Close;
-  FrmBelShop.IBQ_MPMS.SQL.Clear;
-  FrmBelShop.IBQ_MPMS.SQL.Add(MySql);
-  FrmBelShop.IBQ_MPMS.Open;
-
-  sgZona      :='0';
-  sgCorredor  :='000';
-  sgPrateleira:='000';
-  sgGaveta    :='0000';
-
-  If Trim(FrmBelShop.IBQ_MPMS.FieldByName('Corredor').AsString)<>'' Then
-  Begin
-    sgZona:=FrmBelShop.IBQ_MPMS.FieldByName('Zona').AsString;
-    sgCorredor:=FrmBelShop.IBQ_MPMS.FieldByName('Corredor').AsString;
-    sgPrateleira:=FrmBelShop.IBQ_MPMS.FieldByName('Prateleira').AsString;
-    sgGaveta:=FrmBelShop.IBQ_MPMS.FieldByName('Gaveta').AsString;
-  End;
-  FrmBelShop.IBQ_MPMS.Close;
-
-  MySql:=' DELETE FROM PROD_ENDERECO pe'+
-         ' WHERE pe.Cod_loja='+QuotedStr(sCodLoja)+
-         ' AND   pe.Cod_Item='+QuotedStr(sCodProd);
-
-  If sQuemExecuta='SQLC' Then
-  Begin
-    SQLC.Execute(MySql,nil,nil);
-  End;
-
-  If sQuemExecuta='IBQ_Executa' Then
-  Begin
-    IBQ_Executa.Close;
-    IBQ_Executa.SQL.Clear;
-    IBQ_Executa.SQL.Add(MySql);
-    IBQ_Executa.ExecSQL;
-  End;
-
-  MySql:=' INSERT INTO PROD_ENDERECO (COD_LOJA, COD_ITEM, ZONAENDERECO, CORREDOR, PRATELEIRA, GAVETA)'+
-         ' VALUES('+
-         QuotedStr(sCodLoja)+', '+ // COD_LOJA
-         QuotedStr(sCodProd)+', '+ // COD_ITEM
-         QuotedStr(sgZona)+', '+ // ZONAENDERECO
-         QuotedStr(sgCorredor)+', '+ // CORREDOR
-         QuotedStr(sgPrateleira)+', '+ // PRATELEIRA
-         QuotedStr(sgGaveta)+')'; // GAVETA
-
-  If sQuemExecuta='SQLC' Then
-  Begin
-    SQLC.Execute(MySql,nil,nil);
-  End;
-
-  If sQuemExecuta='IBQ_Executa' Then
-  Begin
-    IBQ_Executa.Close;
-    IBQ_Executa.SQL.Clear;
-    IBQ_Executa.SQL.Add(MySql);
-    IBQ_Executa.ExecSQL;
-  End;
-
-End; // Atualiza Endereçamento dos Produtos (Colocar Dentro de Uma Transação) >>
-
 // Calucla os Totais do Documento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TDMBelShop.Doc_CalculaValores(sDoc, sDtaDocto: String; sCodProd: String='0'; sCodLoja: String='0'): Boolean;
 Var
@@ -2511,7 +2406,7 @@ Begin
              MySql+' AND d.Origem='+QuotedStr('Linx')
            Else
             MySql:=
-             MySql+' AND d.Origem<>'+QuotedStr('Linx');
+             MySql+' AND UPPER(TRIM(d.Origem)) LIKE '+QuotedStr('%BEL%');
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
@@ -2874,6 +2769,15 @@ Begin
     Exit;
   End;
 
+    // Nome da Base de Dados
+  If Trim(FrmBelShop.EdtConEmpresaAbrev.Text)='' Then
+  Begin
+    sgMensagem:='Favor Informar a Abreviatura'+cr+cr+'do Nome da Loja !!';
+    FrmBelShop.EdtConEmpresaAbrev.SetFocus;
+    Result:=False;
+    Exit;
+  End;
+
 End; // Consiste Conexão Empresas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Banco de Dados - Ajusta Dados das Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2906,7 +2810,8 @@ Begin
            ' TRIM(l.inscricao_emp) INSCR_ESTADUAL,'+
            ' TRIM(l.endereco_emp) ENDERECO,'+
            ' TRIM(l.num_emp) NUMERO,'+
-           ' TRIM(l.complement_emp) COMPLEMENTO'+
+           ' TRIM(l.complement_emp) COMPLEMENTO,'+
+           ' TRIM(l.email_emp) DES_EMAIL'+
 
            ' FROM LINXLOJAS l'+
            ' ORDER BY 1';
@@ -2936,7 +2841,9 @@ Begin
              ' ce.Num_Endereco='+
              QuotedStr(Trim(CDS_Busca.FieldByName('Numero').AsString))+', '+
              ' ce.Compl_Endereco='+
-             QuotedStr(Trim(CDS_Busca.FieldByName('complemento').AsString))+', '+
+             QuotedStr(Trim(CDS_Busca.FieldByName('Complemento').AsString))+', '+
+             ' ce.Des_EMail='+
+             QuotedStr(Trim(CDS_Busca.FieldByName('Des_EMAil').AsString))+', '+
              ' ce.qtd_transf_dia=0'+
 
              ' Where ce.Cod_linx='+CDS_Busca.FieldByName('Cod_Linx').AsString;
@@ -2984,7 +2891,6 @@ Begin
     { Realiza um loop em toda a lista }
     s:='';
     sgNomeServidor:='';
-    sgCodLojaUnica:='';
     sgTpConexao   :='';
     For i := 0 to tsArquivo.Count - 1 do
     Begin
@@ -2993,7 +2899,7 @@ Begin
       If Trim(s)<>'' Then
       Begin
         If i=0 Then sgNomeServidor:=Trim(s);
-        If i=1 Then sgCodLojaUnica:=Trim(s);
+        //If i=1 Then sgCodLojaUnica:=Trim(s);
         If i=2 Then sgTpConexao:=Trim(s);
       End;
     End; // For i := 0 to tsArquivo.Count - 1 do
@@ -3003,9 +2909,6 @@ Begin
     FreeAndNil(tsArquivo);
   End; // Try
   tsArquivo.Free;
-
-  If sgCodLojaUnica='999999' Then
-   Result:=False
 
 End; // // Nome do Servidor, Tipo de Conexão e Codigo da Loja Se Unica >>>>>>>>>
 
@@ -3649,7 +3552,20 @@ Begin
 
           //  \\201.86.212.10\C:\SIDICOM.NEW\BANCO.FDB
 
+//          If (CDS_ConectaEmpresa.FieldByName('Cod_Filial').AsString='99') And
+//             (Trim(CDS_ConectaEmpresa.FieldByName('Endereco_IP').AsString)='173.249.17.24/3050') Then
+//          Begin
+//            {
+//            173.249.17.24/3050:C:\Odir\BELSHOP.FD
+//            \\173.249.17.24/3050:\C:\Odir\BELSHOP.FD
+//            }
+//            s:=Trim(s);
+//            s:=Copy(s,3,Length(s)-3);
+//            s:=f_Troca(':\C:', ':C:', s);
+//          End; // If (CDS_ConectaEmpresa.FieldByName('Cod_Filial').AsString='99') And
+
           (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=s;
+
           Break;
         End;
       End; // If DMConexoes.Components[i] is TIBDatabase Then
@@ -3659,66 +3575,6 @@ Begin
   End; // While Not CDS_ConectaEmpresa.Eof do
   DMVirtual.CDS_V_EmpConexoes.First;
   CDS_ConectaEmpresa.Close;
-
-  // Monta Conexões de Empresas Inativas Válidas ===============================
-  MySql:='Select *'+
-         ' From EMP_Conexoes e'+
-         ' Where e.Ind_Ativo=''NAO'''+
-         ' And e.cod_filial>40'+
-         ' Order by Cod_Emp';
-  CDS_ConectaEmpresa.Close;
-  SDS_ConectaEmpresa.CommandText:=MySql;
-  CDS_ConectaEmpresa.Open;
-
-  While Not CDS_ConectaEmpresa.Eof do
-  Begin
-    For i:=0 to DMConexoes.ComponentCount-1 do
-    Begin
-      If DMConexoes.Components[i] is TIBDatabase Then
-      Begin
-        If (DMConexoes.Components[i] as TIBDatabase).Name='IBDB_'+CDS_ConectaEmpresa.FieldByName('Cod_Filial').AsString Then
-        Begin
-           (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
-
-           sEndIP:=CDS_ConectaEmpresa.FieldByName('ENDERECO_IP').AsString;
-
-           // Tipo de Conexão: NetBEUI
-           If (Trim(sgTpConexao)='')              Or (Trim(sgTpConexao)='NetBEUI')  Or
-              (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgIPServer) Or
-              (AnsiUpperCase(sEndIP)=sgCompServer) Then
-           Begin
-             s:='\\';
-
-             // Se Conexão Local ou Externa ======================================
-             //  \\201.86.212.10\C:\SIDICOM.NEW\BANCO.FDB
-             If (Not bgConexaoLocal) and (Trim(CDS_ConectaEmpresa.FieldByName('Endereco_IP_Externo').AsString)<>'') Then
-              s:=s+IncludeTrailingPathDelimiter(CDS_ConectaEmpresa.FieldByName('ENDERECO_IP_EXTERNO').AsString)
-             Else
-              s:=s+IncludeTrailingPathDelimiter(sEndIP);
-
-             s:=s+IncludeTrailingPathDelimiter(CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString)+
-                                               CDS_ConectaEmpresa.FieldByName('Des_Base_Dados').AsString;
-           End; // If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then ...
-
-           // Tipo de Conexão: TCP/IP
-           If (Trim(sgTpConexao)='TCP/IP')          and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and
-              (AnsiUpperCase(sEndIP)<>sgCompServer) and (AnsiUpperCase(sEndIP)<>sgIPServer) Then
-           Begin
-             s:=sEndIP+':'+
-                IncludeTrailingPathDelimiter(CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString)+
-                                             CDS_ConectaEmpresa.FieldByName('Des_Base_Dados').AsString;
-           End; // If Trim(sgTpConexao)='TCP/IP' Then
-
-          (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=s;
-          Break;
-        End;
-      End; // If DMConexoes.Components[i] is TIBDatabase Then
-    End; // For i:=0 to DMConexoes.ComponentCount-1 do
-
-    CDS_ConectaEmpresa.Next;
-  End; // While Not CDS_ConectaEmpresa.Eof do
-  CDS_ConectaEmpresa.Close;
-
 End; // Monta Empresas a Conectar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -3911,31 +3767,14 @@ begin
   FrmBelShop.EdtDta_ConEmpresasInicioLinx.Text:=CDS_EmpresaDTA_INICIO_LINX.Text;
   FrmBelShop.EdtDta_ConEmpresasInventLinx.Text:=CDS_EmpresaDTA_INVENTARIO_LINX.Text;
 
-  FrmBelShop.EdtConEmpresasUsuInclui.Clear;
-  If Trim(CDS_EmpresaUSU_INCLUI.AsString)<>'' Then
-  Begin
-    MySql:=' Select Des_Login'+
-           ' From PS_Usuarios'+
-           ' Where Cod_Usuario='+CDS_EmpresaUSU_INCLUI.AsString;
-    SDS_Busca.Close;
-    SDS_Busca.CommandText:=MySql;
-    SDS_Busca.Open;
-    FrmBelShop.EdtConEmpresasUsuInclui.Text:=SDS_Busca.FieldByName('Des_Login').AsString;
-    SDS_Busca.Close;
-  End;
-
-  FrmBelShop.EdtConEmpresasUsuAltera.Clear;
-  If Trim(CDS_EmpresaUSU_ALTERA.AsString)<>'' Then
-  Begin
-    MySql:=' Select Des_Login'+
-           ' From PS_Usuarios'+
-           ' Where Cod_Usuario='+CDS_EmpresaUSU_ALTERA.AsString;
-    SDS_Busca.Close;
-    SDS_Busca.CommandText:=MySql;
-    SDS_Busca.Open;
-    FrmBelShop.EdtConEmpresasUsuAltera.Text:=SDS_Busca.FieldByName('Des_Login').AsString;
-    SDS_Busca.Close;
-  End;
+  MySql:=' SELECT a.nome_abrev'+
+         ' FROM LINXLOJAS_ABREVIATURAS a'+
+         ' WHERE a.empresa='+CDS_EmpresaCOD_LINX.AsString;
+  SDS_Busca.Close;
+  SDS_Busca.CommandText:=MySql;
+  SDS_Busca.Open;
+  FrmBelShop.EdtConEmpresaAbrev.Text:=SDS_Busca.FieldByName('Nome_Abrev').AsString;
+  SDS_Busca.Close;
 
 end;
 
@@ -3965,15 +3804,10 @@ begin
   bgFluxoFornAfterScroll:=True;
 
   // Nome do Servidor, Tipo de Conexão e Codigo da Loja Se Unica ===============
-  sgCodLojaUnica:='';
   BuscaServidorLojaUnica;
 
   // Conexão com Banco de Dados BelShop.FDB ====================================
   sgPCTConect_IB:='PCTConect_IB.ini';
-  If sgCodLojaUnica<>'' Then
-  Begin
-    sgPCTConect_IB:='PCTConect_IB_Loja.ini';
-  End; // If sgCodLojaUnica<>'' Then
 
   // Verifica Existencia do Arquivo de Configuração de Conexão =================
   If not(fileexists(IncludeTrailingPathDelimiter(sPath_Local)+sgPCTConect_IB)) then
@@ -3982,47 +3816,6 @@ begin
     Application.Terminate;
     Exit;
   End;
-
-  // Verifica Tipo de Conexão para Loja Unica ==================================
-  If sgCodLojaUnica<>'' Then
-  Begin
-    // Substitui Arquivo
-    DeleteFile(IncludeTrailingPathDelimiter(sPath_Local)+'PCTConect_IB_Loja.ini');
-    CopyFile(PChar(IncludeTrailingPathDelimiter(sPath_Local)+'PCTConect_IB_Loja_Original.ini'),
-             PChar(IncludeTrailingPathDelimiter(sPath_Local)+'PCTConect_IB_Loja.ini'),False);
-
-    sArquivo:= TStringList.Create;
-
-    Try
-      sArquivo.LoadFromFile(IncludeTrailingPathDelimiter(sPath_Local)+sgPCTConect_IB);
-
-      For i := 0 to sArquivo.Count - 1 do
-      Begin
-        // Linha 4 = TCP/IP
-        // Linha 5 = NetBEUI
-
-        If ((Trim(sgTpConexao)='NetBEUI') or ((Trim(sgTpConexao)=''))) and
-           (i=4) And (Trim(sArquivo[i])='Database=LOCALHOST:C:\Projetos\BelShop\Dados\BELSHOP_LOJA.FDB') Then
-        Begin
-          sArquivo.Delete(i);
-          Break;
-        End;
-
-        If (Trim(sgTpConexao)='TCP/IP') and
-           (i=5) And (Trim(sArquivo[i])='Database=\\LocalHost\c:\Projetos\BelShop\Dados\BELSHOP_LOJA.FDB') Then
-        Begin
-          sArquivo.Delete(i);
-          Break;
-        End;
-      End; // For i := 0 to sArquivo.Count - 1 do
-
-      sArquivo.SaveToFile(IncludeTrailingPathDelimiter(sPath_Local)+sgPCTConect_IB);
-    Finally // Try
-      FreeAndNil(sArquivo);
-    End; // Try
-
-    FreeAndNil(sArquivo);
-  End; // If sgCodLojaUnica<>'' Then
 
   // Verifica a Existencia do Arquivo "ConexaoExterna.ini" =====================
   sNewIP:='';
@@ -4083,6 +3876,15 @@ begin
   ConectaBanco;
 
   MontaConexaoEmpresas;
+
+  InicializaFormatos; // define as configurações regionais para ignorar a configuração do windows
+
+  //============================================================================
+  // Utiliza SIDICOM ===========================================================
+  //============================================================================
+  bgUsaSIDICOM:=UtilizaSIDICOM(DMBelShop.SQLQuery1);
+  // Utiliza SIDICOM ===========================================================
+  //============================================================================
 end;
 
 procedure TDMBelShop.CDS_AComprarOCsAfterScroll(DataSet: TDataSet);
@@ -4095,47 +3897,95 @@ begin
      Begin
        If CDS_AComprarOCsTIPO.AsString='OC' Then
        Begin
-         FrmBelShop.Lab_ItensOC.Caption:='Itens OCs';
-         FrmBelShop.Lab_Qtds_OC.Caption:='Qtds OCs';
+         If FrmOCLinx=nil Then
+         Begin
+           FrmBelShop.Lab_ItensOC.Caption:='Itens OCs';
+           FrmBelShop.Lab_Qtds_OC.Caption:='Qtds OCs';
 
-         FrmBelShop.Bt_GeraOCImpEditOC.Visible:=True;
-         FrmBelShop.Bt_GeraOCImpEditOC.Glyph:=FrmBelShop.Bt_GeraOCGraficoImprime.Glyph;
-         FrmBelShop.Bt_GeraOCImpEditOC.Caption:='Imprimir OC';
+           FrmBelShop.Bt_GeraOCImpEditOC.Visible:=True;
+           FrmBelShop.Bt_GeraOCImpEditOC.Glyph:=FrmBelShop.Bt_GeraOCGraficoImprime.Glyph;
+           FrmBelShop.Bt_GeraOCImpEditOC.Caption:='Imprimir OC';
+         End; // If FrmOCLinx=nil Then
+
+         If FrmOCLinx<>nil Then
+         Begin
+           FrmOCLinx.Lab_ItensOC.Caption:='Itens OCs';
+           FrmOCLinx.Lab_Qtds_OC.Caption:='Qtds OCs';
+
+           FrmOCLinx.Bt_GeraOCImpEditOC.Visible:=True;
+           FrmOCLinx.Bt_GeraOCImpEditOC.Glyph:=FrmBelShop.Bt_GeraOCGraficoImprime.Glyph;
+           FrmOCLinx.Bt_GeraOCImpEditOC.Caption:='Imprimir OC';
+         End; // If FrmOCLinx<>nil Then
        End; // If CDS_AComprarOCsTIPO.AsString='OC' Then
 
        If CDS_AComprarOCsTIPO.AsString='TR' Then
        Begin
-         FrmBelShop.Lab_ItensOC.Caption:='Itens TRs';
-         FrmBelShop.Lab_Qtds_OC.Caption:='Qtds TRs';
-       End; // If CDS_AComprarOCsTIPO.AsString='TR' Then
+         If FrmOCLinx=nil Then
+         Begin
+           FrmBelShop.Lab_ItensOC.Caption:='Itens TRs';
+           FrmBelShop.Lab_Qtds_OC.Caption:='Qtds TRs';
+         End; // If FrmOCLinx=nil Then
 
+         If FrmOCLinx<>nil Then
+         Begin
+           FrmOCLinx.Lab_ItensOC.Caption:='Itens TRs';
+           FrmOCLinx.Lab_Qtds_OC.Caption:='Qtds TRs';
+         End; // If FrmOCLinx<>nil Then
+       End; // If CDS_AComprarOCsTIPO.AsString='TR' Then
      End
     Else // If Trim(CDS_AComprarOCsIND_OC_GERADA.AsString)='S' Then
      Begin
        If CDS_AComprarOCsTIPO.AsString='OC' Then
        Begin
-         FrmBelShop.Lab_ItensOC.Caption:='Itens OCs';
-         FrmBelShop.Lab_Qtds_OC.Caption:='Qtds OCs';
+         If FrmOCLinx=nil Then
+         Begin
+           FrmBelShop.Lab_ItensOC.Caption:='Itens OCs';
+           FrmBelShop.Lab_Qtds_OC.Caption:='Qtds OCs';
 
-         FrmBelShop.Bt_GeraOCImpEditOC.Visible:=True;
-         FrmBelShop.Bt_GeraOCImpEditOC.Glyph:=FrmBelShop.Bt_GeraOCGraficoEdit.Glyph;
-         FrmBelShop.Bt_GeraOCImpEditOC.Caption:='Editar OC';
-         FrmBelShop.Bt_GeraOCPreVisualizaOC.Caption:=' Pré-Visualização OC';
+           FrmBelShop.Bt_GeraOCImpEditOC.Visible:=True;
+           FrmBelShop.Bt_GeraOCImpEditOC.Glyph:=FrmBelShop.Bt_GeraOCGraficoEdit.Glyph;
+           FrmBelShop.Bt_GeraOCImpEditOC.Caption:='Editar OC';
+           FrmBelShop.Bt_GeraOCPreVisualizaOC.Caption:=' Pré-Visualização OC';
+         End; // If FrmOCLinx=nil Then
+
+         If FrmOCLinx<>nil Then
+         Begin
+           FrmOCLinx.Lab_ItensOC.Caption:='Itens OCs';
+           FrmOCLinx.Lab_Qtds_OC.Caption:='Qtds OCs';
+
+           FrmOCLinx.Bt_GeraOCImpEditOC.Visible:=True;
+           FrmOCLinx.Bt_GeraOCImpEditOC.Glyph:=FrmBelShop.Bt_GeraOCGraficoEdit.Glyph;
+           FrmOCLinx.Bt_GeraOCImpEditOC.Caption:='Editar OC';
+           FrmOCLinx.Bt_GeraOCPreVisualizaOC.Caption:=' Pré-Visualização OC';
+         End; // If FrmOCLinx<>nil Then
        End;
 
        If CDS_AComprarOCsTIPO.AsString='TR' Then
        Begin
-         FrmBelShop.Lab_ItensOC.Caption:='Itens TRs';
-         FrmBelShop.Lab_Qtds_OC.Caption:='Qtds TRs';
+         If FrmOCLinx=nil Then
+         Begin
+           FrmBelShop.Lab_ItensOC.Caption:='Itens TRs';
+           FrmBelShop.Lab_Qtds_OC.Caption:='Qtds TRs';
 
-         FrmBelShop.Bt_GeraOCImpEditOC.Visible:=True;
-         FrmBelShop.Bt_GeraOCImpEditOC.Glyph:=FrmBelShop.Bt_GeraOCGraficoEdit.Glyph;
-         FrmBelShop.Bt_GeraOCImpEditOC.Caption:='Editar TR';
-         FrmBelShop.Bt_GeraOCPreVisualizaOC.Caption:=' Pré-Visualização TR';
+           FrmBelShop.Bt_GeraOCImpEditOC.Visible:=True;
+           FrmBelShop.Bt_GeraOCImpEditOC.Glyph:=FrmBelShop.Bt_GeraOCGraficoEdit.Glyph;
+           FrmBelShop.Bt_GeraOCImpEditOC.Caption:='Editar TR';
+           FrmBelShop.Bt_GeraOCPreVisualizaOC.Caption:=' Pré-Visualização TR';
+         End; // If FrmOCLinx=nil Then
+
+         If FrmOCLinx<>nil Then
+         Begin
+           FrmOCLinx.Lab_ItensOC.Caption:='Itens TRs';
+           FrmOCLinx.Lab_Qtds_OC.Caption:='Qtds TRs';
+
+           FrmOCLinx.Bt_GeraOCImpEditOC.Visible:=True;
+           FrmOCLinx.Bt_GeraOCImpEditOC.Glyph:=FrmBelShop.Bt_GeraOCGraficoEdit.Glyph;
+           FrmOCLinx.Bt_GeraOCImpEditOC.Caption:='Editar TR';
+           FrmOCLinx.Bt_GeraOCPreVisualizaOC.Caption:=' Pré-Visualização TR';
+         End; // If FrmOCLinx<>nil Then
        End; // If CDS_AComprarOCsTIPO.AsString='TR' Then
-
      End; // If Trim(CDS_AComprarOCsIND_OC_GERADA.AsString)='S' Then
-  End;
+  End; // If Not CDS_AComprarOCs.IsEmpty Then
 end;
 
 procedure TDMBelShop.IBQ_AComprarAfterPost(DataSet: TDataSet);
@@ -4212,17 +4062,11 @@ begin
      IBQ_AComprar.Locate('Num_Seq', iSeq,[]);
    End; // If Trim(sCodItemDel)<>'' Then
 
-  If sgCodLojaUnica='' Then
-   Begin
-     If FrmBelShop.EdtGeraOCBuscaDocto.AsInteger<>0 Then
-      FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmBelShop.EdtGeraOCBuscaDocto.Value), DateToStr(FrmBelShop.DtEdt_GeraOCDataDocto.Date))
-     Else
-      FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmOCLinx.EdtGeraOCBuscaDocto.Value), DateToStr(FrmOCLinx.DtEdt_GeraOCDataDocto.Date));
-   End
-  Else
-   Begin
-     FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmGeraPedidosComprasLojas.EdtGeraOCBuscaDocto.Value), DateToStr(FrmGeraPedidosComprasLojas.DtEdt_GeraOCDataDocto.Date));
-   End;
+   If FrmOCLinx=nil Then
+    FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmBelShop.EdtGeraOCBuscaDocto.Value), DateToStr(FrmBelShop.DtEdt_GeraOCDataDocto.Date));
+
+   If FrmOCLinx<>nil Then
+    FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmOCLinx.EdtGeraOCBuscaDocto.Value), DateToStr(FrmOCLinx.DtEdt_GeraOCDataDocto.Date));
 
 end;
 
@@ -4492,36 +4336,45 @@ begin
   IBT_BelShop.CommitRetaining;
 
   // Busca Totais do Pedido ===================================================
-  If FrmBelShop.Rb_GeraOCEditaComQtd.Checked Then s:='C';
-  If FrmBelShop.Rb_GeraOCEditaSemQtd.Checked Then s:='S';
-  If FrmBelShop.Rb_GeraOCEditaTodosItens.Checked Then s:='T';
+  If FrmOCLinx=nil Then
+  Begin
+    If FrmBelShop.Rb_GeraOCEditaComQtd.Checked Then s:='C';
+    If FrmBelShop.Rb_GeraOCEditaSemQtd.Checked Then s:='S';
+    If FrmBelShop.Rb_GeraOCEditaTodosItens.Checked Then s:='T';
 
-  FrmBelShop.TotaisPedOC(sTotal_Valor, sTotal_Itens, sTotal_Qtd, sDoc, sCodLoja, s, '', sCodForn);
+    FrmBelShop.TotaisPedOC(sTotal_Valor, sTotal_Itens, sTotal_Qtd, sDoc, sCodLoja, s, '', sCodForn);
 
-  If sgCodLojaUnica='' Then
-   Begin
-     If FrmBelShop.EdtGeraOCBuscaDocto.AsInteger<>0 Then
-      FrmBelShop.AlteraAComprar(IBQ_AComprarEdita, 'Q', VarToStr(FrmBelShop.EdtGeraOCBuscaDocto.Value), DateToStr(FrmBelShop.DtEdt_GeraOCDataDocto.Date))
-     Else
-      FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmOCLinx.EdtGeraOCBuscaDocto.Value), DateToStr(FrmOCLinx.DtEdt_GeraOCDataDocto.Date));
-   End
-  Else
-   Begin
-     FrmBelShop.AlteraAComprar(IBQ_AComprarEdita, 'Q', VarToStr(FrmGeraPedidosComprasLojas.EdtGeraOCBuscaDocto.Value), DateToStr(FrmOCLinx.DtEdt_GeraOCDataDocto.Date));
-   End;
+    FrmBelShop.AlteraAComprar(IBQ_AComprarEdita, 'Q', VarToStr(FrmBelShop.EdtGeraOCBuscaDocto.Value), DateToStr(FrmBelShop.DtEdt_GeraOCDataDocto.Date));
 
-  FrmBelShop.EdtGeraOCEditaTotalGeral.Value  :=StrToCurr(sTotal_Valor);
-  FrmBelShop.EdtGeraOCEditaTotalItens.Value  :=StrToCurr(sTotal_Itens);
-  FrmBelShop.EdtGeraOCEditaTotallQtd.Value   :=StrToCurr(sTotal_Qtd);
+    FrmBelShop.EdtGeraOCEditaTotalGeral.Value  :=StrToCurr(sTotal_Valor);
+    FrmBelShop.EdtGeraOCEditaTotalItens.Value  :=StrToCurr(sTotal_Itens);
+    FrmBelShop.EdtGeraOCEditaTotallQtd.Value   :=StrToCurr(sTotal_Qtd);
 
-//  If Not IBQ_AComprarEdita.Locate('NUM_SEQ',iSeq,[]) Then
-//   If Not IBQ_AComprarEdita.Locate('NUM_SEQ',iSeq+1,[]) Then
-//    IBQ_AComprarEdita.Locate('NUM_SEQ',iSeq-1,[]);
+    IBQ_AComprarEdita.RecNo:=iSeq-1;
 
-  IBQ_AComprarEdita.RecNo:=iSeq-1;
+    FrmBelShop.Dbg_GeraOCEditaGrid.SelectedIndex:=2;
+    FrmBelShop.Dbg_GeraOCEditaGrid.SetFocus;
+  End; // If FrmOCLinx=nil Then
 
-  FrmBelShop.Dbg_GeraOCEditaGrid.SelectedIndex:=2;
-  FrmBelShop.Dbg_GeraOCEditaGrid.SetFocus;
+  If FrmOCLinx<>nil Then
+  Begin
+    If FrmOCLinx.Rb_GeraOCEditaComQtd.Checked Then s:='C';
+    If FrmOCLinx.Rb_GeraOCEditaSemQtd.Checked Then s:='S';
+    If FrmOCLinx.Rb_GeraOCEditaTodosItens.Checked Then s:='T';
+
+    FrmOCLinx.TotaisPedOC(sTotal_Valor, sTotal_Itens, sTotal_Qtd, sDoc, sCodLoja, s, '', sCodForn);
+
+    FrmBelShop.AlteraAComprar(IBQ_AComprarEdita, 'Q', VarToStr(FrmOCLinx.EdtGeraOCBuscaDocto.Value), DateToStr(FrmOCLinx.DtEdt_GeraOCDataDocto.Date));
+
+    FrmOCLinx.EdtGeraOCEditaTotalGeral.Value  :=StrToCurr(sTotal_Valor);
+    FrmOCLinx.EdtGeraOCEditaTotalItens.Value  :=StrToCurr(sTotal_Itens);
+    FrmOCLinx.EdtGeraOCEditaTotallQtd.Value   :=StrToCurr(sTotal_Qtd);
+
+    IBQ_AComprarEdita.RecNo:=iSeq-1;
+
+    FrmOCLinx.Dbg_GeraOCEditaGrid.SelectedIndex:=2;
+    FrmOCLinx.Dbg_GeraOCEditaGrid.SetFocus;
+  End; // If FrmOCLinx<>nil Then
 
 end;
 
@@ -4574,25 +4427,10 @@ end;
 
 procedure TDMBelShop.IBQ_AComprarEditaAfterScroll(DataSet: TDataSet);
 begin
-  FrmBelShop.Dbg_GeraOCEditaGrid.SelectedIndex:=2;
-end;
-
-procedure TDMBelShop.IBQ_AComprarAfterScroll(DataSet: TDataSet);
-begin
-
-  If Trim(sgCodLojaUnica)<>'' Then // Loja Unica
-  Begin
-    // Apresenta Fornecedor -----------------------------------------
-    If Not IBQ_AComprar.IsEmpty Then
-     FrmGeraPedidosComprasLojas.Sb_SelectEmpProc2.Panels[0].Text:=
-                   'Forn: '+IBQ_AComprarCOD_FORNECEDOR.AsString+' - '+
-                   IBQ_AComprarDES_FORNECEDOR.AsString;
-
-    If FrmGeraPedidosComprasLojas.PC_GeraOCApresentacao.ActivePage=FrmGeraPedidosComprasLojas.Ts_GeraOCGrid Then
-     FrmGeraPedidosComprasLojas.Dbg_GeraOCGrid.SelectedIndex:=4;
-
-  End; // If Trim(sgCodLojaUnica)<>'' Then
-
+  If FrmOCLinx=nil Then
+   FrmBelShop.Dbg_GeraOCEditaGrid.SelectedIndex:=2
+  Else
+   FrmOCLinx.Dbg_GeraOCEditaGrid.SelectedIndex:=2;
 end;
 
 procedure TDMBelShop.CDS_Gr_FinanceiroAfterScroll(DataSet: TDataSet);

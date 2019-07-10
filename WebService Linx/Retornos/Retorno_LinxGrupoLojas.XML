@@ -1,1 +1,1 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?><Microvix><ResponseData><C><D>CNPJ</D><D>nome_empresa</D><D>id_empresas_rede</D><D>rede</D></C></ResponseData><ResponseResult><ResponseSuccess>True</ResponseSuccess></ResponseResult></Microvix>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?><Microvix><ResponseData><C><D>CNPJ</D><D>nome_empresa</D><D>id_empresas_rede</D><D>rede</D><D>portal</D><D>nome_portal</D><D>empresa</D></C></ResponseData><ResponseResult><ResponseSuccess>True</ResponseSuccess></ResponseResult></Microvix>

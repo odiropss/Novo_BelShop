@@ -466,6 +466,7 @@ object FrmPesquisaIB: TFrmPesquisaIB
     TitleFont.Style = [fsBold]
     OnCellClick = DBGrid1CellClick
     OnDblClick = DBGrid1DblClick
+    OnEnter = DBGrid1Enter
     OnKeyUp = DBGrid1KeyUp
     OnTitleClick = DBGrid1TitleClick
   end
@@ -578,5 +579,10 @@ object FrmPesquisaIB: TFrmPesquisaIB
     Params = <>
     Left = 352
     Top = 216
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    Left = 344
+    Top = 128
   end
 end

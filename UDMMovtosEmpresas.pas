@@ -220,7 +220,7 @@ var
   DMMovtosEmpresas: TDMMovtosEmpresas;
 
   sgPath_Local: String;
-  sgNomeServidor, sgCodLojaUnica, sgTpConexao: String;
+  sgNomeServidor, sgTpConexao: String;
   sgCompMaster, sgCompServer: String; // Dados dos Servidores, Computador Local
   sgIPServer, sgIPInternetServer: String; // Ips do Servidor
 
@@ -307,7 +307,6 @@ Begin
       If Trim(s)<>'' Then
       Begin
         If i=0 Then sgNomeServidor:=Trim(s);
-        If i=1 Then sgCodLojaUnica:=Trim(s);
         If i=2 Then sgTpConexao:=Trim(s);
       End;
     End; // For i := 0 to tsArquivo.Count - 1 do

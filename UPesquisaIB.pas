@@ -73,10 +73,11 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBClient, DBLocal, DBLocalI, DB, IBCustomDataSet, IBQuery,
+  Dialogs, DBClient, DBLocal, DBLocalI, IBCustomDataSet, IBQuery,
   Clipbrd, // PrintScreen
-  JvExControls, JvXPCore, JvXPButtons, Grids, DBGrids, StdCtrls, Qt, ExtCtrls;
-//  Último: ExtCtrls;
+  JvExControls, JvXPCore, JvXPButtons, Grids, DBGrids, StdCtrls,
+  DB, // ==> Qt, Trocado
+  ExtCtrls,  AppEvnts;
 
 {
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
@@ -99,6 +100,7 @@ type
     Bt_PesquisaRetorna: TJvXPButton;
     IB_Tabela: TIBQuery;
     IBCDS_Pesquisa: TIBClientDataSet;
+    ApplicationEvents1: TApplicationEvents;
     procedure EdtDescricaoChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -114,10 +116,11 @@ type
     procedure FormKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure DBGrid1CellClick(Column: TColumn);
+    procedure ApplicationEvents1Message(var Msg: tagMSG;
+      var Handled: Boolean);
+    procedure DBGrid1Enter(Sender: TObject);
   private
     { Private declarations }
-    // Rolagem no Grid com Mouse
-    procedure MouseAppEventsMessage(var Msg: TMsg; var Handled: Boolean);
   public
     { Public declarations }
     Campo_Pesquisa: String;
@@ -137,27 +140,6 @@ var
 implementation
 
 {$R *.dfm}
-
-// Rolagem no Grid com Mouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-procedure TFrmPesquisaIB.MouseAppEventsMessage(var Msg: TMsg; var Handled: Boolean);
-var
-  Sentido: SmallInt;
-begin
- // primeiramente verificamos se é o evento a ser tratado...
- if Msg.message = WM_MOUSEWHEEL then
- Begin
-   if ActiveControl is TDBGrid then   // <=== AQUI você testa se classe é TDBGRID
-   begin
-     Msg.message := WM_KEYDOWN;
-     Msg.lParam := 0;
-     Sentido := HiWord(Msg.wParam);
-     if Sentido > 0 then
-      Msg.wParam := VK_UP
-     else
-      Msg.wParam := VK_DOWN;
-   end; // if ActiveControl is TDBGrid then
- End; // if Msg.message = WM_MOUSEWHEEL then
-end; // // Rolagem no Grid com Mouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmPesquisaIB.EdtDescricaoChange(Sender: TObject);
 begin
@@ -194,7 +176,7 @@ end;
 procedure TFrmPesquisaIB.DBGrid1KeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  If key=Key_Enter Then
+  If key=Vk_Return Then
    Bt_PesquisaOKClick(Sender);
 end;
 
@@ -259,7 +241,9 @@ begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
-  Application.OnMessage := MouseAppEventsMessage;
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  Application.OnMessage := ApplicationEvents1Message;
+  
 end;
 
 procedure TFrmPesquisaIB.FormKeyUp(Sender: TObject; var Key: Word;
@@ -283,6 +267,35 @@ begin
 //  If Campo_Retorno3<>'' Then
 //   Retorno3:=IBCDS_Pesquisa.FieldByName(Campo_Retorno3).AsString;
 //
+end;
+
+procedure TFrmPesquisaIB.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
+var
+  Sentido: SmallInt;
+begin
+  // (ERRO) ACERTA ROLAGEM DO MOUSE (SCROLL)
+  If Msg.message = WM_MOUSEWHEEL then // primeiramente verificamos se é o evento a ser tratado...
+  Begin
+    // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    If (ActiveControl is TDBGrid) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
+      Msg.message := WM_KEYDOWN;
+      Msg.lParam := 0;
+      Sentido := HiWord(Msg.wParam);
+      if Sentido > 0 then
+       Msg.wParam := VK_UP
+      else
+       Msg.wParam := VK_DOWN;
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+  End; // if Msg.message = WM_MOUSEWHEEL then
+end;
+
+procedure TFrmPesquisaIB.DBGrid1Enter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=DBGrid1Enter; // Nome do Evento do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
 end;
 
 end.

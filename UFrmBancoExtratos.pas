@@ -535,6 +535,7 @@ type
     procedure Dbg_DepAnaliseTitleClick(Column: TColumn);
     procedure Dbg_DepAnaliseEnter(Sender: TObject);
     procedure Bt_DepAnaliseDoctoFinanClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
         
   private
     { Private declarations }
@@ -571,8 +572,8 @@ var
   sgCodBanco: String;
 
   // Extratos
+//odirApagar - 09/04/2019 Coloquei em DMBelShop  sgDia, sgMes, sgAno,
   sgLeiaute,
-  sgDia, sgMes, sgAno,
   sgDesMovto, sgDocto, sgValor, sgSaldo,
   sgDta, sgTpMovtos: String;
 
@@ -609,6 +610,27 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Desabilita TabSheets - Habilita Somente a TS: TTabSheet >>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmBancoExtratos.DesabilitaTabSheet(TS: TTabSheet);
+Begin
+  // TS = TabSheet a Liberar
+  Ts_BancosManut.TabVisible               :=False;
+  Ts_VerificaExtrato.TabVisible           :=False;
+  Ts_ExtratosManut.TabVisible             :=False;
+
+  Ts_ConciliacaoManutPagtos.TabVisible    :=False;
+  Ts_ConciliacoesManutPagtos.TabVisible   :=False;
+
+  Ts_ConciliacoesManutDepositos.TabVisible:=False;
+  Ts_ConciliacoesManutDepAnalise.TabVisible:=False;
+
+  Ts_ConcManutTotalPagtos.TabVisible      :=False;
+  Ts_HistConcAuto.TabVisible              :=False;
+
+  If TS<>nil Then
+   TS.TabVisible:=True;  // OK
+End; // Desabilita TabSheets - Habilita Somente a TS: TTabSheet >>>>>>>>>>>>>>>>
 
 // CONCILIAÇÕES DEPOSITOS - Apresenta Documento Financeiro`>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBancoExtratos.DepositoAnaliseApresDoctFinanceiro(sDoc: String; sLoja: String=''; sData: String='');
@@ -4255,7 +4277,7 @@ Begin
          ' WHERE m.ind_tipo=''C'''+
          ' AND   e.dta_extrato BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
          ' AND   e.Num_Seq<>999999'+
-         ' AND   UPPER(m.des_tpmovto) LIKE ''DEPOS%'''+
+         ' AND   UPPER(m.des_tpmovto) LIKE ''DEP%'''+
 
          ' ORDER BY e.dta_extrato, b.des_Banco, b.num_banco, b.num_agencia, b.num_conta, e.vlr_docto, e.num_seq';
   DMConciliacao.CDS_CMExtratosDep.Close;
@@ -5151,27 +5173,6 @@ Begin
 //  MenuHistoricosBancarios.Visible:=False;
 
 End; // Menus Visivel >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// Desabilita TabSheets - Habilita Somente a TS: TTabSheet >>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmBancoExtratos.DesabilitaTabSheet(TS: TTabSheet);
-Begin
-  // TS = TabSheet a Liberar
-  Ts_BancosManut.TabVisible               :=False;
-  Ts_VerificaExtrato.TabVisible           :=False;
-  Ts_ExtratosManut.TabVisible             :=False;
-
-  Ts_ConciliacaoManutPagtos.TabVisible    :=False;
-  Ts_ConciliacoesManutPagtos.TabVisible   :=False;
-
-  Ts_ConciliacoesManutDepositos.TabVisible:=False;
-  Ts_ConciliacoesManutDepAnalise.TabVisible:=False;
-
-  Ts_ConcManutTotalPagtos.TabVisible      :=False;
-  Ts_HistConcAuto.TabVisible              :=False;
-
-  If TS<>nil Then
-   TS.TabVisible:=True;  // OK
-End; // Desabilita TabSheets - Habilita Somente a TS: TTabSheet >>>>>>>>>>>>>>>>
 
 // Habilita Botoes Conciliação Pagtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBancoExtratos.HabilitaBotoes(b: Boolean);
@@ -10656,7 +10657,7 @@ var
 begin
   // primeiramente verificamos se é o evento a ser tratado...
   if Msg.message = WM_MOUSEWHEEL then
-  if ActiveControl is TDBGrid then // *** <=== AQUI você testa se classe é TDBGRID
+  If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   begin
     Msg.message := WM_KEYDOWN;
     Msg.lParam := 0;
@@ -10666,7 +10667,7 @@ begin
      Msg.wParam := VK_UP
     else
      Msg.wParam := VK_DOWN;
-  end;
+  end; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
 end; // Habilita o Scroll do Mouse no DBGrid >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -15466,6 +15467,8 @@ begin
   // primeiramente verificamos se é o evento a ser tratado...
   If Msg.message = WM_MOUSEWHEEL then
   Begin
+    If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
       Msg.message := WM_KEYDOWN;
       Msg.lParam := 0;
       Sentido := HiWord(Msg.wParam);
@@ -15473,6 +15476,7 @@ begin
        Msg.wParam := VK_UP
       else
        Msg.wParam := VK_DOWN;
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   End; // if Msg.message = WM_MOUSEWHEEL then
 end;
 
@@ -16405,37 +16409,38 @@ begin
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
    Abort;
 
-   // Busca Valor ===============================================================
-  If Key=Vk_F4 Then
-  Begin
-    If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
-    Begin
-      sValor:='';
-      b:=True;
-      While b do
-      Begin
-        If InputQuery('Valor a Localizar','',sValor) then
-         Begin
-           Try
-             StrToCurr(sValor);
-             If Not DMConciliacao.CDS_CMExtratosDep.Locate('VLR_DOCTO',sValor,[]) Then
-             Begin
-               msg('Valor Não Localizado !!','A');
-               Exit;
-             End;
-             Break;
-           Except
-             msg('Valor Inválido !!','A');
-             Break;
-           End;
-         End
-        Else // If InputQuery('Valor a Localizar','',sValor) then
-         Begin
-           Break;
-         End; // If InputQuery('Valor a Localizar','',sValor) then
-      End; // While b do
-    End; // If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
-  End; // If Key=Vk_F4 Then
+// OdirApagar - 23/05/2019
+//   // Busca Valor ===============================================================
+//  If Key=Vk_F4 Then
+//  Begin
+//    If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+//    Begin
+//      sValor:='';
+//      b:=True;
+//      While b do
+//      Begin
+//        If InputQuery('Valor a Localizar','',sValor) then
+//         Begin
+//           Try
+//             StrToCurr(sValor);
+//             If Not DMConciliacao.CDS_CMExtratosDep.Locate('VLR_DOCTO',sValor,[]) Then
+//             Begin
+//               msg('Valor Não Localizado !!','A');
+//               Exit;
+//             End;
+//             Break;
+//           Except
+//             msg('Valor Inválido !!','A');
+//             Break;
+//           End;
+//         End
+//        Else // If InputQuery('Valor a Localizar','',sValor) then
+//         Begin
+//           Break;
+//         End; // If InputQuery('Valor a Localizar','',sValor) then
+//      End; // While b do
+//    End; // If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+//  End; // If Key=Vk_F4 Then
 
   // Apresenta Conciliação =====================================================
   If Key=Vk_F6 Then
@@ -16508,7 +16513,18 @@ begin
            If Column.FieldName='NUM_DOCTO' Then
             sPesquisa:=FormatFloat('000000',StrToInt(sPesquisa));
 
-           If Not DMConciliacao.CDS_CMExtratosDep.Locate(Column.FieldName, sPesquisa,[]) Then
+            { Function LocalizaRegSequencial(:
+              ===============================
+              Retorna TRUE se achou
+              dsGrid: DataSouce a Pesquisar
+              KeyField: Nome do Campo em que será feita a busca
+              KeyValue:  Valor do campo a achar (sempre String)
+              Options :  Semalhante a Locate (usa apenas loCaseInsensitive)
+              Direction: 0  - Pesquisa desde o Inicio,
+                         1  - Pesquisa da posição atual para Frente,
+                         -1 - Pesquisa da posição atual para Tras
+            }
+           If Not LocalizaRegSequencial(DMConciliacao.DS_CMExtratosDep, Column.FieldName, sPesquisa, [], 1) Then
            Begin
              If Not LocalizaRegistro(DMConciliacao.CDS_CMExtratosDep, Column.FieldName, sPesquisa) Then
              Begin
@@ -16516,7 +16532,7 @@ begin
                msg('Não Localizado !!','A');
                Exit;
              End;
-           End; // If Not DMConciliacao.CDS_CMExtratosDep.Locate(Column.FieldName, sPesquisa,[]) Then
+           End; // If Not LocalizaRegSequencial(Column.FieldName, sPesquisa, [], 1) Then
            Break;
          Except
            msg('Informação Inválida !!','A');
@@ -16534,7 +16550,11 @@ end;
 procedure TFrmBancoExtratos.Dbg_ConcManutDepositosDblClick(Sender: TObject);
 Var
   bExcPagto, bConcRetira: Boolean;
+
+  iPosReg,
   iRecNo, i: Integer;
+
+  sFiltro, sFiltroMult,
   MySql: String;
 
   sObsNaoConc,
@@ -16851,9 +16871,53 @@ begin
    End
   Else // If DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM' Then
    Begin
+     If (DMConciliacao.CDS_CMDepositos.State=dsEdit) Or (DMConciliacao.CDS_CMDepositos.State=dsInsert) Then
+      DMConciliacao.CDS_CMDepositos.Post;
+
+     iPosReg:=DMConciliacao.CDS_CMDepositos.RecNo;
+
+     sFiltro:='';
+     If DMConciliacao.CDS_CMDepositos.Filtered Then
+      sFiltro:=DMConciliacao.CDS_CMDepositos.Filter;
+
+     DMConciliacao.CDS_CMDepositos.Edit;
      DMConciliacao.CDS_CMDepositosConciliar.AsString:='SIM';
+     DMConciliacao.CDS_CMDepositos.Post;
+
+     sFiltroMult:='DTA_DOCTO='+QuotedStr(FormatDateTime('dd/mm/yyyy', DMConciliacao.CDS_CMDepositosDTA_DOCTO.AsDateTime))+
+                  ' AND TRIM(RAZAO_SOCIAL)='+QuotedStr(Trim(DMConciliacao.CDS_CMDepositosRAZAO_SOCIAL.AsString))+
+                  ' AND TRIM(DESC_HISTORICO)='+QuotedStr(Trim(DMConciliacao.CDS_CMDepositosDESC_HISTORICO.AsString));
+     DMConciliacao.CDS_CMDepositos.DisableControls;
+     DMConciliacao.CDS_CMDepositos.Filtered:=False;
+     DMConciliacao.CDS_CMDepositos.Filter:=sFiltroMult;
+     DMConciliacao.CDS_CMDepositos.Filtered:=True;
+
+     While Not DMConciliacao.CDS_CMDepositos.Eof do
+     Begin
+       If (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='') And
+          (Trim(DMConciliacao.CDS_CMDepositosConciliado.AsString)='NAO') And
+          (Trim(DMConciliacao.CDS_CMDepositosConciliar.AsString)='NAO') Then
+       Begin
+         DMConciliacao.CDS_CMDepositos.Edit;
+         DMConciliacao.CDS_CMDepositosConciliar.AsString:='SIM';
+         DMConciliacao.CDS_CMDepositos.Post;
+       End; // If (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='') And...
+
+       DMConciliacao.CDS_CMDepositos.Next;
+     End; // While Not DMConciliacao.CDS_CMDepositos.Eof do
+
+     DMConciliacao.CDS_CMDepositos.Filtered:=False;
+     If sFiltro<>'' Then
+     Begin
+       DMConciliacao.CDS_CMDepositos.Filter:=sFiltro;
+       DMConciliacao.CDS_CMDepositos.Filtered:=True;
+     End; // DMConciliacao.CDS_CMDepositos.Filtered:=False;
+     DMConciliacao.CDS_CMDepositos.RecNo:=iPosReg;
+     DMConciliacao.CDS_CMDepositos.EnableControls;
    End; // If DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM' Then
-  DMConciliacao.CDS_CMDepositos.Post;
+
+  If (DMConciliacao.CDS_CMDepositos.State=dsEdit) Or (DMConciliacao.CDS_CMDepositos.State=dsInsert) Then
+   DMConciliacao.CDS_CMDepositos.Post;
 
   // Retira a Liberaçao Para Gravação ==========================================
   LiberaClientGravarDep(False);
@@ -16915,37 +16979,38 @@ begin
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
    Abort;
 
-  // Busca Valor ===============================================================
-  If Key=Vk_F4 Then
-  Begin
-    If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
-    Begin
-      sValor:='';
-      b:=True;
-      While b do
-      Begin
-        If InputQuery('Valor a Localizar','',sValor) then
-         Begin
-           Try
-             StrToCurr(sValor);
-             If Not DMConciliacao.CDS_CMDepositos.Locate('VLR_DOCTO',sValor,[]) Then
-             Begin
-               msg('Valor Não Localizado !!','A');
-               Exit;
-             End;
-             Break;
-           Except
-             msg('Valor Inválido !!','A');
-             Break;
-           End;
-         End
-        Else // If InputQuery('Valor a Localizar','',sValor) then
-         Begin
-           Break;
-         End; // If InputQuery('Valor a Localizar','',sValor) then
-      End; // While b do
-    End; // If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
-  End; // If Key=Vk_F4 Then
+// OdirApagar - 23/05/2019   
+//  // Busca Valor ===============================================================
+//  If Key=Vk_F4 Then
+//  Begin
+//    If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+//    Begin
+//      sValor:='';
+//      b:=True;
+//      While b do
+//      Begin
+//        If InputQuery('Valor a Localizar','',sValor) then
+//         Begin
+//           Try
+//             StrToCurr(sValor);
+//             If Not DMConciliacao.CDS_CMDepositos.Locate('VLR_DOCTO',sValor,[]) Then
+//             Begin
+//               msg('Valor Não Localizado !!','A');
+//               Exit;
+//             End;
+//             Break;
+//           Except
+//             msg('Valor Inválido !!','A');
+//             Break;
+//           End;
+//         End
+//        Else // If InputQuery('Valor a Localizar','',sValor) then
+//         Begin
+//           Break;
+//         End; // If InputQuery('Valor a Localizar','',sValor) then
+//      End; // While b do
+//    End; // If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+//  End; // If Key=Vk_F4 Then
 
   // Apresenta Conciliação =====================================================
   If Key=Vk_F6 Then
@@ -17027,7 +17092,27 @@ begin
       If InputQuery('Localizar: '+s,'',sPesquisa) then
        Begin
          Try
-           If Not DMConciliacao.CDS_CMDepositos.Locate(Column.FieldName, sPesquisa,[]) Then
+//           If Not DMConciliacao.CDS_CMDepositos.Locate(Column.FieldName, sPesquisa,[]) Then
+//           Begin
+//             If Not LocalizaRegistro(DMConciliacao.CDS_CMDepositos, Column.FieldName, sPesquisa) Then
+//             Begin
+//               DMConciliacao.CDS_CMDepositos.RecNo:=i;
+//               msg('Não Localizado !!','A');
+//               Exit;
+//             End;
+//           End; // If Not DMConciliacao.CDS_CMDepositos.Locate(Column.FieldName, sPesquisa,[]) Then
+            { Function LocalizaRegSequencial(:
+              ===============================
+              Retorna TRUE se achou
+              dsGrid: DataSouce a Pesquisar
+              KeyField: Nome do Campo em que será feita a busca
+              KeyValue:  Valor do campo a achar (sempre String)
+              Options :  Semalhante a Locate (usa apenas loCaseInsensitive)
+              Direction: 0  - Pesquisa desde o Inicio,
+                         1  - Pesquisa da posição atual para Frente,
+                         -1 - Pesquisa da posição atual para Tras
+            }
+           If Not LocalizaRegSequencial(DMConciliacao.DS_CMDepositos, Column.FieldName, sPesquisa, [], 1) Then
            Begin
              If Not LocalizaRegistro(DMConciliacao.CDS_CMDepositos, Column.FieldName, sPesquisa) Then
              Begin
@@ -17035,7 +17120,7 @@ begin
                msg('Não Localizado !!','A');
                Exit;
              End;
-           End; // If Not DMConciliacao.CDS_CMDepositos.Locate(Column.FieldName, sPesquisa,[]) Then
+           End; // If Not LocalizaRegSequencial(Column.FieldName, sPesquisa, [], 1) Then
            Break;
          Except
            msg('Informação Inválida !!','A');
@@ -18732,6 +18817,14 @@ begin
   DepositoAnaliseApresDoctFinanceiro(sNumDocto);
 
   Dbg_DepAnalise.SetFocus;
+end;
+
+procedure TFrmBancoExtratos.Button1Click(Sender: TObject);
+Var
+  i: Integer;
+  sFiltroMult: String;
+begin
+
 end;
 
 end.

@@ -73,15 +73,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, JvExControls, JvXPCore, JvXPButtons, Grids, DBGrids, StdCtrls,
   Clipbrd, // PrintScreen
-  Qt, ExtCtrls, DBXpress, AppEvnts;
-//  Último: DBXpress,;
-{
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, ADODB, StdCtrls, Buttons, Grids, DBGrids, ExtCtrls, Qt,
-  FMTBcd, DBClient, Provider, SqlExpr, DBXpress, JvExControls, JvXPCore,
-  Clipbrd, // PrintScreen
-  JvXPButtons;
-}
+  DB, // ==> Qt, Trocado
+  ExtCtrls, DBXpress, AppEvnts;
 
 type
   TFrmPesquisa = class(TForm)
@@ -94,6 +87,7 @@ type
     Bt_PesquisaOK: TJvXPButton;
     Bt_PesquisaRetorna: TJvXPButton;
     Bt_PesquisaNovo: TJvXPButton;
+    ApplicationEvents1: TApplicationEvents;
     procedure EdtDescricaoChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -112,15 +106,17 @@ type
     // Odir ====================================================================
 
     // Dbg_Pesquisa para Pesquisa de Documentos de OC ==============================
-    Procedure Dbg_PesquisaPesquisaDoctosOC;
-    procedure Bt_PesquisaNovoClick(Sender: TObject);
-
+    Procedure Dbg_PesquisaPesquisaDoctosOC(sTipo: String);
+                                        // sTipo= < L > Lojas BelShop
+                                        //        < M > BelShop Matriz
     // Odir ====================================================================
+
+    procedure Bt_PesquisaNovoClick(Sender: TObject);
+    procedure ApplicationEvents1Message(var Msg: tagMSG;
+      var Handled: Boolean);
+    procedure Dbg_PesquisaEnter(Sender: TObject);
   private
     { Private declarations }
-    // Rolagem no Grid com Mouse
-    procedure MouseAppEventsMessage(var Msg: TMsg; var Handled: Boolean);
-
   public
     { Public declarations }
     Campo_Pesquisa: String;
@@ -148,62 +144,88 @@ uses UDMBelShop, DK_Procs1;
 {$R *.dfm}
 
 // Dbg_Pesquisa para Pesquisa de Documentos de OC ==============================
-Procedure TFrmPesquisa.Dbg_PesquisaPesquisaDoctosOC;
+Procedure TFrmPesquisa.Dbg_PesquisaPesquisaDoctosOC(sTipo: String);
 Begin
-  FrmPesquisa.AutoSize:=False;
-  FrmPesquisa.Width:=700;
-  FrmPesquisa.AutoSize:=True;
+  // sTipo= < L > Lojas BelShop
+  //        < M > BelShop Matriz
 
-  Dbg_Pesquisa.Columns[0].Alignment:=taRightJustify;
-  Dbg_Pesquisa.Columns[0].Title.Alignment:=taRightJustify;
-  Dbg_Pesquisa.Columns[0].Title.Caption:='Nº Docto';
-  Dbg_Pesquisa.Columns[0].Width:=70;
-  Dbg_Pesquisa.Columns[0].Color:=clYellow;
-  Dbg_Pesquisa.Columns[0].Font.Style:=[fsBold];
+  If sTipo='M' Then
+  Begin
+    FrmPesquisa.AutoSize:=False;
+    FrmPesquisa.Width:=700;
+    FrmPesquisa.AutoSize:=True;
 
-  Dbg_Pesquisa.Columns[1].Alignment:=taLeftJustify;
-  Dbg_Pesquisa.Columns[1].Title.Alignment:=taLeftJustify;
-  Dbg_Pesquisa.Columns[1].Title.Caption:='Comprador';
-  Dbg_Pesquisa.Columns[1].Width:=100;
+    Dbg_Pesquisa.Columns[0].Alignment:=taRightJustify;
+    Dbg_Pesquisa.Columns[0].Title.Alignment:=taRightJustify;
+    Dbg_Pesquisa.Columns[0].Title.Caption:='Nº Docto';
+    Dbg_Pesquisa.Columns[0].Width:=70;
+    Dbg_Pesquisa.Columns[0].Color:=clYellow;
+    Dbg_Pesquisa.Columns[0].Font.Style:=[fsBold];
 
-  Dbg_Pesquisa.Columns[2].Alignment:=taLeftJustify;
-  Dbg_Pesquisa.Columns[2].Title.Alignment:=taLeftJustify;
-  Dbg_Pesquisa.Columns[2].Title.Caption:='Origem do Docto';
-  Dbg_Pesquisa.Columns[2].Width:=300;
-  Dbg_Pesquisa.Columns[2].Color:=clYellow;
-  Dbg_Pesquisa.Columns[2].Font.Style:=[fsBold];
+    Dbg_Pesquisa.Columns[1].Alignment:=taLeftJustify;
+    Dbg_Pesquisa.Columns[1].Title.Alignment:=taLeftJustify;
+    Dbg_Pesquisa.Columns[1].Title.Caption:='Comprador';
+    Dbg_Pesquisa.Columns[1].Width:=300;
 
-  Dbg_Pesquisa.Columns[3].Alignment:=taCenter;
-  Dbg_Pesquisa.Columns[3].Title.Alignment:=taCenter;
-  Dbg_Pesquisa.Columns[3].Title.Caption:='Data Docto';
-  Dbg_Pesquisa.Columns[3].Width:=80;
+    Dbg_Pesquisa.Columns[2].Alignment:=taLeftJustify;
+    Dbg_Pesquisa.Columns[2].Title.Alignment:=taLeftJustify;
+    Dbg_Pesquisa.Columns[2].Title.Caption:='Origem do Docto';
+    Dbg_Pesquisa.Columns[2].Width:=100;
+    Dbg_Pesquisa.Columns[2].Color:=clYellow;
+    Dbg_Pesquisa.Columns[2].Font.Style:=[fsBold];
 
-  Dbg_Pesquisa.Columns[4].Alignment:=taRightJustify;
-  Dbg_Pesquisa.Columns[4].Title.Alignment:=taRightJustify;
-  Dbg_Pesquisa.Columns[4].Title.Caption:='Cód Comprador';
-  Dbg_Pesquisa.Columns[4].Width:=100;
+    Dbg_Pesquisa.Columns[3].Alignment:=taCenter;
+    Dbg_Pesquisa.Columns[3].Title.Alignment:=taCenter;
+    Dbg_Pesquisa.Columns[3].Title.Caption:='Data Docto';
+    Dbg_Pesquisa.Columns[3].Width:=80;
+
+    Dbg_Pesquisa.Columns[4].Alignment:=taRightJustify;
+    Dbg_Pesquisa.Columns[4].Title.Alignment:=taRightJustify;
+    Dbg_Pesquisa.Columns[4].Title.Caption:='Cód Comprador';
+    Dbg_Pesquisa.Columns[4].Width:=100;
+  End; // If sTipo='M' Then
+
+  If sTipo='L' Then
+  Begin
+    FrmPesquisa.AutoSize:=False;
+    FrmPesquisa.Width:=790;
+    FrmPesquisa.AutoSize:=True;
+
+    Dbg_Pesquisa.Columns[0].Alignment:=taRightJustify;
+    Dbg_Pesquisa.Columns[0].Title.Alignment:=taRightJustify;
+    Dbg_Pesquisa.Columns[0].Title.Caption:='Nº Docto';
+    Dbg_Pesquisa.Columns[0].Width:=66;
+    Dbg_Pesquisa.Columns[0].Color:=clYellow;
+    Dbg_Pesquisa.Columns[0].Font.Style:=[fsBold];
+
+    Dbg_Pesquisa.Columns[1].Alignment:=taCenter;
+    Dbg_Pesquisa.Columns[1].Title.Alignment:=taCenter;
+    Dbg_Pesquisa.Columns[1].Title.Caption:='Data Docto';
+    Dbg_Pesquisa.Columns[1].Width:=74;
+
+    Dbg_Pesquisa.Columns[2].Alignment:=taLeftJustify;
+    Dbg_Pesquisa.Columns[2].Title.Alignment:=taLeftJustify;
+    Dbg_Pesquisa.Columns[2].Title.Caption:='Nome Fornecedor';
+    Dbg_Pesquisa.Columns[2].Width:=310;
+    Dbg_Pesquisa.Columns[2].Color:=clYellow;
+    Dbg_Pesquisa.Columns[2].Font.Style:=[fsBold];
+
+    Dbg_Pesquisa.Columns[3].Alignment:=taRightJustify;
+    Dbg_Pesquisa.Columns[3].Title.Alignment:=taRightJustify;
+    Dbg_Pesquisa.Columns[3].Title.Caption:='Cód Forn';
+    Dbg_Pesquisa.Columns[3].Width:=60;
+
+    Dbg_Pesquisa.Columns[4].Alignment:=taLeftJustify;
+    Dbg_Pesquisa.Columns[4].Title.Alignment:=taLeftJustify;
+    Dbg_Pesquisa.Columns[4].Title.Caption:='Comprador';
+    Dbg_Pesquisa.Columns[4].Width:=150;
+
+    Dbg_Pesquisa.Columns[5].Alignment:=taCenter;
+    Dbg_Pesquisa.Columns[5].Title.Alignment:=taCenter;
+    Dbg_Pesquisa.Columns[5].Title.Caption:='Situação';
+    Dbg_Pesquisa.Columns[5].Width:=70;
+  End; // If sTipo='L' Then
 End;
-
-// Rolagem no Grid com Mouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-procedure TFrmPesquisa.MouseAppEventsMessage(var Msg: TMsg; var Handled: Boolean);
-var
-  Sentido: SmallInt;
-begin
- // primeiramente verificamos se é o evento a ser tratado...
- if Msg.message = WM_MOUSEWHEEL then
- Begin
-   if ActiveControl is TDBGrid then   // <=== AQUI você testa se classe é TDBGRID
-   begin
-     Msg.message := WM_KEYDOWN;
-     Msg.lParam := 0;
-     Sentido := HiWord(Msg.wParam);
-     if Sentido > 0 then
-      Msg.wParam := VK_UP
-     else
-      Msg.wParam := VK_DOWN;
-   end; // if ActiveControl is TDBGrid then
- End; // if Msg.message = WM_MOUSEWHEEL then
-end; // // Rolagem no Grid com Mouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmPesquisa.EdtDescricaoChange(Sender: TObject);
 begin
@@ -245,7 +267,7 @@ end;
 
 procedure TFrmPesquisa.Dbg_PesquisaKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  If key=Key_Enter Then
+  If key=Vk_Return Then
    Bt_PesquisaOKClick(Sender);
 end;
 
@@ -295,7 +317,8 @@ begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
-  Application.OnMessage := MouseAppEventsMessage;
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  Application.OnMessage := ApplicationEvents1Message;
 end;
 
 procedure TFrmPesquisa.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -375,6 +398,37 @@ begin
   End; // If sgBt_PesquisaNovo='1' Then
   // 1 = 29 => LOGISTICA - Cadastro de Separadores de Mercadorias ==============
   //============================================================================
+end;
+
+procedure TFrmPesquisa.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
+var
+  Sentido: SmallInt;
+begin
+  // (ERRO) ACERTA ROLAGEM DO MOUSE (SCROLL)
+  If Msg.message = WM_MOUSEWHEEL then // primeiramente verificamos se é o evento a ser tratado...
+  Begin
+    // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    If (ActiveControl is TDBGrid) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
+      Msg.message := WM_KEYDOWN;
+      Msg.lParam := 0;
+      Sentido := HiWord(Msg.wParam);
+      if Sentido > 0 then
+       Msg.wParam := VK_UP
+      else
+       Msg.wParam := VK_DOWN;
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+  End; // if Msg.message = WM_MOUSEWHEEL then
+
+end;
+
+procedure TFrmPesquisa.Dbg_PesquisaEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_PesquisaEnter; // Nome do Evento do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
 end;
 
 end.

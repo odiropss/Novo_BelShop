@@ -1,5 +1,5 @@
 object FrmBelShop: TFrmBelShop
-  Left = 238
+  Left = 235
   Top = 106
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_OrdemCompra
+    ActivePage = TS_Filtros
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -5144,269 +5144,32 @@ object FrmBelShop: TFrmBelShop
       Caption = '  Manuten'#231#227'o de Empresas  '
       ImageIndex = 8
       object Pan_ConEmpresasDados: TPanel
-        Left = 320
+        Left = 325
         Top = 0
-        Width = 651
+        Width = 646
         Height = 501
         Align = alClient
         BevelInner = bvLowered
         Enabled = False
         TabOrder = 0
         DesignSize = (
-          651
+          646
           501)
-        object Label17: TLabel
-          Left = 25
-          Top = 132
-          Width = 85
-          Height = 13
-          Caption = 'Raz'#227'o Social *'
-          Color = clBtnFace
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = False
-          ParentFont = False
-        end
-        object Label21: TLabel
-          Left = 26
-          Top = 106
-          Width = 81
-          Height = 13
-          Caption = '(M)atriz (F)ilial'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label38: TLabel
-          Left = 24
-          Top = 155
-          Width = 41
-          Height = 13
-          Caption = 'CNPJ *'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label49: TLabel
-          Left = 162
-          Top = 105
-          Width = 30
-          Height = 13
-          Caption = 'Ativo'
-        end
-        object Label50: TLabel
-          Left = 202
-          Top = 155
-          Width = 115
-          Height = 13
-          Caption = 'Inscri'#231#227'o Estadual *'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label45: TLabel
-          Left = 25
-          Top = 177
-          Width = 74
-          Height = 13
-          Caption = 'Logradouro *'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label51: TLabel
-          Left = 25
-          Top = 197
-          Width = 85
-          Height = 13
-          Caption = 'Complemento *'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label52: TLabel
-          Left = 181
-          Top = 197
-          Width = 43
-          Height = 13
-          Anchors = [akLeft, akTop, akRight]
-          Caption = 'Bairro *'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label53: TLabel
-          Left = 497
-          Top = 197
-          Width = 34
-          Height = 13
-          Anchors = [akTop, akRight]
-          Caption = 'CEP *'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label55: TLabel
-          Left = 25
-          Top = 240
-          Width = 26
-          Height = 13
-          Caption = 'UF *'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label56: TLabel
-          Left = 368
-          Top = 240
-          Width = 66
-          Height = 13
-          Anchors = [akTop, akRight]
-          Caption = 'Munic'#237'pio *'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label57: TLabel
-          Left = 497
-          Top = 177
-          Width = 53
-          Height = 13
-          Anchors = [akTop, akRight]
-          Caption = 'N'#250'mero *'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label200: TLabel
-          Left = 449
-          Top = 155
-          Width = 89
-          Height = 13
-          Caption = 'Lista de Pre'#231'os'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label193: TLabel
-          Left = 25
-          Top = 269
-          Width = 236
-          Height = 13
-          Caption = 'Inscri'#231#227'o Sindicato dos Sal'#245'es de Beleza'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label201: TLabel
-          Left = 90
-          Top = 291
-          Width = 171
-          Height = 13
-          Caption = 'N'#250'mero do Alvar'#225' Municip'#225'rio'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label69: TLabel
-          Left = 369
-          Top = 291
-          Width = 90
-          Height = 13
-          Caption = 'C'#243'digo Contabil'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label136: TLabel
-          Left = 271
-          Top = 105
-          Width = 134
-          Height = 13
-          Caption = 'Trabalha aos Domingos'
-        end
-        object Dbe_ConEmpresasRazaoSocial: TDBEdit
-          Left = 113
-          Top = 129
-          Width = 514
-          Height = 19
-          Anchors = [akLeft, akTop, akRight]
-          CharCase = ecUpperCase
-          Color = 15263999
-          Ctl3D = False
-          DataField = 'RAZAO_SOCIAL'
-          DataSource = DMBelShop.DS_Empresa
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentCtl3D = False
-          ParentFont = False
-          TabOrder = 6
-        end
-        object Panel21: TPanel
+        object Pan_EmpObs: TPanel
           Left = 2
           Top = 464
-          Width = 647
+          Width = 642
           Height = 35
           Align = alBottom
           BevelInner = bvLowered
           BorderStyle = bsSingle
-          TabOrder = 25
+          TabOrder = 5
           object Label66: TLabel
             Left = 206
             Top = 9
-            Width = 440
+            Width = 326
             Height = 13
-            Caption = 
-              'Estas Informa'#231#245'es devem ser ALTERADAS no SIDICOM ( CD / BelShop_' +
-              'CD )'
+            Caption = 'Estas Informa'#231#245'es devem ser ALTERADAS no MICROVIX'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clRed
             Font.Height = -11
@@ -5466,366 +5229,10 @@ object FrmBelShop: TFrmBelShop
             OnClick = Bt_ConEmpresasVoltarClick
           end
         end
-        object Dbcb_ConEmpresasAtivo: TDBComboBox
-          Left = 196
-          Top = 102
-          Width = 60
-          Height = 19
-          Style = csOwnerDrawFixed
-          CharCase = ecUpperCase
-          DataField = 'IND_ATIVO'
-          DataSource = DMBelShop.DS_Empresa
-          ItemHeight = 13
-          Items.Strings = (
-            'SIM'
-            'NAO')
-          TabOrder = 4
-        end
-        object Dbe_ConEmpresasInscrEstadual: TDBEdit
-          Left = 320
-          Top = 152
-          Width = 120
-          Height = 19
-          CharCase = ecUpperCase
-          Color = 15263999
-          Ctl3D = False
-          DataField = 'INSCR_ESTADUAL'
-          DataSource = DMBelShop.DS_Empresa
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentCtl3D = False
-          ParentFont = False
-          TabOrder = 8
-        end
-        object Dbe_ConEmpresasComplemento: TDBEdit
-          Left = 25
-          Top = 212
-          Width = 150
-          Height = 19
-          CharCase = ecUpperCase
-          Color = 15263999
-          Ctl3D = False
-          DataField = 'COMPL_ENDERECO'
-          DataSource = DMBelShop.DS_Empresa
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentCtl3D = False
-          ParentFont = False
-          TabOrder = 12
-        end
-        object Dbe_ConEmpresasBairro: TDBEdit
-          Left = 181
-          Top = 212
-          Width = 310
-          Height = 19
-          Anchors = [akLeft, akTop, akRight]
-          CharCase = ecUpperCase
-          Color = 15263999
-          Ctl3D = False
-          DataField = 'DES_BAIRRO'
-          DataSource = DMBelShop.DS_Empresa
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentCtl3D = False
-          ParentFont = False
-          TabOrder = 13
-        end
-        object Dbe_ConEmpresasNumero: TDBEdit
-          Left = 554
-          Top = 175
-          Width = 72
-          Height = 19
-          Anchors = [akTop, akRight]
-          CharCase = ecUpperCase
-          Color = 15263999
-          Ctl3D = False
-          DataField = 'NUM_ENDERECO'
-          DataSource = DMBelShop.DS_Empresa
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentCtl3D = False
-          ParentFont = False
-          TabOrder = 11
-        end
-        object Dbe_ConEmpresasEndereco: TDBEdit
-          Left = 103
-          Top = 175
-          Width = 389
-          Height = 19
-          Anchors = [akLeft, akTop, akRight]
-          CharCase = ecUpperCase
-          Color = 15263999
-          Ctl3D = False
-          DataField = 'DES_ENDERECO'
-          DataSource = DMBelShop.DS_Empresa
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentCtl3D = False
-          ParentFont = False
-          TabOrder = 10
-        end
-        object Dbe_ConEmpresasUF: TDBEdit
-          Left = 55
-          Top = 237
-          Width = 26
-          Height = 19
-          TabStop = False
-          CharCase = ecUpperCase
-          Color = 15263999
-          Ctl3D = False
-          DataField = 'COD_UF'
-          DataSource = DMBelShop.DS_Empresa
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentCtl3D = False
-          ParentFont = False
-          ReadOnly = True
-          TabOrder = 15
-        end
-        object EdtConEmpresasEstado: TEdit
-          Left = 85
-          Top = 237
-          Width = 253
-          Height = 19
-          TabStop = False
-          Anchors = [akLeft, akTop, akRight]
-          CharCase = ecUpperCase
-          Color = 15263999
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          ReadOnly = True
-          TabOrder = 16
-        end
-        object Bt_ConEmpresasBuscaMunicipio: TJvXPButton
-          Tag = 92
-          Left = 602
-          Top = 234
-          Width = 24
-          Height = 26
-          TabOrder = 19
-          TabStop = False
-          ShowFocusRect = True
-          Anchors = [akTop, akRight]
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_ConEmpresasBuscaMunicipioClick
-        end
-        object Bt_ConEmpresasBuscaEstado: TJvXPButton
-          Tag = 92
-          Left = 341
-          Top = 234
-          Width = 23
-          Height = 24
-          TabOrder = 17
-          TabStop = False
-          ShowFocusRect = True
-          Anchors = [akTop, akRight]
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_ConEmpresasBuscaEstadoClick
-        end
-        object Dbcb_ConEmpresasTipo: TDBComboBox
-          Left = 110
-          Top = 102
-          Width = 45
-          Height = 19
-          Style = csOwnerDrawFixed
-          CharCase = ecUpperCase
-          Ctl3D = False
-          DataField = 'TIP_EMP'
-          DataSource = DMBelShop.DS_Empresa
-          ItemHeight = 13
-          Items.Strings = (
-            'M'
-            'F')
-          ParentCtl3D = False
-          TabOrder = 3
-        end
-        object Me_ConEmpresasCNPJ: TMaskEdit
-          Left = 68
-          Top = 152
-          Width = 129
-          Height = 19
-          CharCase = ecUpperCase
-          Color = 15263999
-          EditMask = '99.999.999/9999-99'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          MaxLength = 18
-          ParentFont = False
-          TabOrder = 7
-          Text = '  .   .   /    -  '
-        end
-        object Dbe_ConEmpresasMunicipio: TDBEdit
-          Left = 438
-          Top = 237
-          Width = 161
-          Height = 19
-          TabStop = False
-          Anchors = [akTop, akRight]
-          CharCase = ecUpperCase
-          Color = 15263999
-          Ctl3D = False
-          DataField = 'DES_CIDADE'
-          DataSource = DMBelShop.DS_Empresa
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentCtl3D = False
-          ParentFont = False
-          ReadOnly = True
-          TabOrder = 18
-        end
-        object Me_ConEmpresasCEP: TMaskEdit
-          Left = 497
-          Top = 212
-          Width = 68
-          Height = 19
-          Anchors = [akTop, akRight]
-          Color = 15263999
-          EditMask = '00000\-000;1;_'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          MaxLength = 9
-          ParentFont = False
-          TabOrder = 14
-          Text = '     -   '
-        end
-        object Panel9: TPanel
+        object Gb_EmpConexao: TGroupBox
           Left = 2
-          Top = 414
-          Width = 647
-          Height = 50
-          Align = alBottom
-          BevelInner = bvLowered
-          TabOrder = 24
-          DesignSize = (
-            647
-            50)
-          object Gb_ConEmpresasUsuInclui: TGroupBox
-            Left = 8
-            Top = 3
-            Width = 309
-            Height = 42
-            Caption = '  Usu'#225'rio que Incluiu  '
-            TabOrder = 0
-            object Label12: TLabel
-              Left = 194
-              Top = 19
-              Width = 17
-              Height = 13
-              Caption = 'em'
-            end
-            object Dbe_ConEmpresasDataInclui: TDBEdit
-              Left = 219
-              Top = 16
-              Width = 77
-              Height = 19
-              TabStop = False
-              CharCase = ecUpperCase
-              Color = 12171775
-              Ctl3D = False
-              DataField = 'DTA_INCLUI'
-              DataSource = DMBelShop.DS_Empresa
-              ParentCtl3D = False
-              ReadOnly = True
-              TabOrder = 0
-            end
-            object EdtConEmpresasUsuInclui: TEdit
-              Left = 12
-              Top = 16
-              Width = 175
-              Height = 19
-              TabStop = False
-              Color = 12171775
-              ReadOnly = True
-              TabOrder = 1
-            end
-          end
-          object Gb_ConEmpresasUsuAltera: TGroupBox
-            Left = 323
-            Top = 3
-            Width = 309
-            Height = 42
-            Anchors = [akTop, akRight]
-            Caption = '  Usu'#225'rio que Alterou  '
-            TabOrder = 1
-            object Label13: TLabel
-              Left = 194
-              Top = 19
-              Width = 17
-              Height = 13
-              Caption = 'em'
-            end
-            object Dbe_ConEmpresasDataAltera: TDBEdit
-              Left = 219
-              Top = 16
-              Width = 77
-              Height = 19
-              TabStop = False
-              CharCase = ecUpperCase
-              Color = 12171775
-              Ctl3D = False
-              DataField = 'DTA_ALTERA'
-              DataSource = DMBelShop.DS_Empresa
-              ParentCtl3D = False
-              ReadOnly = True
-              TabOrder = 0
-            end
-            object EdtConEmpresasUsuAltera: TEdit
-              Left = 11
-              Top = 16
-              Width = 177
-              Height = 19
-              TabStop = False
-              Color = 12171775
-              ReadOnly = True
-              TabOrder = 1
-            end
-          end
-        end
-        object Gb_ConEmpresasConexao: TGroupBox
-          Left = 2
-          Top = 308
-          Width = 647
+          Top = 358
+          Width = 642
           Height = 106
           Align = alBottom
           Caption = ' Conex'#227'o Banco de Dados '
@@ -5835,9 +5242,9 @@ object FrmBelShop: TFrmBelShop
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          TabOrder = 23
+          TabOrder = 4
           DesignSize = (
-            647
+            642
             106)
           object Label19: TLabel
             Left = 25
@@ -5868,7 +5275,7 @@ object FrmBelShop: TFrmBelShop
           object Dbe_ConEmpresasBaseDados: TDBEdit
             Left = 213
             Top = 81
-            Width = 185
+            Width = 402
             Height = 19
             Anchors = [akLeft, akTop, akRight]
             CharCase = ecUpperCase
@@ -5887,7 +5294,7 @@ object FrmBelShop: TFrmBelShop
           object Dbe_ConEmpresasPastaBD: TDBEdit
             Left = 213
             Top = 59
-            Width = 407
+            Width = 402
             Height = 19
             Anchors = [akLeft, akTop, akRight]
             CharCase = ecUpperCase
@@ -5904,9 +5311,9 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 2
           end
           object Gb_ConEmpresasEnderecoIP: TGroupBox
-            Left = 14
+            Left = 13
             Top = 15
-            Width = 273
+            Width = 282
             Height = 41
             Anchors = [akTop]
             Caption = ' IP do Servidor (Lojas ou Local para Matriz) '
@@ -5919,8 +5326,8 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             object Dbe_ConEmpresasIP: TDBEdit
               Left = 9
-              Top = 17
-              Width = 256
+              Top = 16
+              Width = 263
               Height = 19
               CharCase = ecUpperCase
               Ctl3D = False
@@ -5937,7 +5344,7 @@ object FrmBelShop: TFrmBelShop
             end
           end
           object Gb_ConEmpresasEnderecoIPExterno: TGroupBox
-            Left = 288
+            Left = 296
             Top = 15
             Width = 336
             Height = 41
@@ -5951,9 +5358,9 @@ object FrmBelShop: TFrmBelShop
             ParentFont = False
             TabOrder = 1
             object Dbe_ConEmpresasIPExterno: TDBEdit
-              Left = 14
+              Left = 11
               Top = 16
-              Width = 315
+              Width = 314
               Height = 19
               CharCase = ecUpperCase
               Ctl3D = False
@@ -5970,267 +5377,394 @@ object FrmBelShop: TFrmBelShop
             end
           end
         end
-        object Dbe_ConEmpresasCodLP: TDBEdit
-          Left = 542
-          Top = 152
-          Width = 53
-          Height = 19
-          CharCase = ecUpperCase
-          Ctl3D = False
-          DataField = 'COD_LISTAPRE'
-          DataSource = DMBelShop.DS_Empresa
-          ParentCtl3D = False
-          TabOrder = 9
-          OnExit = Dbe_ConEmpresasCodLPExit
-        end
-        object Dbe_ConEmpresasNumSindicato: TDBEdit
-          Left = 264
-          Top = 266
-          Width = 94
-          Height = 19
-          CharCase = ecUpperCase
-          Ctl3D = False
-          DataField = 'NUM_SINDICATO'
-          DataSource = DMBelShop.DS_Empresa
-          ParentCtl3D = False
-          TabOrder = 20
-        end
-        object Dbe_ConEmpresasNumAlvaraMun: TDBEdit
-          Left = 264
-          Top = 288
-          Width = 94
-          Height = 19
-          CharCase = ecUpperCase
-          Ctl3D = False
-          DataField = 'NUM_ALVARA_MUN'
-          DataSource = DMBelShop.DS_Empresa
-          ParentCtl3D = False
-          TabOrder = 21
-        end
-        object Dbe_ConEmpresasCodContabil: TDBEdit
-          Left = 462
-          Top = 288
-          Width = 53
-          Height = 19
-          CharCase = ecUpperCase
-          Ctl3D = False
-          DataField = 'COD_CONTABIL'
-          DataSource = DMBelShop.DS_Empresa
-          ParentCtl3D = False
-          TabOrder = 22
-          OnExit = Dbe_ConEmpresasCodLPExit
-        end
-        object Gb_Sidicom: TGroupBox
-          Left = 12
-          Top = 5
-          Width = 174
-          Height = 91
-          Caption = ' SIDICOM '
-          Color = 14079702
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlue
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = False
-          ParentFont = False
-          TabOrder = 0
-          object Label16: TLabel
-            Left = 34
-            Top = 24
-            Width = 68
+        object Pan_EmpEndereco: TPanel
+          Left = 2
+          Top = 172
+          Width = 642
+          Height = 148
+          Anchors = [akTop]
+          BevelInner = bvLowered
+          TabOrder = 2
+          DesignSize = (
+            642
+            148)
+          object Label17: TLabel
+            Left = 25
+            Top = 15
+            Width = 85
             Height = 13
-            Caption = 'C'#243'digo Loja'
+            Caption = 'Raz'#227'o Social *'
+            Color = clBtnFace
             Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentColor = False
+            ParentFont = False
+          end
+          object Label50: TLabel
+            Left = 202
+            Top = 38
+            Width = 115
+            Height = 13
+            Caption = 'Inscri'#231#227'o Estadual *'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             ParentFont = False
           end
-          object Label15: TLabel
-            Left = 10
-            Top = 55
-            Width = 92
+          object Label38: TLabel
+            Left = 24
+            Top = 38
+            Width = 41
             Height = 13
-            Caption = 'C'#243'digo Empresa'
+            Caption = 'CNPJ *'
             Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
+            Font.Color = clRed
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             ParentFont = False
           end
-          object Dbe_ConEmpresasCodFilial: TDBEdit
-            Left = 105
-            Top = 21
+          object Label45: TLabel
+            Left = 25
+            Top = 60
+            Width = 74
+            Height = 13
+            Caption = 'Logradouro *'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label57: TLabel
+            Left = 493
+            Top = 60
             Width = 53
+            Height = 13
+            Anchors = [akTop, akRight]
+            Caption = 'N'#250'mero *'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label53: TLabel
+            Left = 493
+            Top = 80
+            Width = 34
+            Height = 13
+            Anchors = [akTop, akRight]
+            Caption = 'CEP *'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label52: TLabel
+            Left = 181
+            Top = 80
+            Width = 43
+            Height = 13
+            Anchors = [akLeft, akTop, akRight]
+            Caption = 'Bairro *'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label51: TLabel
+            Left = 25
+            Top = 80
+            Width = 85
+            Height = 13
+            Caption = 'Complemento *'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label55: TLabel
+            Left = 25
+            Top = 123
+            Width = 26
+            Height = 13
+            Caption = 'UF *'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label56: TLabel
+            Left = 364
+            Top = 123
+            Width = 66
+            Height = 13
+            Anchors = [akTop, akRight]
+            Caption = 'Munic'#237'pio *'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Dbe_ConEmpresasRazaoSocial: TDBEdit
+            Left = 113
+            Top = 12
+            Width = 509
             Height = 19
+            Anchors = [akLeft, akTop, akRight]
             CharCase = ecUpperCase
+            Color = 15263999
             Ctl3D = False
-            DataField = 'COD_FILIAL'
+            DataField = 'RAZAO_SOCIAL'
             DataSource = DMBelShop.DS_Empresa
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
             ParentCtl3D = False
+            ParentFont = False
             TabOrder = 0
           end
-          object Dbe_ConEmpresasCodEmp: TDBEdit
-            Left = 105
-            Top = 52
-            Width = 53
+          object Dbe_ConEmpresasInscrEstadual: TDBEdit
+            Left = 320
+            Top = 35
+            Width = 119
             Height = 19
             CharCase = ecUpperCase
+            Color = 15263999
             Ctl3D = False
-            DataField = 'COD_EMP'
+            DataField = 'INSCR_ESTADUAL'
             DataSource = DMBelShop.DS_Empresa
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
             ParentCtl3D = False
-            TabOrder = 1
-          end
-        end
-        object Gb_Linx: TGroupBox
-          Left = 187
-          Top = 5
-          Width = 279
-          Height = 91
-          Caption = ' LINX '
-          Color = 14079702
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlue
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = False
-          ParentFont = False
-          TabOrder = 1
-          object Label2: TLabel
-            Left = 31
-            Top = 24
-            Width = 68
-            Height = 13
-            Caption = 'C'#243'digo Loja'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
             ParentFont = False
-          end
-          object Label71: TLabel
-            Left = 182
-            Top = 47
-            Width = 65
-            Height = 13
-            Caption = 'Data In'#237'cio'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ParentFont = False
-          end
-          object Label72: TLabel
-            Left = 173
-            Top = 7
-            Width = 89
-            Height = 13
-            Caption = 'Data Invent'#225'rio'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ParentFont = False
-          end
-          object Label54: TLabel
-            Left = 10
-            Top = 55
-            Width = 92
-            Height = 13
-            Caption = 'C'#243'digo Empresa'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ParentFont = False
-          end
-          object Dbe_ConEmpresasCodLojaLinx: TDBEdit
-            Left = 104
-            Top = 21
-            Width = 53
-            Height = 19
-            CharCase = ecUpperCase
-            Ctl3D = False
-            DataField = 'COD_LINX'
-            DataSource = DMBelShop.DS_Empresa
-            ParentCtl3D = False
-            TabOrder = 0
-            OnExit = Dbe_ConEmpresasCodLojaLinxExit
-            OnKeyPress = Dbe_ConEmpresasCodLojaLinxKeyPress
-          end
-          object EdtDta_ConEmpresasInicioLinx: TcxDateEdit
-            Left = 168
-            Top = 62
-            ParentFont = False
-            Properties.OnChange = EdtDta_ConEmpresasInicioLinxPropertiesChange
-            Style.Font.Charset = DEFAULT_CHARSET
-            Style.Font.Color = clBlue
-            Style.Font.Height = -13
-            Style.Font.Name = 'MS Sans Serif'
-            Style.Font.Style = [fsBold]
-            Style.IsFontAssigned = True
-            StyleFocused.BorderStyle = ebsOffice11
-            TabOrder = 1
-            Width = 96
-          end
-          object EdtDta_ConEmpresasInventLinx: TcxDateEdit
-            Left = 169
-            Top = 21
-            ParentFont = False
-            Properties.OnChange = EdtDta_ConEmpresasInicioLinxPropertiesChange
-            Style.Font.Charset = DEFAULT_CHARSET
-            Style.Font.Color = clBlue
-            Style.Font.Height = -13
-            Style.Font.Name = 'MS Sans Serif'
-            Style.Font.Style = [fsBold]
-            Style.IsFontAssigned = True
-            StyleFocused.BorderStyle = ebsOffice11
             TabOrder = 2
-            Width = 96
           end
-          object Dbe_ConEmpresasCodEmpLinx: TDBEdit
-            Left = 105
-            Top = 52
-            Width = 53
+          object Me_ConEmpresasCNPJ: TMaskEdit
+            Left = 68
+            Top = 35
+            Width = 128
             Height = 19
             CharCase = ecUpperCase
+            Color = 15263999
+            EditMask = '99.999.999/9999-99'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 18
+            ParentFont = False
+            TabOrder = 1
+            Text = '  .   .   /    -  '
+          end
+          object Dbe_ConEmpresasEndereco: TDBEdit
+            Left = 103
+            Top = 58
+            Width = 384
+            Height = 19
+            Anchors = [akLeft, akTop, akRight]
+            CharCase = ecUpperCase
+            Color = 15263999
             Ctl3D = False
-            DataField = 'COD_CLI_LINX'
+            DataField = 'DES_ENDERECO'
             DataSource = DMBelShop.DS_Empresa
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
             ParentCtl3D = False
+            ParentFont = False
             TabOrder = 3
           end
+          object Dbe_ConEmpresasNumero: TDBEdit
+            Left = 550
+            Top = 58
+            Width = 71
+            Height = 19
+            Anchors = [akTop, akRight]
+            CharCase = ecUpperCase
+            Color = 15263999
+            Ctl3D = False
+            DataField = 'NUM_ENDERECO'
+            DataSource = DMBelShop.DS_Empresa
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentCtl3D = False
+            ParentFont = False
+            TabOrder = 4
+          end
+          object Me_ConEmpresasCEP: TMaskEdit
+            Left = 493
+            Top = 95
+            Width = 68
+            Height = 19
+            Anchors = [akTop, akRight]
+            Color = 15263999
+            EditMask = '00000\-000;1;_'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 9
+            ParentFont = False
+            TabOrder = 7
+            Text = '     -   '
+          end
+          object Dbe_ConEmpresasBairro: TDBEdit
+            Left = 181
+            Top = 95
+            Width = 306
+            Height = 19
+            Anchors = [akLeft, akTop, akRight]
+            CharCase = ecUpperCase
+            Color = 15263999
+            Ctl3D = False
+            DataField = 'DES_BAIRRO'
+            DataSource = DMBelShop.DS_Empresa
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentCtl3D = False
+            ParentFont = False
+            TabOrder = 6
+          end
+          object Dbe_ConEmpresasComplemento: TDBEdit
+            Left = 25
+            Top = 95
+            Width = 150
+            Height = 19
+            CharCase = ecUpperCase
+            Color = 15263999
+            Ctl3D = False
+            DataField = 'COMPL_ENDERECO'
+            DataSource = DMBelShop.DS_Empresa
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentCtl3D = False
+            ParentFont = False
+            TabOrder = 5
+          end
+          object Dbe_ConEmpresasUF: TDBEdit
+            Left = 55
+            Top = 120
+            Width = 26
+            Height = 19
+            TabStop = False
+            CharCase = ecUpperCase
+            Color = 15263999
+            Ctl3D = False
+            DataField = 'COD_UF'
+            DataSource = DMBelShop.DS_Empresa
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentCtl3D = False
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 8
+          end
+          object EdtConEmpresasEstado: TEdit
+            Left = 85
+            Top = 120
+            Width = 274
+            Height = 19
+            TabStop = False
+            Anchors = [akLeft, akTop, akRight]
+            CharCase = ecUpperCase
+            Color = 15263999
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 9
+          end
+          object Dbe_ConEmpresasMunicipio: TDBEdit
+            Left = 434
+            Top = 120
+            Width = 190
+            Height = 19
+            TabStop = False
+            Anchors = [akTop, akRight]
+            CharCase = ecUpperCase
+            Color = 15263999
+            Ctl3D = False
+            DataField = 'DES_CIDADE'
+            DataSource = DMBelShop.DS_Empresa
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clRed
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentCtl3D = False
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 10
+          end
+          object LstB_SenhaLojas: TListBox
+            Left = 2
+            Top = 2
+            Width = 638
+            Height = 144
+            Align = alClient
+            Columns = 6
+            ItemHeight = 13
+            TabOrder = 11
+            Visible = False
+          end
         end
-        object Gb_Trinks: TGroupBox
-          Left = 467
-          Top = 5
-          Width = 174
-          Height = 91
-          Caption = ' TRINKS '
-          Color = 14079702
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlue
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = False
-          ParentFont = False
-          TabOrder = 2
-          object Label137: TLabel
-            Left = 10
-            Top = 39
-            Width = 92
+        object Pan_EmpRH: TPanel
+          Left = 2
+          Top = 320
+          Width = 642
+          Height = 38
+          Anchors = [akTop]
+          BevelInner = bvLowered
+          TabOrder = 3
+          object Label193: TLabel
+            Left = 13
+            Top = 13
+            Width = 138
             Height = 13
-            Caption = 'C'#243'digo Empresa'
+            Caption = 'Insc Sind Sal'#245'es Beleza'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -6238,33 +5772,461 @@ object FrmBelShop: TFrmBelShop
             Font.Style = [fsBold]
             ParentFont = False
           end
-          object DBEdit2: TDBEdit
-            Left = 105
-            Top = 36
-            Width = 53
+          object Label201: TLabel
+            Left = 261
+            Top = 13
+            Width = 124
+            Height = 13
+            Caption = 'N'#186' Alvar'#225' Municip'#225'rio'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label69: TLabel
+            Left = 497
+            Top = 13
+            Width = 73
+            Height = 13
+            Caption = 'C'#243'd Contabil'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Dbe_ConEmpresasNumSindicato: TDBEdit
+            Left = 154
+            Top = 10
+            Width = 94
             Height = 19
             CharCase = ecUpperCase
             Ctl3D = False
-            DataField = 'COD_TRINKS'
+            DataField = 'NUM_SINDICATO'
             DataSource = DMBelShop.DS_Empresa
             ParentCtl3D = False
             TabOrder = 0
           end
+          object Dbe_ConEmpresasNumAlvaraMun: TDBEdit
+            Left = 389
+            Top = 10
+            Width = 94
+            Height = 19
+            CharCase = ecUpperCase
+            Ctl3D = False
+            DataField = 'NUM_ALVARA_MUN'
+            DataSource = DMBelShop.DS_Empresa
+            ParentCtl3D = False
+            TabOrder = 1
+          end
+          object Dbe_ConEmpresasCodContabil: TDBEdit
+            Left = 574
+            Top = 10
+            Width = 53
+            Height = 19
+            CharCase = ecUpperCase
+            Ctl3D = False
+            DataField = 'COD_CONTABIL'
+            DataSource = DMBelShop.DS_Empresa
+            ParentCtl3D = False
+            TabOrder = 2
+            OnExit = Dbe_ConEmpresasCodLPExit
+          end
         end
-        object Dbcb_ConEmpresasDomingo: TDBComboBox
-          Left = 409
-          Top = 102
-          Width = 45
-          Height = 19
-          Style = csOwnerDrawFixed
-          CharCase = ecUpperCase
-          DataField = 'IND_DOMINGO'
-          DataSource = DMBelShop.DS_Empresa
-          ItemHeight = 13
-          Items.Strings = (
-            'S'
-            'N')
-          TabOrder = 5
+        object Pan_EmpInfo1: TPanel
+          Left = 2
+          Top = 104
+          Width = 642
+          Height = 57
+          Anchors = [akTop]
+          BevelInner = bvLowered
+          TabOrder = 1
+          object Label124: TLabel
+            Left = 10
+            Top = 11
+            Width = 94
+            Height = 13
+            Caption = 'Abreviatura Loja'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label21: TLabel
+            Left = 246
+            Top = 11
+            Width = 81
+            Height = 13
+            Caption = '(M)atriz (F)ilial'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label49: TLabel
+            Left = 378
+            Top = 11
+            Width = 30
+            Height = 13
+            Caption = 'Ativo'
+          end
+          object Label136: TLabel
+            Left = 480
+            Top = 12
+            Width = 97
+            Height = 13
+            Caption = 'Aberto Domingos'
+          end
+          object Label130: TLabel
+            Left = 476
+            Top = 36
+            Width = 101
+            Height = 13
+            Caption = 'Altera Est M'#237'nimo'
+          end
+          object Label200: TLabel
+            Left = 320
+            Top = 36
+            Width = 89
+            Height = 13
+            Caption = 'Lista de Pre'#231'os'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Dbcb_ConEmpresasTipo: TDBComboBox
+            Left = 330
+            Top = 8
+            Width = 44
+            Height = 19
+            Style = csOwnerDrawFixed
+            CharCase = ecUpperCase
+            Ctl3D = False
+            DataField = 'TIP_EMP'
+            DataSource = DMBelShop.DS_Empresa
+            ItemHeight = 13
+            Items.Strings = (
+              'M'
+              'F')
+            ParentCtl3D = False
+            TabOrder = 1
+          end
+          object Dbcb_ConEmpresasAtivo: TDBComboBox
+            Left = 412
+            Top = 8
+            Width = 59
+            Height = 19
+            Style = csOwnerDrawFixed
+            CharCase = ecUpperCase
+            DataField = 'IND_ATIVO'
+            DataSource = DMBelShop.DS_Empresa
+            ItemHeight = 13
+            Items.Strings = (
+              'SIM'
+              'NAO')
+            TabOrder = 2
+          end
+          object Dbcb_ConEmpresasDomingo: TDBComboBox
+            Left = 581
+            Top = 8
+            Width = 54
+            Height = 19
+            Style = csOwnerDrawFixed
+            CharCase = ecUpperCase
+            DataField = 'IND_DOMINGO'
+            DataSource = DMBelShop.DS_Empresa
+            ItemHeight = 13
+            Items.Strings = (
+              'S'
+              'N')
+            TabOrder = 3
+          end
+          object Dbcb_ConEmpresasEstMinimo: TDBComboBox
+            Left = 581
+            Top = 33
+            Width = 54
+            Height = 19
+            Style = csOwnerDrawFixed
+            CharCase = ecUpperCase
+            DataField = 'EST_MINIMO'
+            DataSource = DMBelShop.DS_Empresa
+            ItemHeight = 13
+            Items.Strings = (
+              'SIM'
+              'NAO')
+            TabOrder = 5
+          end
+          object Dbe_ConEmpresasCodLP: TDBEdit
+            Left = 413
+            Top = 33
+            Width = 57
+            Height = 19
+            CharCase = ecUpperCase
+            Ctl3D = False
+            DataField = 'COD_LISTAPRE'
+            DataSource = DMBelShop.DS_Empresa
+            ParentCtl3D = False
+            TabOrder = 4
+            OnExit = Dbe_ConEmpresasCodLPExit
+          end
+          object EdtConEmpresaAbrev: TEdit
+            Left = 108
+            Top = 8
+            Width = 132
+            Height = 19
+            MaxLength = 15
+            TabOrder = 0
+          end
+        end
+        object Pan_EmpCodigos: TPanel
+          Left = 2
+          Top = 2
+          Width = 642
+          Height = 100
+          Anchors = [akTop]
+          BevelInner = bvLowered
+          TabOrder = 0
+          object Gb_Sidicom: TGroupBox
+            Left = 5
+            Top = 5
+            Width = 174
+            Height = 91
+            Caption = ' SIDICOM '
+            Color = 14079702
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlue
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentColor = False
+            ParentFont = False
+            TabOrder = 0
+            object Label16: TLabel
+              Left = 34
+              Top = 26
+              Width = 68
+              Height = 13
+              Caption = 'C'#243'digo Loja'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label15: TLabel
+              Left = 10
+              Top = 54
+              Width = 92
+              Height = 13
+              Caption = 'C'#243'digo Empresa'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Dbe_ConEmpresasCodFilial: TDBEdit
+              Left = 105
+              Top = 23
+              Width = 53
+              Height = 19
+              CharCase = ecUpperCase
+              Ctl3D = False
+              DataField = 'COD_FILIAL'
+              DataSource = DMBelShop.DS_Empresa
+              ParentCtl3D = False
+              TabOrder = 0
+            end
+            object Dbe_ConEmpresasCodEmp: TDBEdit
+              Left = 105
+              Top = 51
+              Width = 53
+              Height = 19
+              CharCase = ecUpperCase
+              Ctl3D = False
+              DataField = 'COD_EMP'
+              DataSource = DMBelShop.DS_Empresa
+              ParentCtl3D = False
+              TabOrder = 1
+            end
+          end
+          object Gb_Linx: TGroupBox
+            Left = 180
+            Top = 5
+            Width = 279
+            Height = 91
+            Caption = ' LINX '
+            Color = 14079702
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlue
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentColor = False
+            ParentFont = False
+            TabOrder = 1
+            object Label2: TLabel
+              Left = 31
+              Top = 24
+              Width = 68
+              Height = 13
+              Caption = 'C'#243'digo Loja'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label71: TLabel
+              Left = 182
+              Top = 47
+              Width = 65
+              Height = 13
+              Caption = 'Data In'#237'cio'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label72: TLabel
+              Left = 173
+              Top = 7
+              Width = 89
+              Height = 13
+              Caption = 'Data Invent'#225'rio'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label54: TLabel
+              Left = 10
+              Top = 55
+              Width = 92
+              Height = 13
+              Caption = 'C'#243'digo Empresa'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Dbe_ConEmpresasCodLojaLinx: TDBEdit
+              Left = 104
+              Top = 21
+              Width = 53
+              Height = 19
+              CharCase = ecUpperCase
+              Ctl3D = False
+              DataField = 'COD_LINX'
+              DataSource = DMBelShop.DS_Empresa
+              ParentCtl3D = False
+              TabOrder = 0
+              OnExit = Dbe_ConEmpresasCodLojaLinxExit
+              OnKeyPress = Dbe_ConEmpresasCodLojaLinxKeyPress
+            end
+            object EdtDta_ConEmpresasInicioLinx: TcxDateEdit
+              Left = 168
+              Top = 62
+              ParentFont = False
+              Properties.OnChange = EdtDta_ConEmpresasInicioLinxPropertiesChange
+              Style.Font.Charset = DEFAULT_CHARSET
+              Style.Font.Color = clBlue
+              Style.Font.Height = -13
+              Style.Font.Name = 'MS Sans Serif'
+              Style.Font.Style = [fsBold]
+              Style.IsFontAssigned = True
+              StyleFocused.BorderStyle = ebsOffice11
+              TabOrder = 3
+              Width = 96
+            end
+            object EdtDta_ConEmpresasInventLinx: TcxDateEdit
+              Left = 169
+              Top = 21
+              ParentFont = False
+              Properties.OnChange = EdtDta_ConEmpresasInicioLinxPropertiesChange
+              Style.Font.Charset = DEFAULT_CHARSET
+              Style.Font.Color = clBlue
+              Style.Font.Height = -13
+              Style.Font.Name = 'MS Sans Serif'
+              Style.Font.Style = [fsBold]
+              Style.IsFontAssigned = True
+              StyleFocused.BorderStyle = ebsOffice11
+              TabOrder = 2
+              Width = 96
+            end
+            object Dbe_ConEmpresasCodEmpLinx: TDBEdit
+              Left = 105
+              Top = 52
+              Width = 53
+              Height = 19
+              CharCase = ecUpperCase
+              Ctl3D = False
+              DataField = 'COD_CLI_LINX'
+              DataSource = DMBelShop.DS_Empresa
+              ParentCtl3D = False
+              TabOrder = 1
+            end
+          end
+          object Gb_Trinks: TGroupBox
+            Left = 460
+            Top = 5
+            Width = 174
+            Height = 91
+            Caption = ' TRINKS '
+            Color = 14079702
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlue
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentColor = False
+            ParentFont = False
+            TabOrder = 2
+            object Label137: TLabel
+              Left = 10
+              Top = 22
+              Width = 92
+              Height = 13
+              Caption = 'C'#243'digo Empresa'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object DBEdit2: TDBEdit
+              Left = 105
+              Top = 19
+              Width = 53
+              Height = 19
+              CharCase = ecUpperCase
+              Ctl3D = False
+              DataField = 'COD_TRINKS'
+              DataSource = DMBelShop.DS_Empresa
+              ParentCtl3D = False
+              TabOrder = 0
+            end
+          end
         end
       end
       object Panel16: TPanel
@@ -6350,51 +6312,50 @@ object FrmBelShop: TFrmBelShop
           Visible = False
           OnClick = Bt_ConEmpresasUsuWindowsClick
         end
-        object Button1: TButton
-          Left = 356
-          Top = 6
-          Width = 96
-          Height = 25
-          Caption = 'Arq Tex Fenac'
-          TabOrder = 4
-          Visible = False
-          OnClick = Button1Click
-        end
         object Button3: TButton
-          Left = 456
+          Left = 568
           Top = 6
-          Width = 106
+          Width = 95
           Height = 25
           Caption = 'Extratos Duplo'
-          TabOrder = 5
+          TabOrder = 4
           Visible = False
           OnClick = Button3Click
         end
         object Bt_AcertaPromocao: TButton
-          Left = 688
+          Left = 695
           Top = 5
-          Width = 151
+          Width = 175
           Height = 25
-          Caption = 'Acerta Odir_promocao'
-          TabOrder = 6
+          Caption = 'ES_FINAN_CURVA_ABC'
+          TabOrder = 5
           Visible = False
           OnClick = Bt_AcertaPromocaoClick
         end
-        object Button4: TButton
-          Left = 576
-          Top = 5
-          Width = 106
-          Height = 25
-          Caption = 'Acerta Deb Cred'
-          TabOrder = 7
+        object Bt_ConEmpresasEncliptaLj: TJvXPButton
+          Tag = 92
+          Left = 351
+          Top = 2
+          Width = 156
+          Height = 29
+          Caption = 'Enclipta Senha Loja'
+          TabOrder = 6
+          ShowFocusRect = True
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
           Visible = False
-          OnClick = Button4Click
+          OnClick = Bt_ConEmpresasEncliptaLjClick
         end
       end
       object Dbg_ConEmpresas: TDBGrid
         Left = 0
         Top = 0
-        Width = 320
+        Width = 325
         Height = 501
         Align = alLeft
         DataSource = DMBelShop.DS_Empresa
@@ -6424,21 +6385,21 @@ object FrmBelShop: TFrmBelShop
             Visible = True
           end
           item
+            Color = 13828095
+            Expanded = False
+            FieldName = 'COD_LINX'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Linx'
+            Width = 30
+            Visible = True
+          end
+          item
             Alignment = taCenter
             Color = 13828095
             Expanded = False
             FieldName = 'COD_FILIAL'
             Title.Alignment = taCenter
             Title.Caption = 'Sid'
-            Width = 30
-            Visible = True
-          end
-          item
-            Color = 13828095
-            Expanded = False
-            FieldName = 'COD_LINX'
-            Title.Alignment = taRightJustify
-            Title.Caption = 'Linx'
             Width = 30
             Visible = True
           end>
@@ -6933,29 +6894,13 @@ object FrmBelShop: TFrmBelShop
         DesignSize = (
           947
           379)
-        object Label37: TLabel
-          Left = 8
-          Top = 80
-          Width = 131
-          Height = 52
-          Anchors = [akLeft]
-          Caption = 
-            '* O C'#243'digo do Usu'#225'rio '#13#10'   deve ser o Mesmo '#13#10'       Utilizado n' +
-            'o '#13#10'   Sistema SIDICOM'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
         object GB_UsuManutCodigo: TGroupBox
           Left = 9
           Top = 29
           Width = 98
           Height = 44
           Anchors = [akLeft]
-          Caption = '  C'#243'digo *  '
+          Caption = '  C'#243'digo  '
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -7346,42 +7291,6 @@ object FrmBelShop: TFrmBelShop
                 ParentFont = False
                 OnClick = Bt_OCBuscaProdutosClick
               end
-              object Bt_OCsLojas: TJvXPButton
-                Tag = 91
-                Left = 142
-                Top = 2
-                Width = 110
-                Height = 36
-                Caption = 'OC'#39's Lojas'
-                TabOrder = 2
-                ShowFocusRect = True
-                Align = alLeft
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                OnClick = Bt_OCsLojasClick
-              end
-              object Bt_OCsImportadas: TJvXPButton
-                Tag = 92
-                Left = 252
-                Top = 2
-                Width = 139
-                Height = 36
-                Caption = 'Apresenta OC'#39's '#13#10'   Importadas'
-                TabOrder = 3
-                ShowFocusRect = True
-                Align = alLeft
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                OnClick = Bt_OCsImportadasClick
-              end
               object Panel8: TPanel
                 Left = 724
                 Top = 2
@@ -7389,7 +7298,7 @@ object FrmBelShop: TFrmBelShop
                 Height = 36
                 Align = alRight
                 BevelInner = bvLowered
-                TabOrder = 4
+                TabOrder = 2
                 object Label70: TLabel
                   Left = 10
                   Top = 13
@@ -8496,11 +8405,11 @@ object FrmBelShop: TFrmBelShop
                 Height = 19
                 TabStop = False
                 Anchors = [akTop, akRight]
-                Color = 14342874
+                Color = clBlue
                 DataField = 'DES_EMPRESA'
                 DataSource = DMBelShop.DS_AComprar
                 Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
+                Font.Color = clWindow
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = [fsBold]
@@ -8948,7 +8857,7 @@ object FrmBelShop: TFrmBelShop
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
-                Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+                Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
                 ParentFont = False
                 ParentShowHint = False
                 PopupMenu = PopM_GeraOC
@@ -8961,6 +8870,7 @@ object FrmBelShop: TFrmBelShop
                 TitleFont.Style = [fsBold]
                 OnColEnter = Dbg_GeraOCGridColEnter
                 OnColExit = Dbg_GeraOCGridColExit
+                OnColumnMoved = Dbg_GeraOCGridColumnMoved
                 OnDrawColumnCell = Dbg_GeraOCGridDrawColumnCell
                 OnEnter = Dbg_GeraOCProdutosEnter
                 OnExit = Dbg_GeraOCProdutosExit
@@ -10254,7 +10164,7 @@ object FrmBelShop: TFrmBelShop
                 TitleFont.Style = [fsBold]
                 OnDrawColumnCell = Dbg_GeraOCTotalGeralDrawColumnCell
                 OnDblClick = Dbg_GeraOCTotalGeralDblClick
-                OnKeyDown = Dbg_GeraOCTotalGeralKeyDown
+                OnKeyDown = Dbg_UsuariosKeyDown
                 CorComFoco = 15004403
                 SairComEnter = False
                 EditDataSetCheck = False
@@ -10631,22 +10541,6 @@ object FrmBelShop: TFrmBelShop
                 TabOrder = 1
               end
             end
-            object Bt_GeraOCEditaLegendaCores: TJvXPButton
-              Left = 889
-              Top = 2
-              Width = 72
-              Height = 57
-              Caption = '   Legenda      de Cores'
-              TabOrder = 2
-              ShowFocusRect = True
-              Align = alRight
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
             object Bt_GeraOCPreVisualizaOC: TJvXPButton
               Tag = 4
               Left = 704
@@ -10654,7 +10548,7 @@ object FrmBelShop: TFrmBelShop
               Width = 178
               Height = 38
               Caption = ' Pr'#233'-Visualiza'#231#227'o OC'
-              TabOrder = 3
+              TabOrder = 2
               Glyph.Data = {
                 07544269746D617046090000424D460900000000000036040000280000002100
                 0000240000000100080000000000100500000000000000000000000100000000
@@ -11940,7 +11834,7 @@ object FrmBelShop: TFrmBelShop
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
-          OnKeyDown = Dbg_ConsultaOCOrdensCompraKeyDown
+          OnKeyDown = Dbg_UsuariosKeyDown
           CorComFoco = 15004403
           SairComEnter = False
           EditDataSetCheck = False
@@ -12904,11 +12798,11 @@ object FrmBelShop: TFrmBelShop
         Top = 61
         Width = 971
         Height = 431
-        ActivePage = TS_ConsultaNFeFiltros
+        ActivePage = Ts_ConsultaNFeProdutos
         Align = alClient
         TabOrder = 1
         OnChange = PC_ConsultaMovtoComprChange
-        object TS_ConsultaNFeFiltros: TTabSheet
+        object Ts_ConsultaNFeFiltros: TTabSheet
           Caption = ' Filtros '
           Highlighted = True
         end
@@ -13462,7 +13356,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_ConsultaNFeProdutosDrawColumnCell
-            OnKeyDown = Dbg_ConsultaNFeProdutosKeyDown
+            OnKeyDown = Dbg_UsuariosKeyDown
             Columns = <
               item
                 Expanded = False
@@ -13531,7 +13425,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Height = -11
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
-            OnKeyDown = Dbg_ConsultaNFeProdLojasKeyDown
+            OnKeyDown = Dbg_UsuariosKeyDown
             Columns = <
               item
                 Alignment = taCenter
@@ -13560,7 +13454,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_CurvaABCEndMantencao
+        ActivePage = Ts_CurvaABCEndCurvaABC
         Align = alClient
         TabOrder = 0
         OnChange = PC_CurvaABCEnderecamentosChange
@@ -14246,7 +14140,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_CurvaABCEndCurvaABCDrawColumnCell
-            OnKeyDown = Dbg_CurvaABCEndCurvaABCKeyDown
+            OnKeyDown = Dbg_UsuariosKeyDown
             Columns = <
               item
                 Expanded = False
@@ -14470,7 +14364,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Height = -11
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
-            OnKeyDown = Dbg_CurvaABCEndCurvaABCFornKeyDown
+            OnKeyDown = Dbg_UsuariosKeyDown
             Columns = <
               item
                 Color = 14024703
@@ -14727,7 +14621,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_EstFisFinaFiltros
+        ActivePage = Ts_EstFisFinaResutadoFisicoFinan
         Align = alClient
         TabOrder = 0
         OnChange = PC_EstoqueFisicoFinanChange
@@ -15478,7 +15372,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_EstFisFinanGiroEstoqueDrawColumnCell
-            OnKeyDown = Dbg_EstFisFinanGiroEstoqueKeyDown
+            OnKeyDown = Dbg_UsuariosKeyDown
             Columns = <
               item
                 Expanded = False
@@ -15687,7 +15581,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_FinanComprPlanFinanPlanilhaFinanceira
+        ActivePage = Ts_FinanComprPlanFinanDemonsResultados
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanComprPlanFinanChange
@@ -16543,7 +16437,7 @@ object FrmBelShop: TFrmBelShop
             OnDblClick = Dbg_FinanGrFinanceiroDblClick
             OnEnter = Dbg_FinanGrFinanceiroEnter
             OnExit = Dbg_FinanGrFinanceiroExit
-            OnKeyDown = Dbg_FinanGrFinanceiroKeyDown
+            OnKeyDown = Dbg_UsuariosKeyDown
             OnTitleClick = Dbg_FinanGrFinanceiroTitleClick
             Columns = <
               item
@@ -16971,7 +16865,7 @@ object FrmBelShop: TFrmBelShop
                 TitleFont.Height = -11
                 TitleFont.Name = 'MS Sans Serif'
                 TitleFont.Style = [fsBold]
-                OnKeyDown = Dbg_FinanGrFinanUsuarioKeyDown
+                OnKeyDown = Dbg_UsuariosKeyDown
                 Columns = <
                   item
                     Expanded = False
@@ -17742,7 +17636,7 @@ object FrmBelShop: TFrmBelShop
                 OnDblClick = Dbg_FinanDemonsResultadoDblClick
                 OnEnter = Dbg_FinanDemonsResultadoEnter
                 OnExit = Dbg_FinanDemonsResultadoExit
-                OnKeyDown = Dbg_FinanDemonsResultadoKeyDown
+                OnKeyDown = Dbg_UsuariosKeyDown
                 OnTitleClick = Dbg_FinanGrFinanceiroTitleClick
                 Columns = <
                   item
@@ -18466,7 +18360,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_FinanObjetivosManut
+        ActivePage = Ts_FinanObjetivosResultadosAuditorias
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanObjetivosChange
@@ -18508,7 +18402,7 @@ object FrmBelShop: TFrmBelShop
               OnDblClick = Dbg_FinanObjetivosManutDblClick
               OnEnter = Dbg_FinanObjetivosManutEnter
               OnExit = Dbg_FinanObjetivosManutExit
-              OnKeyDown = Dbg_FinanObjetivosManutKeyDown
+              OnKeyDown = Dbg_UsuariosKeyDown
               OnTitleClick = Dbg_FinanObjetivosManutTitleClick
               CorComFoco = 15004403
               SairComEnter = False
@@ -20953,7 +20847,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_FinanObjetivosResultadosAuditoriaDrawColumnCell
-            OnKeyDown = Dbg_FinanObjetivosResultadosAuditoriaKeyDown
+            OnKeyDown = Dbg_UsuariosKeyDown
             Columns = <
               item
                 Expanded = False
@@ -22234,7 +22128,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_FinanFechaCaixaDoctosDrawColumnCell
             OnDblClick = Dbg_FinanFechaCaixaDoctosDblClick
-            OnKeyDown = Dbg_FinanFechaCaixaDoctosKeyDown
+            OnKeyDown = Dbg_UsuariosKeyDown
             Columns = <
               item
                 Expanded = False
@@ -22337,7 +22231,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_FinanFechaCaixaTotalDrawColumnCell
-            OnKeyDown = Dbg_FinanFechaCaixaTotalKeyDown
+            OnKeyDown = Dbg_UsuariosKeyDown
             Columns = <
               item
                 Expanded = False
@@ -22941,7 +22835,7 @@ object FrmBelShop: TFrmBelShop
         Top = 43
         Width = 971
         Height = 493
-        ActivePage = Ts_FinanMLFat
+        ActivePage = Ts_FinanMLFinal
         Align = alClient
         TabOrder = 1
         OnChange = PC_FinanMargemLucroChange
@@ -23921,7 +23815,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_FinanMLResultadoDrawColumnCell
             OnDblClick = Dbg_FinanMLResultadoDblClick
-            OnKeyDown = Dbg_FinanMLResultadoKeyDown
+            OnKeyDown = Dbg_UsuariosKeyDown
             Columns = <
               item
                 Alignment = taCenter
@@ -24050,7 +23944,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_FinanMLResFinalDrawColumnCell
-            OnKeyDown = Dbg_FinanMLResFinalKeyDown
+            OnKeyDown = Dbg_UsuariosKeyDown
             Columns = <
               item
                 Alignment = taCenter
@@ -25069,7 +24963,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = TS_FiltroFornecedor
+        ActivePage = TS_FiltroProdutos
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -26439,10 +26333,2087 @@ object FrmBelShop: TFrmBelShop
         end
       end
     end
+    object Ts_InventarioAleatorio: TTabSheet
+      Tag = 119
+      Caption = ' Invent'#225'rio Aleat'#243'rio '
+      ImageIndex = 15
+      DesignSize = (
+        971
+        536)
+      object Panel13: TPanel
+        Left = 0
+        Top = 487
+        Width = 971
+        Height = 49
+        Align = alBottom
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 0
+        object Bt_InventAleatFechar: TJvXPButton
+          Left = 868
+          Top = 2
+          Width = 99
+          Height = 43
+          Caption = 'Fechar'
+          TabOrder = 2
+          TabStop = False
+          Glyph.Data = {
+            07544269746D61700E060000424D0E0600000000000036000000280000001600
+            0000160000000100180000000000D8050000C30E0000C30E0000000000000000
+            0000FFFFFFF2F2F2F2F2F2D3D3D3E8E8E8F5F5F5DBDBDBDDDDDDECECECEEEEEE
+            D3D3D3EBEBEBF7F7F723230F4F4F00B2B2A8E9E9E9D6D6D6EBEBEBFAFAFAFFFF
+            FFFFFFFF0000FFFFFFF0F0F0D8D8D8EDEDEDEAEAEADFDFDFDCDCDCF4F4F4E6E6
+            E6D7D7D7F2F2F2E7E7E7DDDDDD4C4C0CFFFF006868119B9B9BF4F4F4E7E7E7DB
+            DBDBE6E6E6FFFFFF0000D3D3D3E4E4E4EFEFEFE4E4E4D8D8D8EDEDEDF3F3F3D3
+            D3D3E7E7E7F1F1F1DFDFDFDBDBDBECECEC4D4D0DFFFF008D8D00515105878781
+            DFDFDFEDEDEDECECECD3D3D30000E6E6E6EDEDEDE1E1E1DBDBDBF5F5F5E3E3E3
+            DCDCDCEAEAEAEAEAEAE0E0E0DBDBDBF6F6F6E3E3E34D4D0DFFFF008F8F007F7F
+            0056560DA1A1A1E2E2E2DBDBDBF3F3F300004B4B4B5050504E4E4E4848484F4F
+            4F5050504A4A4A4C4C4C444444F0F0F0F3F3F3D3D3D3E7E7E74E4E0EFFFF008F
+            8F007F7F007D7D004C4C0D3232324848484E4E4E0000BFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBF4A4A4ADFDFDFDFDFDFE9E9E9EBEBEB4D4D0D
+            FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFB0B0B0BFBFBF4040403F3F3F3737373737373F3F
+            3F434303FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF3D3D3D8F8F8F3E3E3E7F7F7F7F7F7F7F
+            7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF
+            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF3C3C304D4D141515137F7F7F
+            7F7F7F7F7F7F7F7F7F474707FFFF008D8D007777007D7D00474700636363BFBF
+            BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF4646309A9A004545
+            046161617F7F7F7F7F7F7F7F7F474707FFFF005F5F0817171767670047470063
+            6363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF474727ED
+            ED0092920045450E6363637F7F7F7F7F7F474707FFFF004747276B6B6B676700
+            474700636363BFBFBFBFBFBF0000AEAEAE57574531310A272700272700272700
+            424200FFFF00F9F9009898004242006363637F7F7F474707FFFF007E7E002727
+            006E6E00474700636363BFBFBFBFBFBF00008989898C8C13CFCF01CFCF00CFCF
+            00CFCF00D5D500FFFF00FFFF00EDED0098980045450E616161474707FFFF008F
+            8F007F7F007F7F00474700636363BFBFBFBFBFBF0000898989A1A113FEFE2CFF
+            FFAFFFFFAFFFFFAFFFFFAFFFFFAFFFFFDBFFFF6DE3E3004B4B095B5B5B474707
+            FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000A7A7A76F6F48
+            79790C7A7A0A7A7A0A7A7A0A8A8A09FFFF3EFFFF70E4E4005F5F005858587F7F
+            7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBF
+            BFB1B1B1A9A9A9A9A9A9A9A9A9A9A9A94C4C2CFFFF0DE6E6075959085858537F
+            7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF
+            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF505030E3E3005F5F03575757
+            7F7F7F7F7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBF
+            BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF4242356E6E252121
+            1B7F7F7F7F7F7F7F7F7F7F7F7F5E5E52999906D5D5008787007F7F0047470063
+            6363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF70707088
+            88884444447F7F7F7F7F7F7F7F7F7F7F7F7F7F7F565656999906DBDB00898900
+            474700636363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBF4444447F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F5E5E529B9B
+            03D7D7004C4C00767676BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBF41414156565656565656565656565656565656565656
+            56562E2E2E88880765650C888888BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBF969696898989898989898989898989898989
+            898989898989898989898989898989B1B1B1BFBFBFBFBFBF0000}
+          ShowFocusRect = True
+          Align = alRight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_InventAleatFecharClick
+        end
+        object Gb_InventAleatArqDestino: TGroupBox
+          Left = 132
+          Top = 2
+          Width = 696
+          Height = 43
+          Align = alLeft
+          Caption = ' Pasta e o Arquivo de DESTINO (NomeArquivo.txt)  a Salvar '
+          Color = clBtnFace
+          Enabled = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          TabOrder = 1
+          object Label129: TLabel
+            Left = 376
+            Top = -1
+            Width = 125
+            Height = 13
+            Caption = ' Dep'#243'sito: 1 - Estoque '
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlue
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Bt_InventAleatBuscaArq: TJvXPButton
+            Left = 12
+            Top = 14
+            Width = 23
+            Height = 25
+            TabOrder = 0
+            TabStop = False
+            Glyph.Data = {
+              07544269746D61705E060000424D5E0600000000000036040000280000001600
+              000017000000010008000000000028020000C30E0000C30E0000000100000000
+              000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+              FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+              FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000010101010101010101010101010101010101010101010000010101010101
+              0101010101010101010101040404030100000101010101010101010101010101
+              0101040701070401000001010101010101010101010101010104070101070401
+              0000010101010101010101010101010104070101070704010000010101010101
+              0101010101010104070101070704010100000101010101010101010101010407
+              0101070704010101000001010101010101010101010407010107070401010101
+              0000010101010101010101010407010107070401010101010000010101010101
+              0101010404040307070401010101010100000101010101010404040404040407
+              0401010101010101000001010101040406010601010404040101010101010101
+              0000010101040106010601010101040101010101010101010000010101040601
+              0601060106010401010101010101010100000101040601060101010601060104
+              0101010101010101000001010401060106010601060101040101010101010101
+              0000010104060106010601060106010401010101010101010000010104010601
+              0601060106010104010101010101010100000101010401060101010601060401
+              0101010101010101000001010104060106010601060104010101010101010101
+              0000010101010404010101060404010101010101010101010000010101010101
+              0404040401010101010101010101010100000101010101010101010101010101
+              01010101010101010000}
+            ShowFocusRect = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_InventAleatBuscaArqClick
+          end
+          object EdtInventAleatDesArquivo: TEdit
+            Left = 39
+            Top = 18
+            Width = 518
+            Height = 19
+            TabStop = False
+            Color = 14737632
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 1
+          end
+          object Bt_InventAleatGeraArq: TJvXPButton
+            Tag = 1
+            Left = 563
+            Top = 9
+            Width = 121
+            Height = 30
+            Caption = 'Gerar Arquivo'
+            TabOrder = 2
+            TabStop = False
+            Glyph.Data = {
+              07544269746D617066010000424D660100000000000076000000280000001400
+              0000140000000100040000000000F00000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00333333333333333333330000300000000000003333330000307888888888
+              80333333000030F77777777780333333000030F99777777780333333000030FF
+              FFFFFFFF70333333000030000000000000333333000033333333333333333333
+              0000333003333333333333330000333003333333333333330000333003333330
+              000000030000333003303330FFFFFF030000333008300330F4444F0300003338
+              00000030FFFFFF030000333380000030F4444F030000333333300330FFFFFF03
+              0000333333303330F44F00030000333333333330FFFF00330000333333333330
+              000003330000333333333333333333330000}
+            OnClick = Bt_InventAleatGeraArqClick
+          end
+        end
+        object Gb_InventAleatData: TGroupBox
+          Left = 2
+          Top = 2
+          Width = 130
+          Height = 43
+          Align = alLeft
+          Caption = ' Estoque Final de  '
+          Ctl3D = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentCtl3D = False
+          ParentFont = False
+          TabOrder = 0
+          object DtaEdtInventAleatData: TcxDateEdit
+            Left = 14
+            Top = 14
+            ParentFont = False
+            Properties.ReadOnly = False
+            Style.Font.Charset = DEFAULT_CHARSET
+            Style.Font.Color = clWindowText
+            Style.Font.Height = -13
+            Style.Font.Name = 'Tahoma'
+            Style.Font.Style = [fsBold]
+            Style.IsFontAssigned = True
+            StyleDisabled.ButtonStyle = btsDefault
+            StyleFocused.Color = clSilver
+            TabOrder = 0
+            Width = 102
+          end
+        end
+      end
+      object Pan_InventAleatorio: TPanel
+        Left = 95
+        Top = 3
+        Width = 786
+        Height = 483
+        Anchors = []
+        BevelInner = bvRaised
+        BevelOuter = bvLowered
+        BevelWidth = 2
+        TabOrder = 1
+        object Gb_InventAleatLoja: TGroupBox
+          Left = 20
+          Top = 18
+          Width = 742
+          Height = 53
+          Caption = ' PAR'#194'METROS: Selecione a Loja '
+          Color = clBtnFace
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          TabOrder = 0
+          DesignSize = (
+            742
+            53)
+          object Bt_InventAleatLoja: TJvXPButton
+            Left = 13
+            Top = 19
+            Width = 23
+            Height = 25
+            TabOrder = 0
+            TabStop = False
+            Glyph.Data = {
+              07544269746D61705E060000424D5E0600000000000036040000280000001600
+              000017000000010008000000000028020000C30E0000C30E0000000100000000
+              000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+              FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+              FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000010101010101010101010101010101010101010101010000010101010101
+              0101010101010101010101040404030100000101010101010101010101010101
+              0101040701070401000001010101010101010101010101010104070101070401
+              0000010101010101010101010101010104070101070704010000010101010101
+              0101010101010104070101070704010100000101010101010101010101010407
+              0101070704010101000001010101010101010101010407010107070401010101
+              0000010101010101010101010407010107070401010101010000010101010101
+              0101010404040307070401010101010100000101010101010404040404040407
+              0401010101010101000001010101040406010601010404040101010101010101
+              0000010101040106010601010101040101010101010101010000010101040601
+              0601060106010401010101010101010100000101040601060101010601060104
+              0101010101010101000001010401060106010601060101040101010101010101
+              0000010104060106010601060106010401010101010101010000010104010601
+              0601060106010104010101010101010100000101010401060101010601060401
+              0101010101010101000001010104060106010601060104010101010101010101
+              0000010101010404010101060404010101010101010101010000010101010101
+              0404040401010101010101010101010100000101010101010101010101010101
+              01010101010101010000}
+            ShowFocusRect = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_InventAleatLojaClick
+          end
+          object EdtInventAleatDesLoja: TEdit
+            Left = 40
+            Top = 22
+            Width = 684
+            Height = 19
+            TabStop = False
+            Anchors = [akLeft, akTop, akRight]
+            Color = 14737632
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 1
+          end
+        end
+        object Pan_InventAleatCurvas: TPanel
+          Left = 4
+          Top = 160
+          Width = 778
+          Height = 277
+          Align = alBottom
+          BevelInner = bvLowered
+          BevelWidth = 2
+          Enabled = False
+          TabOrder = 2
+          object Label133: TLabel
+            Left = 71
+            Top = 83
+            Width = 92
+            Height = 13
+            Caption = '* Mais Vendidos'
+          end
+          object Label134: TLabel
+            Left = 60
+            Top = 111
+            Width = 103
+            Height = 13
+            Caption = '* Menos Vendidos'
+          end
+          object Label135: TLabel
+            Left = 77
+            Top = 140
+            Width = 86
+            Height = 13
+            Caption = '* Saldo Zerado'
+          end
+          object Label138: TLabel
+            Left = 66
+            Top = 169
+            Width = 97
+            Height = 13
+            Caption = '* Saldo Negativo'
+          end
+          object Label139: TLabel
+            Left = 54
+            Top = 198
+            Width = 109
+            Height = 13
+            Caption = '** J'#225' Inventariados'
+          end
+          object Label140: TLabel
+            Left = 133
+            Top = 229
+            Width = 30
+            Height = 13
+            Caption = 'Total'
+          end
+          object Bevel14: TBevel
+            Left = 168
+            Top = 26
+            Width = 102
+            Height = 233
+            Shape = bsFrame
+          end
+          object Bevel18: TBevel
+            Left = 270
+            Top = 26
+            Width = 102
+            Height = 233
+            Shape = bsFrame
+          end
+          object Bevel15: TBevel
+            Left = 372
+            Top = 26
+            Width = 102
+            Height = 233
+            Shape = bsFrame
+          end
+          object Bevel16: TBevel
+            Left = 474
+            Top = 26
+            Width = 102
+            Height = 233
+            Shape = bsFrame
+          end
+          object Bevel17: TBevel
+            Left = 576
+            Top = 26
+            Width = 102
+            Height = 233
+            Shape = bsFrame
+          end
+          object Label152: TLabel
+            Left = 593
+            Top = 34
+            Width = 62
+            Height = 19
+            Caption = 'Curva E'
+            Color = clYellow
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentColor = False
+            ParentFont = False
+          end
+          object Label153: TLabel
+            Left = 594
+            Top = 63
+            Width = 10
+            Height = 13
+            Caption = '%'
+          end
+          object Label154: TLabel
+            Left = 625
+            Top = 63
+            Width = 43
+            Height = 13
+            Caption = 'Qtd Sel'
+          end
+          object Label151: TLabel
+            Left = 523
+            Top = 63
+            Width = 43
+            Height = 13
+            Caption = 'Qtd Sel'
+          end
+          object Label149: TLabel
+            Left = 493
+            Top = 63
+            Width = 10
+            Height = 13
+            Caption = '%'
+          end
+          object Label150: TLabel
+            Left = 491
+            Top = 34
+            Width = 64
+            Height = 19
+            Caption = 'Curva D'
+            Color = clYellow
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentColor = False
+            ParentFont = False
+          end
+          object Label146: TLabel
+            Left = 391
+            Top = 63
+            Width = 10
+            Height = 13
+            Caption = '%'
+          end
+          object Label147: TLabel
+            Left = 389
+            Top = 34
+            Width = 63
+            Height = 19
+            Caption = 'Curva C'
+            Color = clYellow
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentColor = False
+            ParentFont = False
+          end
+          object Label148: TLabel
+            Left = 421
+            Top = 63
+            Width = 43
+            Height = 13
+            Caption = 'Qtd Sel'
+          end
+          object Label144: TLabel
+            Left = 289
+            Top = 63
+            Width = 10
+            Height = 13
+            Caption = '%'
+          end
+          object Label145: TLabel
+            Left = 319
+            Top = 63
+            Width = 43
+            Height = 13
+            Caption = 'Qtd Sel'
+          end
+          object Label142: TLabel
+            Left = 187
+            Top = 63
+            Width = 10
+            Height = 13
+            Caption = '%'
+          end
+          object Label143: TLabel
+            Left = 217
+            Top = 63
+            Width = 43
+            Height = 13
+            Caption = 'Qtd Sel'
+          end
+          object Label141: TLabel
+            Left = 186
+            Top = 34
+            Width = 64
+            Height = 19
+            BiDiMode = bdLeftToRight
+            Caption = 'Curva A'
+            Color = clYellow
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentBiDiMode = False
+            ParentColor = False
+            ParentFont = False
+          end
+          object Label155: TLabel
+            Left = 287
+            Top = 34
+            Width = 63
+            Height = 19
+            Caption = 'Curva B'
+            Color = clYellow
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentColor = False
+            ParentFont = False
+          end
+          object EdtInventAleatQtdMaisCE: TCurrencyEdit
+            Left = 617
+            Top = 80
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 25
+          end
+          object EdtInventAleatPerMaisCE: TCurrencyEdit
+            Left = 582
+            Top = 80
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 20
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerMenosCE: TCurrencyEdit
+            Left = 582
+            Top = 109
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 21
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatQtdMenosCE: TCurrencyEdit
+            Left = 617
+            Top = 109
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 26
+          end
+          object EdtInventAleatQtdZeradoCE: TCurrencyEdit
+            Left = 617
+            Top = 138
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 27
+          end
+          object EdtInventAleatPerZeradoCE: TCurrencyEdit
+            Left = 582
+            Top = 138
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 22
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerNegativoCE: TCurrencyEdit
+            Left = 582
+            Top = 167
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 23
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatQtdNegativoCE: TCurrencyEdit
+            Left = 617
+            Top = 167
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 28
+          end
+          object EdtInventAleatQtdJaInventCE: TCurrencyEdit
+            Left = 617
+            Top = 196
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 29
+          end
+          object EdtInventAleatPerJaInventCE: TCurrencyEdit
+            Tag = 1
+            Left = 582
+            Top = 196
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 24
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerTotalCE: TCurrencyEdit
+            Left = 582
+            Top = 225
+            Width = 34
+            Height = 21
+            AutoSize = False
+            Color = 8454143
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 30
+          end
+          object EdtInventAleatQtdTotalCE: TCurrencyEdit
+            Left = 617
+            Top = 225
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 8454143
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 31
+          end
+          object EdtInventAleatQtdTotalCD: TCurrencyEdit
+            Left = 515
+            Top = 225
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 8454143
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 32
+          end
+          object EdtInventAleatQtdJaInventCD: TCurrencyEdit
+            Left = 515
+            Top = 196
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 33
+          end
+          object EdtInventAleatQtdNegativoCD: TCurrencyEdit
+            Left = 515
+            Top = 167
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 34
+          end
+          object EdtInventAleatQtdZeradoCD: TCurrencyEdit
+            Left = 515
+            Top = 138
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 35
+          end
+          object EdtInventAleatQtdMenosCD: TCurrencyEdit
+            Left = 515
+            Top = 109
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 36
+          end
+          object EdtInventAleatQtdMaisCD: TCurrencyEdit
+            Left = 515
+            Top = 80
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 37
+          end
+          object EdtInventAleatPerMaisCD: TCurrencyEdit
+            Left = 480
+            Top = 80
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 15
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerMenosCD: TCurrencyEdit
+            Left = 480
+            Top = 109
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 16
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerZeradoCD: TCurrencyEdit
+            Left = 480
+            Top = 138
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 17
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerNegativoCD: TCurrencyEdit
+            Left = 480
+            Top = 167
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 18
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerJaInventCD: TCurrencyEdit
+            Tag = 1
+            Left = 480
+            Top = 196
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 19
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerTotalCD: TCurrencyEdit
+            Left = 480
+            Top = 225
+            Width = 34
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 8454143
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 38
+          end
+          object EdtInventAleatQtdTotalCC: TCurrencyEdit
+            Left = 413
+            Top = 225
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 8454143
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 39
+          end
+          object EdtInventAleatPerTotalCC: TCurrencyEdit
+            Left = 378
+            Top = 225
+            Width = 34
+            Height = 21
+            AutoSize = False
+            Color = 8454143
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 40
+          end
+          object EdtInventAleatPerJaInventCC: TCurrencyEdit
+            Tag = 1
+            Left = 378
+            Top = 196
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 14
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerNegativoCC: TCurrencyEdit
+            Left = 378
+            Top = 167
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 13
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerZeradoCC: TCurrencyEdit
+            Left = 378
+            Top = 138
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 12
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerMenosCC: TCurrencyEdit
+            Left = 378
+            Top = 109
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 11
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerMaisCC: TCurrencyEdit
+            Left = 378
+            Top = 80
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 10
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatQtdMaisCC: TCurrencyEdit
+            Left = 413
+            Top = 80
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 41
+          end
+          object EdtInventAleatQtdMenosCC: TCurrencyEdit
+            Left = 413
+            Top = 109
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 42
+          end
+          object EdtInventAleatQtdZeradoCC: TCurrencyEdit
+            Left = 413
+            Top = 138
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 43
+          end
+          object EdtInventAleatQtdNegativoCC: TCurrencyEdit
+            Left = 413
+            Top = 167
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 44
+          end
+          object EdtInventAleatQtdJaInventCC: TCurrencyEdit
+            Left = 413
+            Top = 196
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 45
+          end
+          object EdtInventAleatQtdTotalCB: TCurrencyEdit
+            Left = 311
+            Top = 225
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 8454143
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 46
+          end
+          object EdtInventAleatPerTotalCB: TCurrencyEdit
+            Left = 276
+            Top = 225
+            Width = 34
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 8454143
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 47
+          end
+          object EdtInventAleatPerJaInventCB: TCurrencyEdit
+            Tag = 1
+            Left = 276
+            Top = 196
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 9
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatQtdJaInventCB: TCurrencyEdit
+            Left = 311
+            Top = 196
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 48
+          end
+          object EdtInventAleatQtdNegativoCB: TCurrencyEdit
+            Left = 311
+            Top = 167
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 49
+          end
+          object EdtInventAleatPerNegativoCB: TCurrencyEdit
+            Left = 276
+            Top = 167
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 8
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerZeradoCB: TCurrencyEdit
+            Left = 276
+            Top = 138
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 7
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerMenosCB: TCurrencyEdit
+            Left = 276
+            Top = 109
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 6
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerMaisCB: TCurrencyEdit
+            Left = 276
+            Top = 80
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 5
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatQtdMaisCB: TCurrencyEdit
+            Left = 311
+            Top = 80
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 50
+          end
+          object EdtInventAleatQtdMenosCB: TCurrencyEdit
+            Left = 311
+            Top = 109
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 51
+          end
+          object EdtInventAleatQtdZeradoCB: TCurrencyEdit
+            Left = 311
+            Top = 138
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 52
+          end
+          object EdtInventAleatQtdTotalCA: TCurrencyEdit
+            Left = 209
+            Top = 225
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 8454143
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 53
+          end
+          object EdtInventAleatPerTotalCA: TCurrencyEdit
+            Left = 174
+            Top = 225
+            Width = 34
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 8454143
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 54
+          end
+          object EdtInventAleatPerJaInventCA: TCurrencyEdit
+            Tag = 1
+            Left = 174
+            Top = 196
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 4
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerNegativoCA: TCurrencyEdit
+            Left = 174
+            Top = 167
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 3
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerZeradoCA: TCurrencyEdit
+            Left = 174
+            Top = 138
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 2
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerMenosCA: TCurrencyEdit
+            Left = 174
+            Top = 109
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 1
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatPerMaisCA: TCurrencyEdit
+            Left = 174
+            Top = 80
+            Width = 34
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 3
+            MaxValue = 100.000000000000000000
+            ParentFont = False
+            TabOrder = 0
+            OnChange = EdtInventAleatQtdInventChange
+          end
+          object EdtInventAleatQtdMaisCA: TCurrencyEdit
+            Left = 209
+            Top = 80
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 55
+          end
+          object EdtInventAleatQtdMenosCA: TCurrencyEdit
+            Left = 209
+            Top = 109
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 56
+          end
+          object EdtInventAleatQtdZeradoCA: TCurrencyEdit
+            Left = 209
+            Top = 138
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 57
+          end
+          object EdtInventAleatQtdNegativoCA: TCurrencyEdit
+            Left = 210
+            Top = 167
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 58
+          end
+          object EdtInventAleatQtdJaInventCA: TCurrencyEdit
+            Left = 209
+            Top = 196
+            Width = 51
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14024661
+            DecimalPlaces = 0
+            DisplayFormat = '0,'
+            Enabled = False
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 59
+          end
+        end
+        object Pan_InventAleatSalvar: TPanel
+          Left = 4
+          Top = 437
+          Width = 778
+          Height = 42
+          Align = alBottom
+          BevelInner = bvLowered
+          BorderStyle = bsSingle
+          Ctl3D = False
+          Enabled = False
+          ParentCtl3D = False
+          TabOrder = 3
+          object Label156: TLabel
+            Left = 159
+            Top = 14
+            Width = 216
+            Height = 13
+            Caption = '* N'#227'o Repetem do Invent'#225'rio Anterior'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label157: TLabel
+            Left = 434
+            Top = 14
+            Width = 170
+            Height = 13
+            Caption = '** Dos '#218'ltimos 10 Invent'#225'rios'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Bt_InventAleatSalvar: TJvXPButton
+            Left = 2
+            Top = 2
+            Width = 112
+            Height = 36
+            Caption = '   Salvar'#13#10'Altera'#231#245'es'
+            TabOrder = 0
+            TabStop = False
+            Glyph.Data = {
+              07544269746D617066010000424D660100000000000076000000280000001400
+              0000140000000100040000000000F00000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00333333333333333333330000333333000000000000030000333333078888
+              8888880300003333330F77777777780300003333330F99777777780300003333
+              330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+              0000333333333333330033330000333333333333300003330000300000000333
+              00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+              FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+              000030F44F00033333333333000030FFFF003333333333330000300000033333
+              333333330000333333333333333333330000}
+            Spacing = 5
+            Align = alLeft
+            OnClick = Bt_InventAleatSalvarClick
+          end
+          object Bt_InventAleatAbandonar: TJvXPButton
+            Left = 656
+            Top = 2
+            Width = 118
+            Height = 36
+            Caption = 'Abandonar'#13#10'Altera'#231#245'es'
+            TabOrder = 1
+            TabStop = False
+            Glyph.Data = {
+              07544269746D6170F6000000424DF60000000000000076000000280000001000
+              0000100000000100040000000000800000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF0077777700000087777777770AAAAA00877777770AAAAAA2077777770AAAAA
+              2A20777777000000A22077777777777700207777777777777700777707777777
+              77007770077777770020770A00000000A22070AAAAAAAAAA2A200AAAAAAAAAAA
+              A20770AAAAAAAAAA0077770A0000000087777770077777777777777707777777
+              7777}
+            Spacing = 10
+            Align = alRight
+            OnClick = Bt_InventAleatAbandonarClick
+          end
+        end
+        object Pan_InventAleatDados: TPanel
+          Left = 13
+          Top = 86
+          Width = 756
+          Height = 63
+          BevelOuter = bvNone
+          Caption = 'Pan_InventAleatDados'
+          TabOrder = 1
+          object Gb_InventAleatTpCurva: TGroupBox
+            Left = 7
+            Top = 1
+            Width = 231
+            Height = 53
+            Caption = ' Tipo de Curva a Utilizar '
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+            object Rb_InventAleatCurvaVlr: TRadioButton
+              Left = 10
+              Top = 22
+              Width = 90
+              Height = 17
+              Caption = 'Curva Valor'
+              Checked = True
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              TabOrder = 0
+              TabStop = True
+              OnClick = Rb_InventAleatCurvaVlrClick
+              OnKeyUp = Rb_InventAleatCurvaVlrKeyUp
+            end
+            object Rb_InventAleatCurvaQtd: TRadioButton
+              Left = 102
+              Top = 22
+              Width = 128
+              Height = 17
+              Caption = 'Curva Quantidade'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 1
+              OnClick = Rb_InventAleatCurvaVlrClick
+              OnKeyUp = Rb_InventAleatCurvaVlrKeyUp
+            end
+          end
+          object Gb_InventAleatQtdPrdutos: TGroupBox
+            Left = 239
+            Top = 1
+            Width = 510
+            Height = 53
+            Caption = ' Quantidade de Produtos  '
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 1
+            object Label125: TLabel
+              Left = 10
+              Top = 24
+              Width = 60
+              Height = 13
+              Caption = 'A Inventariar'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+            end
+            object Label126: TLabel
+              Left = 130
+              Top = 24
+              Width = 64
+              Height = 13
+              Caption = 'Selecionados'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+            end
+            object Label127: TLabel
+              Left = 259
+              Top = 24
+              Width = 46
+              Height = 13
+              Caption = 'Diferen'#231'a'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+            end
+            object Label128: TLabel
+              Left = 369
+              Top = 24
+              Width = 70
+              Height = 13
+              Caption = '% Selecionado'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+            end
+            object EdtInventAleatQtdInvent: TCurrencyEdit
+              Left = 73
+              Top = 20
+              Width = 51
+              Height = 21
+              TabStop = False
+              AutoSize = False
+              DecimalPlaces = 0
+              DisplayFormat = '0,'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              TabOrder = 0
+              OnChange = EdtInventAleatQtdInventChange
+            end
+            object EdtInventAleatQtdSelect: TCurrencyEdit
+              Left = 197
+              Top = 20
+              Width = 51
+              Height = 21
+              TabStop = False
+              AutoSize = False
+              Color = 14024661
+              DecimalPlaces = 0
+              DisplayFormat = '0,'
+              Enabled = False
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 1
+            end
+            object EdtInventAleatQtdDif: TCurrencyEdit
+              Left = 308
+              Top = 20
+              Width = 51
+              Height = 21
+              TabStop = False
+              AutoSize = False
+              Color = 14024661
+              DecimalPlaces = 0
+              DisplayFormat = '0,'
+              Enabled = False
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 2
+            end
+            object EdtInventAleatPerSelect: TCurrencyEdit
+              Left = 443
+              Top = 20
+              Width = 51
+              Height = 21
+              TabStop = False
+              AutoSize = False
+              Color = 14024661
+              DecimalPlaces = 0
+              DisplayFormat = '0,'
+              Enabled = False
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 3
+            end
+          end
+        end
+      end
+    end
   end
   object OdirPanApres: TPanel
-    Left = 880
-    Top = 316
+    Left = 784
+    Top = 412
     Width = 89
     Height = 33
     BevelInner = bvLowered
@@ -26460,8 +28431,8 @@ object FrmBelShop: TFrmBelShop
   end
   object MainMenu1: TMainMenu
     OwnerDraw = True
-    Left = 616
-    Top = 336
+    Left = 688
+    Top = 280
     object MenuSistema: TMenuItem
       Tag = 15
       Caption = 'SISTEMA'
@@ -28020,7 +29991,7 @@ object FrmBelShop: TFrmBelShop
           BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000000000FF00
           00FF00000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
           BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000000000BFBFBF00}
-        Caption = 'Estoques: M'#237'nimo/M'#225'ximo/Vendas'
+        Caption = 'Estoques: M'#237'nimo/M'#225'ximo'
         HelpContext = 1
         OnClick = SubMenuComprasEstoquesMinimoDemadasClick
       end
@@ -28150,58 +30121,6 @@ object FrmBelShop: TFrmBelShop
         Caption = 'Controle de Kitz'
         HelpContext = 1
         OnClick = SubMenuControledeKitzClick
-      end
-      object N24: TMenuItem
-        Caption = '-'
-      end
-      object SubMenuSolicitacaoCompraLoja: TMenuItem
-        Tag = 1207
-        Bitmap.Data = {
-          26050000424D260500000000000036040000280000000F0000000F0000000100
-          080000000000F0000000400B0000400B00000001000000000000000000000000
-          BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
-          A600800000008080000000800000008080000000800080008000FFFBF0008080
-          400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
-          8000804000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
-          F7F70707070707070700070707070707F7F9F707070707070700070707070707
-          F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
-          F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
-          F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
-          F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
-          07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
-          07F9F90707070707070007070707070707F90707070707070700070707070707
-          07070707070707070700}
-        Caption = 'Solicita'#231#227'o de Compra Loja'
-        HelpContext = 1
-        OnClick = SubMenuSolicitacaoCompraLojaClick
       end
       object N39: TMenuItem
         Caption = '-'
@@ -28349,9 +30268,114 @@ object FrmBelShop: TFrmBelShop
           00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
           BFBFBFBFBF00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
           BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00}
-        Caption = 'Reposi'#231#245'es Lojas (SIDICOM / LINX)'
+        Caption = 'Reposi'#231#245'es Lojas'
         HelpContext = 1
         OnClick = SubMenuCentroDistrReposicoesLojasClick
+      end
+      object SubMenuCentroDistrEnderecoProdutos: TMenuItem
+        Tag = 1603
+        Bitmap.Data = {
+          360C0000424D360C000000000000360000002800000020000000200000000100
+          180000000000000C0000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000000000FFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000000000FFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000000000FFFFFF0000
+          00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFF000000000000000000FFFFFFFFFFFFFFFFFFFFFF
+          FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFF0000000000
+          00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF000000000000FFFFFFFFFF
+          FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFF
+          FFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF000000FFFFFF000000FFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFF
+          FF000000000000000000FFFFFFFFFFFF000000FFFFFF000000FFFFFF000000FF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF0000
+          00FFFFFFFFFFFFFFFFFF000000000000FFFFFF000000FFFFFF000000000000FF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF0000
+          00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF000000FFFFFF000000FF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000FF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000FFFFFFFFFFFFFFFFFF000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000FFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFF0000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFF000000008080FFFFFF008080FFFFFF008080FFFFFF0080
+          80FFFFFF008080FFFFFF008080FFFFFF008080000000000000808080C0C0C000
+          0000808080000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFF000000FFFFFF008080FFFFFF008080FFFFFF008080FFFF
+          FF008080FFFFFF008080FFFFFF008080FFFFFF000000000000808080C0C0C000
+          0000808080000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFF000000FFFFFF008080FFFFFF008080FFFFFF008080FFFFFF0080
+          80FFFFFF008080FFFFFF008080FFFFFF000000808080000000808080C0C0C000
+          0000808080000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFF000000008080FFFFFF008080FFFFFF008080FFFFFF008080FFFF
+          FF008080FFFFFF008080FFFFFF008080000000808080000000808080C0C0C000
+          0000808080000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFF000000008080FFFFFF008080FFFFFF008080FFFFFF008080FFFFFF0080
+          80FFFFFF008080FFFFFF008080000000808080FFFFFF000000808080C0C0C000
+          0000808080000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFF0000000000000000000000000000000000000000000000000000000000
+          00000000000000000000000000000000808080008080000000808080C0C0C000
+          0000808080000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFF000000808080000000FFFFFF00FFFFFFFFFF00FF
+          FFFFFFFF00FFFFFFFFFF000000808080008080FFFFFF000000808080C0C0C000
+          0000808080000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFF00000000808000000000FFFF0000000000000000
+          0000000000000000FFFF000000008080FFFFFF008080000000808080C0C0C000
+          0000808080000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFF000000000000000000FFFFFF00FFFFFFFFFF00FF
+          FFFFFFFF00FFFFFFFFFF00000000000000000000000000000000000000000000
+          0000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFF0000000000000000
+          0000000000000000FFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF00FFFFFFFFFF00FF
+          FFFFFFFF00FFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFF00FFFFFFFF
+          FF00FFFFFFFFFF00FFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000000000000000000000000000
+          00000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+        Caption = 'Endere'#231'amento de Produtos'
+        HelpContext = 1
+        OnClick = SubMenuCentroDistrEnderecoProdutosClick
       end
       object N50: TMenuItem
         Caption = '-'
@@ -28487,55 +30511,6 @@ object FrmBelShop: TFrmBelShop
           Caption = 'Analise Di'#225'ria'
           HelpContext = 1
           OnClick = SubMenuCentroDistAnaliseAnalReposicoesRespDiariaClick
-        end
-        object SubMenuCentroDistAnaliseAnalReposicoesEndereco: TMenuItem
-          Tag = 160402
-          Bitmap.Data = {
-            26050000424D260500000000000036040000280000000F0000000F0000000100
-            080000000000F0000000400B0000400B00000001000000000000000000000000
-            BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
-            A600800000008080000000800000008080000000800080008000FFFBF0008080
-            400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
-            8000804000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
-            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
-            F7F70707070707070700070707070707F7F9F707070707070700070707070707
-            F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
-            F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
-            F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
-            F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
-            07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
-            07F9F90707070707070007070707070707F90707070707070700070707070707
-            07070707070707070700}
-          Caption = 'Endere'#231'amento'
-          HelpContext = 1
-          OnClick = SubMenuCentroDistAnaliseAnalReposicoesEnderecoClick
         end
         object SubMenuCentroDistControleProducao: TMenuItem
           Tag = 160404
@@ -29026,6 +31001,55 @@ object FrmBelShop: TFrmBelShop
           Caption = 'D'#233'bito / Cr'#233'dito ICMS ST'
           HelpContext = 1
           OnClick = SubMenuICMSDebCredSTClick
+        end
+        object SubMenuAnaliseXMLsEntrada: TMenuItem
+          Tag = 130102
+          Bitmap.Data = {
+            26050000424D260500000000000036040000280000000F0000000F0000000100
+            080000000000F0000000400B0000400B00000001000000000000000000000000
+            BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
+            A600800000008080000000800000008080000000800080008000FFFBF0008080
+            400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
+            8000804000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
+            F7F70707070707070700070707070707F7F9F707070707070700070707070707
+            F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
+            F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
+            F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
+            F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
+            07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
+            07F9F90707070707070007070707070707F90707070707070700070707070707
+            07070707070707070700}
+          Caption = 'Analise de XML'#39's de Entrada'
+          HelpContext = 1
+          OnClick = SubMenuAnaliseXMLsEntradaClick
         end
       end
       object N9: TMenuItem
@@ -30196,7 +32220,7 @@ object FrmBelShop: TFrmBelShop
           B57D52B57D52B57D52B57D52B57D52B57D52B57D52B57D520000}
         Caption = 'Auditoria de Estoques'
         HelpContext = 3
-        object SubMenuGeracaoArquivos: TMenuItem
+        object SubMenuAudGeracaoArquivos: TMenuItem
           Tag = 130701
           Bitmap.Data = {
             26050000424D260500000000000036040000280000000F0000000F0000000100
@@ -30243,7 +32267,56 @@ object FrmBelShop: TFrmBelShop
             07070707070707070700}
           Caption = 'Gera'#231#227'o de Arquivos'
           HelpContext = 1
-          OnClick = SubMenuGeracaoArquivosClick
+          OnClick = SubMenuAudGeracaoArquivosClick
+        end
+        object SubMenuAudInventarioAleatorio: TMenuItem
+          Tag = 130702
+          Bitmap.Data = {
+            26050000424D260500000000000036040000280000000F0000000F0000000100
+            080000000000F0000000400B0000400B00000001000000000000000000000000
+            BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
+            A600800000008080000000800000008080000000800080008000FFFBF0008080
+            400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
+            8000804000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
+            F7F70707070707070700070707070707F7F9F707070707070700070707070707
+            F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
+            F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
+            F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
+            F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
+            07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
+            07F9F90707070707070007070707070707F90707070707070700070707070707
+            07070707070707070700}
+          Caption = 'Invent'#225'rio Aleat'#243'rio'
+          HelpContext = 1
+          OnClick = SubMenuAudInventarioAleatorioClick
         end
       end
       object N12: TMenuItem
@@ -30933,16 +33006,16 @@ object FrmBelShop: TFrmBelShop
   end
   object PopM_UsuSenha: TPopupMenu
     OnPopup = PopM_UsuSenhaPopup
-    Left = 880
-    Top = 432
+    Left = 800
+    Top = 480
     object Senha1: TMenuItem
       Caption = 'Senha'
       HelpContext = 999999
     end
   end
   object PopM_FinanPlanFInanceira: TPopupMenu
-    Left = 888
-    Top = 354
+    Left = 728
+    Top = 218
     object PopM_PlanFinanceiraMemoria: TMenuItem
       Caption = 'Salvar Planilha Financeira em Mem'#243'ria'
       HelpContext = 999999
@@ -31023,22 +33096,22 @@ object FrmBelShop: TFrmBelShop
     Font.Style = [fsBold]
     StartColor = 15522303
     EndColor = 8388863
-    Left = 776
-    Top = 448
+    Left = 904
+    Top = 472
   end
   object Trad_Localizer: TcxLocalizer
-    Left = 656
-    Top = 448
+    Left = 704
+    Top = 488
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 748
-    Top = 351
+    Left = 812
+    Top = 311
   end
   object PopM_OCRomaneio: TPopupMenu
     OwnerDraw = True
-    Left = 552
-    Top = 432
+    Left = 720
+    Top = 352
     object PopM_OCRomaneioVoltar: TMenuItem
       Bitmap.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100
@@ -31182,8 +33255,8 @@ object FrmBelShop: TFrmBelShop
   end
   object PopM_GeraOC: TPopupMenu
     OwnerDraw = True
-    Left = 398
-    Top = 349
+    Left = 758
+    Top = 269
     object PopM_GeraOCVoltar1: TMenuItem
       Bitmap.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100
@@ -31304,22 +33377,6 @@ object FrmBelShop: TFrmBelShop
       Caption = 'Ver Tr'#226'nsito'
       OnClick = PopM_GeraOCVerTransitoClick
     end
-    object PopM_GeraOCOCsOrigem: TMenuItem
-      Bitmap.Data = {
-        42010000424D4201000000000000760000002800000011000000110000000100
-        040000000000CC00000000000000000000001000000010000000000000000000
-        BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000808080000000
-        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00777777777777
-        7777700000007777777777777700700000007777777777777000700000007777
-        7777777700077000000077778000087000777000000077700777700007777000
-        0000770870007E80777770000000780777077770877770000000707777077777
-        077770000000707777077777077770000000707E70000777077770000000707E
-        77077777077770000000780EE70770708777700000007708EEE0078077777000
-        0000777007777007777770000000777780000877777770000000777777777777
-        777770000000}
-      Caption = 'OCs de Origem'
-      OnClick = PopM_GeraOCOCsOrigemClick
-    end
     object N28: TMenuItem
       Caption = '-'
     end
@@ -31414,7 +33471,6 @@ object FrmBelShop: TFrmBelShop
         BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
         BFBF}
       Caption = 'Importa Solicita'#231#245'es de Lojas'
-      OnClick = PopM_GeraOCImportaSolicitcoesLojasClick
     end
     object N27: TMenuItem
       Caption = '-'
@@ -33852,387 +35908,5 @@ object FrmBelShop: TFrmBelShop
     object N37: TMenuItem
       Caption = '-'
     end
-  end
-  object SQLQuery1: TSQLQuery
-    MaxBlobSize = -1
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'Dta1'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Dta2'
-        ParamType = ptUnknown
-      end>
-    SQL.Strings = (
-      'INSERT INTO DEB_CRED_ICMS_ST'
-      'SELECT'
-      'm.empresa,'
-      'p.cod_fornecedor,'
-      'm.cod_produto,'
-      'CAST(m.data_documento AS DATE) DATA_DOCUMENTO,'
-      'CAST(m.data_lancamento AS DATE) DATA_LANCAMENTO,'
-      'm.documento DOCUMENTO,'
-      'm.serie SERIE,'
-      
-        'CAST(SUBSTRING(TRIM(m.chave_nf) FROM 21 FOR 2) AS VARCHAR(3)) MO' +
-        'DELO_NF,'
-      'm.operacao,'
-      'm.tipo_transacao,'
-      'm.id_cfop ID_CFOP,'
-      'm.cst_icms CST_ICMS,'
-      'm.quantidade qtd_item,'
-      
-        'CAST(COALESCE(m.aliquota_icms, 0.00) AS NUMERIC(18,2)) PER_ALIQ_' +
-        'ICMS,'
-      'CAST(COALESCE(m.valor_icms, 0.00) AS NUMERIC(18,2)) VLR_ICMS,'
-      
-        'CAST(COALESCE(m.aliquota_icms_st, 0.00) AS NUMERIC(18,2)) PER_AL' +
-        'IQ_ICMS_ST,'
-      
-        'CAST(COALESCE(m.valor_icms_st, 0.00) AS NUMERIC(18,2)) VLR_ICMS_' +
-        'ST,'
-      
-        'CAST(COALESCE(m.base_icms_st, 0.00) AS NUMERIC(18,2)) VLR_BASE_I' +
-        'CMS_ST,'
-      
-        'CAST(COALESCE(m.valor_total, 0.00) AS NUMERIC(18,2)) VLR_OPERACA' +
-        'O,'
-      ''
-      
-        '----------------------------------------------------------------' +
-        '----------------'
-      
-        '----------------------------------------------------------------' +
-        '----------------'
-      'CAST('
-      'CASE'
-      
-        '   WHEN TRIM(m.id_cfop) IN ('#39'5401'#39', '#39'6401'#39', '#39'5405'#39', '#39'6108'#39',  '#39'54' +
-        '03'#39') THEN  -- Vendas'
-      '      '#39'VENDAS'#39
-      
-        '   WHEN TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39') THEN' +
-        '  -- Compras'
-      '      '#39'COMPRAS'#39
-      'END'
-      'AS VARCHAR(15)) MODALIDADE,'
-      ''
-      
-        '----------------------------------------------------------------' +
-        '----------------'
-      
-        '----------------------------------------------------------------' +
-        '----------------'
-      'CAST('
-      'CASE'
-      
-        '   WHEN (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) AN' +
-        'D   -- Compras Atacado'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%60'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'500'#39')) THEN'
-      '      '#39'ATACADO'#39
-      ''
-      
-        '   WHEN (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) AN' +
-        'D   -- Compras Industria'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')) THEN'
-      '      '#39'IND'#218'STRIA'#39
-      ''
-      
-        '   WHEN (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) AN' +
-        'D   -- Compras Outros'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'900'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'%90'#39')) THEN'
-      '      '#39'OUTROS'#39
-      ''
-      '   ELSE ------------------ Vendas BelShop'
-      '     '#39'BELSHOP'#39
-      'END'
-      'AS VARCHAR(15)) TIPO,'
-      ''
-      
-        '----------------------------------------------------------------' +
-        '----------------'
-      '-- Dados NCM'
-      
-        '----------------------------------------------------------------' +
-        '----------------'
-      'n.des_ncm DES_NCM,'
-      'CAST(n.per_icms AS NUMERIC(18,2)) PER_ICMS,'
-      'CAST(n.per_fcp AS NUMERIC(18,2)) PER_FCP,'
-      'CAST(n.per_icms_efetivo AS NUMERIC(18,2)) PER_ICMS_EFETIVO,'
-      ''
-      
-        '----------------------------------------------------------------' +
-        '----------------'
-      
-        '----------------------------------------------------------------' +
-        '----------------'
-      'CAST('
-      'CASE'
-      '   -- Compras - Ind'#250'stria Base de Calculo ICMS ST'
-      
-        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
-        'AND   -- Compras - Ind'#250'stria'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
-      '          OR'
-      
-        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')) ) AND (' +
-        'm.base_icms_st<>0) THEN'
-      '      '#39'Valor Base de Calculo ICMS ST'#39
-      ''
-      '   -- Compras - Ind'#250'stria Valor da Opera'#231#227'o'
-      
-        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
-        'AND   -- Compras - Ind'#250'stria'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
-      '          OR'
-      
-        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')) ) AND (' +
-        'm.base_icms_st=0) THEN'
-      '      '#39'Valor da Opera'#231#227'o'#39
-      ''
-      '   -- Compras - Atacado Valor da Opera'#231#227'o'
-      
-        '   WHEN (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) AN' +
-        'D   -- Compras Atacado'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%60'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'500'#39')) THEN'
-      '      '#39'Valor da Opera'#231#227'o'#39
-      ''
-      '   -- Compras - Outros Base de Calculo ICMS ST'
-      
-        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
-        'AND   -- Compras Outros'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'900'#39')'
-      '          OR'
-      
-        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'%90'#39')) ) AND (m.b' +
-        'ase_icms_st<>0) THEN'
-      '      '#39'Valor Base de Calculo ICMS ST'#39
-      ''
-      '   -- Compras - Outros Valor da Opera'#231#227'o'
-      
-        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
-        'AND   -- Compras Outros'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'900'#39')'
-      '          OR'
-      
-        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'%90'#39')) ) AND (m.b' +
-        'ase_icms_st<>0) THEN'
-      '      '#39'Valor da Opera'#231#227'o'#39
-      ''
-      '   ELSE ------------ Vendas BelShop'
-      '      '#39'Valor da Opera'#231#227'o'#39
-      'END'
-      'AS varchar(35)) UTILIZADO,'
-      ''
-      
-        '----------------------------------------------------------------' +
-        '----------------'
-      '-- Valor ICMS Efetivo'
-      
-        '----------------------------------------------------------------' +
-        '----------------'
-      'CAST('
-      'CASE'
-      '   -- Vendas - BelShop'
-      
-        '   WHEN TRIM(m.id_cfop) in ('#39'5401'#39', '#39'6401'#39', '#39'5405'#39', '#39'6108'#39',  '#39'54' +
-        '03'#39') THEN -- Somente Vendas'
-      
-        '     (COALESCE(m.valor_total, 0.00) * COALESCE(n.per_icms_efetiv' +
-        'o, 0.00)) / 100'
-      ''
-      '   -- Compras - Ind'#250'stria Base de Calculo ICMS ST'
-      
-        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
-        'AND   -- Compras - Ind'#250'stria'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
-      '          OR'
-      
-        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')) ) AND (' +
-        'm.base_icms_st<>0) THEN'
-      
-        '     (COALESCE(m.base_icms_st, 0.00) * COALESCE(n.per_icms_efeti' +
-        'vo, 0.00)) / 100'
-      ''
-      '   -- Compras - Ind'#250'stria Valor da Opera'#231#227'o'
-      
-        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
-        'AND   -- Compras - Ind'#250'stria'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
-      '          OR'
-      
-        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')) ) AND (' +
-        'm.base_icms_st=0) THEN'
-      
-        '     (COALESCE(m.valor_total, 0.00) * COALESCE(n.per_icms_efetiv' +
-        'o, 0.00)) / 100'
-      ''
-      '   -- Compras - Atacado Valor da Opera'#231#227'o'
-      
-        '   WHEN (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) AN' +
-        'D   -- Compras Atacado'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%60'#39')'
-      '          OR'
-      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'500'#39')) THEN'
-      
-        '     (COALESCE(m.valor_total, 0.00) * COALESCE(n.per_icms_efetiv' +
-        'o, 0.00)) / 100'
-      ''
-      '   -- Compras - Outros Base de Calculo ICMS ST'
-      
-        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
-        'AND   -- Compras Outros'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'900'#39')'
-      '          OR'
-      
-        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'%90'#39')) ) AND (m.b' +
-        'ase_icms_st<>0) THEN'
-      
-        '     (COALESCE(m.base_icms_st, 0.00) * COALESCE(n.per_icms_efeti' +
-        'vo, 0.00)) / 100'
-      ''
-      '   -- Compras - Outros Valor da Opera'#231#227'o'
-      
-        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
-        'AND   -- Compras Outros'
-      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'900'#39')'
-      '          OR'
-      
-        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'%90'#39')) ) AND (m.b' +
-        'ase_icms_st<>0) THEN'
-      
-        '     (COALESCE(m.valor_total, 0.00) * COALESCE(n.per_icms_efetiv' +
-        'o, 0.00)) / 100'
-      ''
-      '   ELSE ------------ Vendas BelShop'
-      '      0.00'
-      'END'
-      'AS NUMERIC(18,2)) VLR_ICMS_EFETIVO,'
-      '0.00 VLR_ICMS_EFETIVO_C'
-      ''
-      'FROM LINXMOVIMENTO m, LINXPRODUTOS p,'
-      '     DEB_CRED_ICMS_NCM n'
-      ''
-      'WHERE m.cod_produto=p.cod_produto'
-      'AND   p.ncm=n.des_ncm'
-      ''
-      'AND   m.excluido='#39'N'#39
-      'AND   m.cancelado='#39'N'#39
-      '---------------------------'
-      '--- CFOPs SELECIONADOS ----'
-      '---------------------------'
-      
-        'AND TRIM(m.id_cfop) in ('#39'5401'#39', '#39'6401'#39', '#39'5405'#39', '#39'6108'#39',  '#39'5403'#39',' +
-        ' -- Vendas'
-      
-        '                        '#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39') -- Compr' +
-        'as'
-      ''
-      
-        '--AND TRIM(m.id_cfop) in ('#39'5401'#39', '#39'6401'#39', '#39'5405'#39', '#39'6108'#39',  '#39'5403' +
-        #39') -- Somente Vendas'
-      
-        '--AND TRIM(m.id_cfop) in ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39') -- Som' +
-        'ente Compras'
-      ''
-      '---------------------------'
-      '--- CFOPs SELECIONADOS ----'
-      '---------------------------'
-      ''
-      '------------------------'
-      '--- CST SELECIONADOS ---'
-      '------------------------'
-      'AND ( (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
-      '      OR'
-      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
-      '      OR'
-      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
-      '      OR'
-      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
-      '      OR'
-      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'500'#39')'
-      '      OR'
-      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'900'#39')'
-      '      OR'
-      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
-      '      OR'
-      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
-      '      OR'
-      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%60'#39')'
-      '      OR'
-      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')'
-      '      OR'
-      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%90'#39') )'
-      '------------------------'
-      '--- CST SELECIONADOS ---'
-      '------------------------'
-      ''
-      'AND COALESCE(m.tipo_transacao,'#39#39')<>'#39'J'#39
-      'AND m.data_lancamento between :Dta1 and :Dta2'
-      '')
-    SQLConnection = DMBelShop.SQLC
-    Left = 150
-    Top = 449
   end
 end

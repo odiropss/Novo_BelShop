@@ -14,7 +14,7 @@ uses
 
 var
   Aplicativo : THandle;
-
+  
 begin
   // Não Permite Rodar Duas Vezes
   CreateMutex(nil, false, 'PAtualizaSeteHoras');

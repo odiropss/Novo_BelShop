@@ -1,11 +1,11 @@
 object FrmOCLinx: TFrmOCLinx
-  Left = 260
-  Top = 101
+  Left = 238
+  Top = 120
   Align = alClient
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = '  PEDIDO DE COMPRA - LINX'
-  ClientHeight = 576
+  ClientHeight = 584
   ClientWidth = 977
   Color = 12895428
   Ctl3D = False
@@ -27,7 +27,7 @@ object FrmOCLinx: TFrmOCLinx
     Left = 0
     Top = 0
     Width = 977
-    Height = 576
+    Height = 584
     ActivePage = Ts_OCBuscaProdutos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -46,14 +46,14 @@ object FrmOCLinx: TFrmOCLinx
         Left = 0
         Top = 0
         Width = 969
-        Height = 548
+        Height = 556
         Align = alClient
         BevelInner = bvLowered
         Color = 14342874
         TabOrder = 0
         object Panel22: TPanel
           Left = 2
-          Top = 504
+          Top = 512
           Width = 965
           Height = 42
           Align = alBottom
@@ -2675,8 +2675,8 @@ object FrmOCLinx: TFrmOCLinx
           Left = 2
           Top = 153
           Width = 965
-          Height = 351
-          ActivePage = TS_FiltroFornecedor
+          Height = 359
+          ActivePage = TS_FiltroProdutos
           Align = alClient
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -2694,7 +2694,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 0
               Top = 0
               Width = 316
-              Height = 323
+              Height = 331
               Align = alLeft
               Caption = '  Fornecedores  '
               Color = 13092807
@@ -2710,7 +2710,7 @@ object FrmOCLinx: TFrmOCLinx
               TabOrder = 0
               DesignSize = (
                 316
-                323)
+                331)
               object Label188: TLabel
                 Left = 282
                 Top = 29
@@ -3040,7 +3040,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 316
               Top = 0
               Width = 641
-              Height = 323
+              Height = 331
               Hint = '<Delete> Exclui Fornecedor da Lista'
               Align = alClient
               DataSource = DMVirtual.DS_V_Fornecedores
@@ -3087,7 +3087,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 0
               Top = 0
               Width = 316
-              Height = 323
+              Height = 331
               Align = alLeft
               Caption = '  Produtos  '
               Color = 13092807
@@ -3103,7 +3103,7 @@ object FrmOCLinx: TFrmOCLinx
               TabOrder = 0
               DesignSize = (
                 316
-                323)
+                331)
               object Label3: TLabel
                 Left = 282
                 Top = 29
@@ -3290,7 +3290,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 316
               Top = 0
               Width = 641
-              Height = 323
+              Height = 331
               Hint = '<Delete> Exclui Item da Lista'
               Align = alClient
               DataSource = DMVirtual.DS_V_Produtos
@@ -3346,7 +3346,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 0
               Top = 0
               Width = 409
-              Height = 323
+              Height = 331
               Align = alLeft
               Anchors = [akLeft, akTop, akRight, akBottom]
               Caption = '  Grupo de Produtos  '
@@ -3389,7 +3389,7 @@ object FrmOCLinx: TFrmOCLinx
               end
               object Panel27: TPanel
                 Left = 1
-                Top = 60
+                Top = 68
                 Width = 407
                 Height = 262
                 Hint = '<Delete> Exclui Item da Lista'
@@ -3444,7 +3444,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 409
               Top = 0
               Width = 548
-              Height = 323
+              Height = 331
               Align = alClient
               Caption = '  SubGrupo de Produtos  '
               Color = 13092807
@@ -3460,12 +3460,12 @@ object FrmOCLinx: TFrmOCLinx
               TabOrder = 1
               DesignSize = (
                 548
-                323)
+                331)
               object Panel32: TPanel
                 Left = 1
                 Top = 60
                 Width = 546
-                Height = 262
+                Height = 270
                 Align = alBottom
                 Anchors = [akLeft, akTop, akRight, akBottom]
                 BevelInner = bvLowered
@@ -3474,7 +3474,7 @@ object FrmOCLinx: TFrmOCLinx
                   Left = 2
                   Top = 2
                   Width = 542
-                  Height = 258
+                  Height = 266
                   Hint = '<Delete> Exclui Item da Lista'
                   Align = alClient
                   DataSource = DMVirtual.DS_V_SubGruposProdutos
@@ -3557,7 +3557,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 0
               Top = 0
               Width = 177
-              Height = 323
+              Height = 331
               Align = alLeft
               Caption = '  Aplica'#231#245'es  '
               Color = 13092807
@@ -3573,7 +3573,7 @@ object FrmOCLinx: TFrmOCLinx
               TabOrder = 0
               DesignSize = (
                 177
-                323)
+                331)
               object Label4: TLabel
                 Left = 143
                 Top = 29
@@ -3613,7 +3613,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 177
               Top = 0
               Width = 780
-              Height = 323
+              Height = 331
               Hint = '<Delete> Exclui Item da Lista'
               Align = alClient
               DataSource = DMVirtual.DS_V_Aplicacao
@@ -3659,7 +3659,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 0
               Top = 0
               Width = 177
-              Height = 323
+              Height = 331
               Align = alLeft
               Caption = '  Familias Pre'#231'os  '
               Color = 13092807
@@ -3675,7 +3675,7 @@ object FrmOCLinx: TFrmOCLinx
               TabOrder = 0
               DesignSize = (
                 177
-                323)
+                331)
               object Label5: TLabel
                 Left = 143
                 Top = 29
@@ -3715,7 +3715,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 177
               Top = 0
               Width = 780
-              Height = 323
+              Height = 331
               Hint = '<Delete> Exclui Item da Lista'
               Align = alClient
               DataSource = DMVirtual.DS_V_FamiliaPrecos
@@ -3761,7 +3761,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 0
               Top = 0
               Width = 177
-              Height = 323
+              Height = 331
               Align = alLeft
               Caption = '  Grupos ST  '
               Color = 13092807
@@ -3777,7 +3777,7 @@ object FrmOCLinx: TFrmOCLinx
               TabOrder = 0
               DesignSize = (
                 177
-                323)
+                331)
               object Label6: TLabel
                 Left = 143
                 Top = 29
@@ -3817,7 +3817,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 177
               Top = 0
               Width = 780
-              Height = 323
+              Height = 331
               Hint = '<Delete> Exclui Item da Lista'
               Align = alClient
               DataSource = DMVirtual.DS_V_GrupoST
@@ -3861,7 +3861,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 0
               Top = 0
               Width = 177
-              Height = 323
+              Height = 331
               Align = alLeft
               Caption = '  Comprovantes  '
               Color = 13092807
@@ -3877,7 +3877,7 @@ object FrmOCLinx: TFrmOCLinx
               TabOrder = 0
               DesignSize = (
                 177
-                323)
+                331)
               object Label14: TLabel
                 Left = 143
                 Top = 29
@@ -3917,7 +3917,7 @@ object FrmOCLinx: TFrmOCLinx
               Left = 177
               Top = 0
               Width = 780
-              Height = 323
+              Height = 331
               Hint = '<Delete> Exclui Item da Lista'
               Align = alClient
               Color = 15004403
@@ -3979,9 +3979,9 @@ object FrmOCLinx: TFrmOCLinx
         BevelInner = bvLowered
         TabOrder = 0
         object Gb_GeraOCItem: TGroupBox
-          Left = 239
+          Left = 298
           Top = 2
-          Width = 734
+          Width = 668
           Height = 49
           Align = alLeft
           Anchors = [akLeft, akTop, akRight]
@@ -3992,9 +3992,9 @@ object FrmOCLinx: TFrmOCLinx
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          TabOrder = 3
+          TabOrder = 1
           DesignSize = (
-            734
+            668
             49)
           object Dbe_GeraOCCodItem: TDBEdit
             Left = 7
@@ -4017,7 +4017,7 @@ object FrmOCLinx: TFrmOCLinx
           object Dbe_GeraOCDescItem: TDBEdit
             Left = 55
             Top = 20
-            Width = 349
+            Width = 283
             Height = 19
             TabStop = False
             Anchors = [akLeft, akTop, akRight]
@@ -4034,17 +4034,17 @@ object FrmOCLinx: TFrmOCLinx
             TabOrder = 1
           end
           object Dbe_GeraOCDescFilial: TDBEdit
-            Left = 406
+            Left = 340
             Top = 20
             Width = 321
             Height = 19
             TabStop = False
             Anchors = [akTop, akRight]
-            Color = 14342874
+            Color = clBlue
             DataField = 'DES_EMPRESA'
             DataSource = DMBelShop.DS_AComprar
             Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
+            Font.Color = clWindow
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
@@ -4056,10 +4056,10 @@ object FrmOCLinx: TFrmOCLinx
         object Gb_GeraOCDocto: TGroupBox
           Left = 2
           Top = 2
-          Width = 237
+          Width = 296
           Height = 49
           Align = alLeft
-          Caption = ' Nro do Documento '
+          Caption = ' Docto de Pedido de Compra '
           Color = clBtnFace
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlue
@@ -4070,7 +4070,7 @@ object FrmOCLinx: TFrmOCLinx
           ParentFont = False
           TabOrder = 0
           DesignSize = (
-            237
+            296
             49)
           object EdtGeraOCBuscaDocto: TCurrencyEdit
             Left = 8
@@ -4097,11 +4097,10 @@ object FrmOCLinx: TFrmOCLinx
           end
           object Bt_GeraOCBuscaDocto: TJvXPButton
             Tag = 92
-            Left = 169
+            Left = 172
             Top = 13
             Width = 28
             Height = 29
-            Hint = 'Localizar Docto'
             TabOrder = 2
             TabStop = False
             ShowFocusRect = True
@@ -4113,16 +4112,15 @@ object FrmOCLinx: TFrmOCLinx
             Font.Style = [fsBold]
             ParentFont = False
             ParentShowHint = False
-            ShowHint = True
+            ShowHint = False
             OnClick = Bt_GeraOCBuscaDoctoClick
           end
           object Bt_GeraOCExcluir: TJvXPButton
             Tag = 3
-            Left = 201
+            Left = 204
             Top = 13
             Width = 28
             Height = 29
-            Hint = 'Excluir Docto'
             TabOrder = 3
             TabStop = False
             ShowFocusRect = True
@@ -4134,8 +4132,119 @@ object FrmOCLinx: TFrmOCLinx
             Font.Style = [fsBold]
             ParentFont = False
             ParentShowHint = False
-            ShowHint = True
+            ShowHint = False
             OnClick = Bt_GeraOCExcluirClick
+          end
+          object Bt_GeraOCDoctoNaoBel: TJvXPButton
+            Tag = 92
+            Left = 252
+            Top = 13
+            Width = 28
+            Height = 29
+            TabOrder = 4
+            TabStop = False
+            Glyph.Data = {
+              07544269746D617066010000424D660100000000000076000000280000001400
+              0000140000000100040000000000F00000000000000000000000100000001000
+              0000000000000000800000800000008080008000000080008000808000008080
+              8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00333333333333333333330000333333333333333333330000333333333003
+              3003300300003333333330033003300300003330333333333333333300003300
+              0333333333333333000030F000333333333333330000330F0003333333333333
+              00003330F000000073333333000033330F0078887033333300003333300788FF
+              870333330000333330788888F877333300003333308888888F80333300003333
+              307888888F803333000033333078FF8888803333000033333777FF8888773333
+              0000333333077888870333330000333333307777703333330000333333337000
+              733333330000333333333333333333330000}
+            ShowFocusRect = True
+            Anchors = [akTop, akRight]
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = False
+            OnClick = Bt_GeraOCBuscaDoctoClick
+          end
+        end
+        object Gb_GeraOCEstoqueTransito: TGroupBox
+          Left = 559
+          Top = 2
+          Width = 226
+          Height = 49
+          Align = alRight
+          Caption = '  Considerar no Calculo  '
+          Color = clSilver
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          TabOrder = 2
+          Visible = False
+          object Label35: TLabel
+            Left = 12
+            Top = 22
+            Width = 48
+            Height = 13
+            Caption = 'Estoque ?'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label36: TLabel
+            Left = 117
+            Top = 22
+            Width = 47
+            Height = 13
+            Caption = 'Tr'#226'nsito ?'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Ckb_GeraOCCalculoEstoque: TJvXPCheckbox
+            Left = 63
+            Top = 20
+            Width = 51
+            Height = 17
+            Caption = 'SIM'
+            TabOrder = 0
+            Checked = True
+            State = cbChecked
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Ckb_GeraOCCalculoEstoqueClick
+            OnKeyUp = Ckb_GeraOCCalculoEstoqueKeyUp
+          end
+          object Ckb_GeraOCCalculoTransito: TJvXPCheckbox
+            Left = 166
+            Top = 20
+            Width = 51
+            Height = 17
+            Caption = 'NAO'
+            TabOrder = 1
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Ckb_GeraOCCalculoTransitoClick
+            OnKeyUp = Ckb_GeraOCCalculoTransitoKeyUp
           end
         end
         object Gb_GeraOCCalculaCompra: TGroupBox
@@ -4153,7 +4262,7 @@ object FrmOCLinx: TFrmOCLinx
           Font.Style = [fsBold]
           ParentColor = False
           ParentFont = False
-          TabOrder = 2
+          TabOrder = 3
           Visible = False
           object Label48: TLabel
             Left = 51
@@ -4234,90 +4343,12 @@ object FrmOCLinx: TFrmOCLinx
             OnClick = Bt_GeraOCCalcularClick
           end
         end
-        object Gb_GeraOCEstoqueTransito: TGroupBox
-          Left = 559
-          Top = 2
-          Width = 226
-          Height = 49
-          Align = alRight
-          Caption = '  Considerar no Calculo  '
-          Color = clSilver
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlue
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = False
-          ParentFont = False
-          TabOrder = 1
-          Visible = False
-          object Label35: TLabel
-            Left = 12
-            Top = 22
-            Width = 48
-            Height = 13
-            Caption = 'Estoque ?'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ParentFont = False
-          end
-          object Label36: TLabel
-            Left = 117
-            Top = 22
-            Width = 47
-            Height = 13
-            Caption = 'Tr'#226'nsito ?'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ParentFont = False
-          end
-          object Ckb_GeraOCCalculoEstoque: TJvXPCheckbox
-            Left = 63
-            Top = 20
-            Width = 51
-            Height = 17
-            Caption = 'SIM'
-            TabOrder = 0
-            Checked = True
-            State = cbChecked
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ParentFont = False
-            OnClick = Ckb_GeraOCCalculoEstoqueClick
-            OnKeyUp = Ckb_GeraOCCalculoEstoqueKeyUp
-          end
-          object Ckb_GeraOCCalculoTransito: TJvXPCheckbox
-            Left = 166
-            Top = 20
-            Width = 51
-            Height = 17
-            Caption = 'NAO'
-            TabOrder = 1
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ParentFont = False
-            OnClick = Ckb_GeraOCCalculoTransitoClick
-            OnKeyUp = Ckb_GeraOCCalculoTransitoKeyUp
-          end
-        end
       end
       object PC_GeraOCProduto: TPageControl
         Left = 0
         Top = 53
         Width = 102
-        Height = 475
+        Height = 483
         ActivePage = Ts_GeraOCProdutos
         Align = alLeft
         TabOrder = 1
@@ -4330,7 +4361,7 @@ object FrmOCLinx: TFrmOCLinx
             Left = 0
             Top = 0
             Width = 94
-            Height = 432
+            Height = 440
             Align = alClient
             DataSource = DMBelShop.DS_AComprarItens
             Font.Charset = DEFAULT_CHARSET
@@ -4373,7 +4404,7 @@ object FrmOCLinx: TFrmOCLinx
           end
           object Panel4: TPanel
             Left = 0
-            Top = 432
+            Top = 440
             Width = 94
             Height = 15
             Align = alBottom
@@ -4385,7 +4416,7 @@ object FrmOCLinx: TFrmOCLinx
         Left = 102
         Top = 53
         Width = 68
-        Height = 475
+        Height = 483
         ActivePage = Ts_GeraOCFiliais
         Align = alLeft
         TabOrder = 2
@@ -4398,7 +4429,7 @@ object FrmOCLinx: TFrmOCLinx
             Left = 0
             Top = 0
             Width = 60
-            Height = 432
+            Height = 440
             Align = alClient
             Ctl3D = False
             DataSource = DMBelShop.DS_AComprar
@@ -4444,7 +4475,7 @@ object FrmOCLinx: TFrmOCLinx
           end
           object Panel3: TPanel
             Left = 0
-            Top = 432
+            Top = 440
             Width = 60
             Height = 15
             Align = alBottom
@@ -4456,7 +4487,7 @@ object FrmOCLinx: TFrmOCLinx
         Left = 170
         Top = 53
         Width = 799
-        Height = 475
+        Height = 483
         ActivePage = Ts_GeraOCGrid
         Align = alClient
         MultiLine = True
@@ -4470,7 +4501,7 @@ object FrmOCLinx: TFrmOCLinx
             Left = 0
             Top = 0
             Width = 791
-            Height = 447
+            Height = 455
             Align = alClient
             DataSource = DMBelShop.DS_AComprar
             Font.Charset = DEFAULT_CHARSET
@@ -4478,7 +4509,7 @@ object FrmOCLinx: TFrmOCLinx
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = []
-            Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+            Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
             ParentFont = False
             ParentShowHint = False
             PopupMenu = PopM_GeraOCLinx
@@ -4491,6 +4522,7 @@ object FrmOCLinx: TFrmOCLinx
             TitleFont.Style = [fsBold]
             OnColEnter = Dbg_GeraOCGridColEnter
             OnColExit = Dbg_GeraOCGridColExit
+            OnColumnMoved = Dbg_GeraOCGridColumnMoved
             OnDrawColumnCell = Dbg_GeraOCGridDrawColumnCell
             OnEnter = Dbg_GeraOCProdutosEnter
             OnExit = Dbg_GeraOCProdutosExit
@@ -5726,7 +5758,7 @@ object FrmOCLinx: TFrmOCLinx
             Left = 0
             Top = 44
             Width = 791
-            Height = 403
+            Height = 411
             Hint = '<Duplo Click> Alterar Gerar'
             Align = alClient
             Color = 15004403
@@ -5751,6 +5783,7 @@ object FrmOCLinx: TFrmOCLinx
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_GeraOCTotalGeralDrawColumnCell
             OnDblClick = Dbg_GeraOCTotalGeralDblClick
+            OnKeyDown = Dbg_GeraOCTotalGeralKeyDown
             CorComFoco = 15004403
             SairComEnter = False
             EditDataSetCheck = False
@@ -5961,33 +5994,45 @@ object FrmOCLinx: TFrmOCLinx
       end
       object Sb_GeraOC: TdxStatusBar
         Left = 0
-        Top = 528
+        Top = 536
         Width = 969
         Height = 20
         Panels = <
           item
-            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-            Width = 200
+            PanelStyleClassName = 'TdxStatusBarContainerPanelStyle'
+            PanelStyle.Container = Sb_GeraOCContainer0
+            Fixed = False
+            Width = 100
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
-            PanelStyle.Color = 13303807
             Fixed = False
             Text = 'OP'#199#213'ES: No Grid Bot'#227'o Direito do Mouse'
-            Width = 30
+            Width = 220
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
             PanelStyle.Color = 13303807
+            Bevel = dxpbNone
             Fixed = False
             Text = '<F4> Localiza Produto'
-            Width = 30
+            Width = 140
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-            Width = 200
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Color = clRed
+            Fixed = False
+            Text = '<F5> Pedido de Compras Pendentes Lojas de SC'
+            Width = 250
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarContainerPanelStyle'
+            PanelStyle.Container = Sb_GeraOCContainer4
+            Fixed = False
+            Width = 100
           end>
         PaintStyle = stpsOffice11
         Font.Charset = DEFAULT_CHARSET
@@ -5996,6 +6041,1300 @@ object FrmOCLinx: TFrmOCLinx
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         Color = 13303807
+        object Sb_GeraOCContainer0: TdxStatusBarContainerControl
+          Left = 2
+          Top = 2
+          Width = 118
+          Height = 16
+        end
+        object Sb_GeraOCContainer4: TdxStatusBarContainerControl
+          Left = 851
+          Top = 2
+          Width = 118
+          Height = 16
+        end
+      end
+    end
+    object Ts_OCGeraEditaOrdemCompra: TTabSheet
+      Caption = ' Edita Ordem de Compra '
+      ImageIndex = 2
+      object PC_GeraOCEditaApresentacao: TPageControl
+        Left = 0
+        Top = 61
+        Width = 969
+        Height = 495
+        ActivePage = Ts_GeraOCEditaGrid
+        Align = alClient
+        MultiLine = True
+        Style = tsButtons
+        TabOrder = 0
+        TabStop = False
+        object Ts_GeraOCEditaGrid: TTabSheet
+          Caption = '  Grid  '
+          Highlighted = True
+          object Splitter1: TSplitter
+            Left = 320
+            Top = 0
+            Height = 404
+            Color = clRed
+            ParentColor = False
+          end
+          object Dbg_GeraOCEditaGrid: TDBGridJul
+            Left = 323
+            Top = 0
+            Width = 638
+            Height = 404
+            Align = alClient
+            DataSource = DMBelShop.DS_AComprarEdita
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = False
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clBlack
+            TitleFont.Height = -11
+            TitleFont.Name = 'Tahoma'
+            TitleFont.Style = [fsBold]
+            OnColEnter = Dbg_GeraOCGridColEnter
+            OnColExit = Dbg_GeraOCGridColExit
+            OnDrawColumnCell = Dbg_GeraOCEditaGridDrawColumnCell
+            OnKeyDown = Dbg_GeraOCEditaGridKeyDown
+            CorComFoco = 15921894
+            SairComEnter = False
+            Columns = <
+              item
+                Alignment = taCenter
+                Color = 14211288
+                Expanded = False
+                FieldName = 'UNI_COMPRA'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clBlack
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold, fsItalic]
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'CxE'
+                Width = 25
+                Visible = True
+              end
+              item
+                Color = 15400959
+                Expanded = False
+                FieldName = 'QTD_SUGERIDA'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 65
+                Visible = True
+              end
+              item
+                Color = 15138790
+                Expanded = False
+                FieldName = 'QTD_ACOMPRAR'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clBlue
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                Title.Alignment = taRightJustify
+                Title.Font.Charset = DEFAULT_CHARSET
+                Title.Font.Color = clBlue
+                Title.Font.Height = -11
+                Title.Font.Name = 'Tahoma'
+                Title.Font.Style = [fsBold]
+                Width = 70
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_UNI_COMPRA'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'Vr Un Comp'
+                Width = 70
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'PER_DESCONTO'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_DESCONTOS'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_TOT_COMPRA'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clBlue
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'Vr Tot Comp'
+                Width = 75
+                Visible = True
+              end
+              item
+                Color = 8454143
+                Expanded = False
+                FieldName = 'QTD_SALDO'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 65
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_TRANSITO'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 65
+                Visible = True
+              end
+              item
+                Color = 8454143
+                Expanded = False
+                FieldName = 'QTD_DISPONIVEL'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_ULT_COMPRA'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Qtd Ult Comp'
+                Width = 80
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_UNI_ULT_COMPRA'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Vr Un Ult Comp'
+                Width = 90
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DTA_ULT_COMPRA'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'Ult Compra'
+                Width = 75
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_DEM_MES1'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_DEM_MES2'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_DEM_MES3'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_DEM_MES4'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_DEM_MES5'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_DEM_MES6'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_DEM_MES7'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_DEM_MES8'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_MEDIA_MES'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_MEDIA_DIA'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_TOT_ULT_COMPRA'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Vr Tot Ult Comp'
+                Width = 95
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_FOR_ULT_COMPRA'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_FOR_ULT_COMPRA'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'UNI_VENDA'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 65
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_BARRAS'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Width = 85
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_GRUPO'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_GRUPO'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_SUBGRUPO'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_SUBGRUPO'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_GENERICO'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_APLICACAO'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_APLICACAO'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_REFERENCIA'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'CLA_CURVA_ABC'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'ABC'
+                Width = 30
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_FAMILIA_PRECO'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_FAMILIA_PRECO'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'DTA_ULT_VENDA'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_CLI_ULT_VENDA'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_CLI_ULT_VENDA'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_ULT_VENDA'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_UNI_ULT_VENDA'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_TOT_ULT_VENDA'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_UNI_VENDA'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Vr Un Venda'
+                Width = 75
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_LISTA_VENDA'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_LISTA_VENDA'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_LISTA_COMPRA'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_LISTA_COMPRA'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_CUSTO_MEDIO'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Custo M'#233'dio'
+                Width = 75
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_TOT_VENDA'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_BRUTO'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_DESPESAS'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_FRETE'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_SOMA_IPI_BASE_ICMS'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'Soma IPI BICMS'
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_SOMA_FRETE_BASE_ICMS'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'Soma Frete BICMS'
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_SOMA_DESPESA_BASE_ICMS'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'Soma Desp BICMS'
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_SOMA_IPI_BASE_ST'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'Soma IPI BST'
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_SOMA_FRETE_BASE_ST'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'Soma Frete BST'
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_SOMA_DESPESA_BASE_ST'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'Soma Desp BST'
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_SIT_TRIBUTARIA'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Visible = False
+              end
+              item
+                Alignment = taCenter
+                Expanded = False
+                FieldName = 'COD_IPI'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_IPI'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'PER_IPI'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_IPI'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Alignment = taCenter
+                Expanded = False
+                FieldName = 'COD_ICMS'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'PER_REDUCAO_ICMS'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_REDUCAO_ICMS'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_BASE_ICMS'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'PER_ICMS'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_ICMS'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Alignment = taCenter
+                Expanded = False
+                FieldName = 'COD_GRUPO_ST'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_GRUPO_ST'
+                ReadOnly = True
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'PER_MARGEM_ST'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_ST'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_BASE_ST'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'PER_ST'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_ST'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'PER_REPASSE'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_REPASSE'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_COMPROVANTE_ICMS'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_FORNECEDOR'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Width = 55
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_FORNECEDOR'
+                ReadOnly = True
+                Width = 220
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'TIP_PESSOA'
+                ReadOnly = True
+                Title.Alignment = taCenter
+                Title.Caption = 'Pessoa'
+                Width = 65
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_EMAIL'
+                ReadOnly = True
+                Width = 200
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_NR_DIAS'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_NR_MESES'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_TOT_MESES'
+                ReadOnly = True
+                Title.Alignment = taRightJustify
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'NUM_SEQ'
+                Visible = False
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_TRANSF'
+                Title.Alignment = taRightJustify
+                Visible = True
+              end>
+          end
+          object Dbg_GeraOCEditaProdutos: TDBGrid
+            Left = 0
+            Top = 0
+            Width = 320
+            Height = 404
+            Align = alLeft
+            DataSource = DMBelShop.DS_AComprarEdita
+            FixedColor = clTeal
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+            ParentFont = False
+            TabOrder = 1
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWhite
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = [fsBold]
+            OnEnter = Dbg_GeraOCEditaProdutosEnter
+            OnExit = Dbg_GeraOCEditaProdutosExit
+            OnKeyDown = Dbg_GeraOCEditaProdutosKeyDown
+            Columns = <
+              item
+                Color = 12910591
+                Expanded = False
+                FieldName = 'COD_ITEM'
+                Title.Alignment = taRightJustify
+                Width = 80
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'CLA_CURVA_ABC'
+                Title.Alignment = taCenter
+                Title.Caption = 'ABC'
+                Width = 30
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_ITEM'
+                Width = 500
+                Visible = True
+              end>
+          end
+          object Panel43: TPanel
+            Left = 0
+            Top = 424
+            Width = 961
+            Height = 40
+            Align = alBottom
+            BevelInner = bvLowered
+            BevelWidth = 2
+            Color = 13816530
+            TabOrder = 2
+            DesignSize = (
+              961
+              40)
+            object Label62: TLabel
+              Left = 10
+              Top = 13
+              Width = 63
+              Height = 13
+              Anchors = [akTop]
+              Caption = 'Valor Total'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clBlue
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label63: TLabel
+              Left = 216
+              Top = 13
+              Width = 62
+              Height = 13
+              Anchors = [akTop]
+              Caption = 'Itens Total'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clBlue
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label64: TLabel
+              Left = 381
+              Top = 13
+              Width = 60
+              Height = 13
+              Anchors = [akTop]
+              Caption = 'Qtds Total'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clBlue
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Bevel7: TBevel
+              Left = 207
+              Top = 3
+              Width = 3
+              Height = 34
+              Anchors = [akTop]
+            end
+            object Bevel8: TBevel
+              Left = 368
+              Top = 3
+              Width = 3
+              Height = 33
+              Anchors = [akTop]
+            end
+            object Bevel9: TBevel
+              Left = 529
+              Top = 3
+              Width = 3
+              Height = 33
+              Anchors = [akTop]
+            end
+            object EdtGeraOCEditaTotalGeral: TCurrencyEdit
+              Left = 78
+              Top = 10
+              Width = 116
+              Height = 19
+              AutoSize = False
+              Color = clBtnFace
+              DisplayFormat = 'R$  ,0.00;-R$  ,0.00'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clBlue
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              Anchors = [akTop]
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 0
+            end
+            object EdtGeraOCEditaTotalItens: TCurrencyEdit
+              Left = 282
+              Top = 10
+              Width = 74
+              Height = 19
+              AutoSize = False
+              Color = clBtnFace
+              DecimalPlaces = 0
+              DisplayFormat = '0'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clBlue
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              Anchors = [akTop]
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 1
+            end
+            object EdtGeraOCEditaTotallQtd: TCurrencyEdit
+              Left = 445
+              Top = 10
+              Width = 74
+              Height = 19
+              AutoSize = False
+              Color = clBtnFace
+              DecimalPlaces = 0
+              DisplayFormat = '0'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clBlue
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              Anchors = [akTop]
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 2
+            end
+            object Bt_GeraOCEditaVoltar: TJvXPButton
+              Tag = 90
+              Left = 849
+              Top = 4
+              Width = 108
+              Height = 32
+              Caption = 'Voltar'
+              TabOrder = 3
+              ShowFocusRect = True
+              Align = alRight
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_GeraOCEditaVoltarClick
+            end
+            object Rb_GeraOCEditaTodosItens: TRadioButton
+              Left = 546
+              Top = 12
+              Width = 106
+              Height = 17
+              Anchors = [akTop]
+              Caption = 'TODOS Itens'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 4
+              OnClick = Rb_GeraOCEditaTodosItensClick
+              OnKeyUp = Rb_GeraOCEditaTodosItensKeyUp
+            end
+            object Rb_GeraOCEditaComQtd: TRadioButton
+              Left = 657
+              Top = 12
+              Width = 75
+              Height = 17
+              Anchors = [akTop]
+              Caption = 'COM Qtd'
+              Checked = True
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              TabOrder = 5
+              TabStop = True
+              OnClick = Rb_GeraOCEditaTodosItensClick
+              OnKeyUp = Rb_GeraOCEditaTodosItensKeyUp
+            end
+            object Rb_GeraOCEditaSemQtd: TRadioButton
+              Left = 746
+              Top = 12
+              Width = 75
+              Height = 17
+              Anchors = [akTop]
+              Caption = 'SEM Qtd'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 6
+              OnClick = Rb_GeraOCEditaTodosItensClick
+              OnKeyUp = Rb_GeraOCEditaTodosItensKeyUp
+            end
+          end
+          object StB_GeraOCEdit: TdxStatusBar
+            Left = 0
+            Top = 404
+            Width = 961
+            Height = 20
+            Panels = <
+              item
+                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                PanelStyle.Alignment = taCenter
+                PanelStyle.Color = clSilver
+                Text = '<F6> Marcar Todos'
+                Width = 150
+              end
+              item
+                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                PanelStyle.Alignment = taCenter
+                Text = '<F7> DesMarcar Todos'
+                Width = 164
+              end
+              item
+                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                PanelStyle.Alignment = taCenter
+                PanelStyle.Color = clSilver
+                BiDiMode = bdRightToLeft
+                Fixed = False
+                ParentBiDiMode = False
+                Text = '<F2> Altera $ Unit'#225'rio'
+                Width = 150
+              end
+              item
+                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                PanelStyle.Alignment = taCenter
+                PanelStyle.Color = clSilver
+                Fixed = False
+                Text = '<F4> Localiza Produto'
+                Width = 140
+              end
+              item
+                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                PanelStyle.Alignment = taCenter
+                PanelStyle.Color = clSilver
+                Fixed = False
+                Text = '<F3> Altera % de Desconto'
+                Width = 170
+              end
+              item
+                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                PanelStyle.Alignment = taCenter
+                PanelStyle.Color = clSilver
+                Fixed = False
+                Text = '<F5> Altera % Desconto MIX'
+                Width = 150
+              end>
+            PaintStyle = stpsOffice11
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+          end
+        end
+      end
+      object Panel40: TPanel
+        Left = 0
+        Top = 0
+        Width = 969
+        Height = 61
+        Align = alTop
+        BevelInner = bvLowered
+        TabOrder = 1
+        object Gb_GeraOCEditaDocto: TGroupBox
+          Left = 8
+          Top = 9
+          Width = 204
+          Height = 46
+          Caption = '  Nro Docto  '
+          Color = 13816530
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          TabOrder = 0
+          object EdtGeraOCEditaDocto: TCurrencyEdit
+            Left = 11
+            Top = 17
+            Width = 71
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 14342874
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            ReadOnly = True
+            TabOrder = 0
+          end
+          object DtEdt_GeraOCEditaDataDocto: TDateEdit
+            Left = 86
+            Top = 17
+            Width = 105
+            Height = 21
+            TabStop = False
+            Color = 14342874
+            NumGlyphs = 2
+            ReadOnly = True
+            TabOrder = 1
+          end
+        end
+        object Gb_GeraOCEditaEmpresa: TGroupBox
+          Left = 213
+          Top = 9
+          Width = 487
+          Height = 46
+          Caption = ' Empresa '
+          Color = 13816530
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          TabOrder = 1
+          DesignSize = (
+            487
+            46)
+          object Dbe_GeraOCEditaDesEmpresa: TDBEdit
+            Left = 65
+            Top = 19
+            Width = 409
+            Height = 19
+            TabStop = False
+            Anchors = [akTop, akRight]
+            Color = 14342874
+            DataField = 'DES_EMPRESA'
+            DataSource = DMBelShop.DS_AComprarEdita
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 0
+          end
+          object Dbe_GeraOCEditaCodEmpresa: TDBEdit
+            Left = 13
+            Top = 19
+            Width = 46
+            Height = 19
+            TabStop = False
+            Anchors = [akTop, akRight]
+            Color = 14342874
+            DataField = 'COD_EMPRESA'
+            DataSource = DMBelShop.DS_AComprarEdita
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 1
+          end
+        end
+        object Bt_GeraOCPreVisualizaOC: TJvXPButton
+          Tag = 4
+          Left = 704
+          Top = 13
+          Width = 178
+          Height = 38
+          Caption = ' Pr'#233'-Visualiza'#231#227'o OC'
+          TabOrder = 2
+          Glyph.Data = {
+            07544269746D617046090000424D460900000000000036040000280000002100
+            0000240000000100080000000000100500000000000000000000000100000000
+            000000000000000080000080000000808000800000008000800080800000C0C0
+            C000C0DCC000F0CAA6000020400000206000002080000020A0000020C0000020
+            E00000400000004020000040400000406000004080000040A0000040C0000040
+            E00000600000006020000060400000606000006080000060A0000060C0000060
+            E00000800000008020000080400000806000008080000080A0000080C0000080
+            E00000A0000000A0200000A0400000A0600000A0800000A0A00000A0C00000A0
+            E00000C0000000C0200000C0400000C0600000C0800000C0A00000C0C00000C0
+            E00000E0000000E0200000E0400000E0600000E0800000E0A00000E0C00000E0
+            E00040000000400020004000400040006000400080004000A0004000C0004000
+            E00040200000402020004020400040206000402080004020A0004020C0004020
+            E00040400000404020004040400040406000404080004040A0004040C0004040
+            E00040600000406020004060400040606000406080004060A0004060C0004060
+            E00040800000408020004080400040806000408080004080A0004080C0004080
+            E00040A0000040A0200040A0400040A0600040A0800040A0A00040A0C00040A0
+            E00040C0000040C0200040C0400040C0600040C0800040C0A00040C0C00040C0
+            E00040E0000040E0200040E0400040E0600040E0800040E0A00040E0C00040E0
+            E00080000000800020008000400080006000800080008000A0008000C0008000
+            E00080200000802020008020400080206000802080008020A0008020C0008020
+            E00080400000804020008040400080406000804080008040A0008040C0008040
+            E00080600000806020008060400080606000806080008060A0008060C0008060
+            E00080800000808020008080400080806000808080008080A0008080C0008080
+            E00080A0000080A0200080A0400080A0600080A0800080A0A00080A0C00080A0
+            E00080C0000080C0200080C0400080C0600080C0800080C0A00080C0C00080C0
+            E00080E0000080E0200080E0400080E0600080E0800080E0A00080E0C00080E0
+            E000C0000000C0002000C0004000C0006000C0008000C000A000C000C000C000
+            E000C0200000C0202000C0204000C0206000C0208000C020A000C020C000C020
+            E000C0400000C0402000C0404000C0406000C0408000C040A000C040C000C040
+            E000C0600000C0602000C0604000C0606000C0608000C060A000C060C000C060
+            E000C0800000C0802000C0804000C0806000C0808000C080A000C080C000C080
+            E000C0A00000C0A02000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0
+            E000C0C00000C0C02000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0
+            A000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFEDECA39B9B9B9B9B
+            9B9B9B9B9B9BFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFEDFFFFFF
+            FFFFFFFFFFFFFFFFFF9BFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFF
+            EDFFEDA4A4A4A4A4A4A4A4A4FF9BFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFF
+            FFFFFFFFEDFFEDF6FF09E3EC09E3E2A4FF9BFFFFFFFFFFFFFFFFFF000000FFFF
+            FFFFFFFFFFFFFFFFEDFFEDE3FFFFE3E3FFE209A4FF9BFFFFFFFFFFFFFFFFFF00
+            0000FFFFFFFFFFFFFFFFFFFFEDFFED09ECE30909E20909A4FF9BFFFFFFFFFFFF
+            FFFFFF000000FFFFFFFFA49B9B9B5252EDFFED0909090909090909A4FF9B5252
+            9B9B9B9BADFFFF000000FFFFFFA4F7F7F7A45252EDFFED0909090909AF0909A4
+            FFA35252A4F7F7A49BFFFF000000FFFFFFF7F7F7F7F75252F7F6F709090909A7
+            F6A709A3F6A35252A4F7F7F79BFFFF000000FFFFFFA4A4A4A4A4A4A4A4A4A4A4
+            A4A4A4A4A4A4A4A4A4A4A4A4A4A4A4A49BFFFF000000FFFFFFA407070707A4F7
+            F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7A4070707079BFFFF000000FFFFFFA40707
+            0707A4F7F7F7F7F7F7F7F7F7F7F7EBEBEBEBF7A4070707079BFFFF000000FFFF
+            FFA407070707A4F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7A4070707079BFFFF00
+            0000FFFFFFF7F6F6F6F6F708080808080808080808080808080808F7F6F6F6F6
+            9BFFFF000000FFFFFFF7F60707F6A407070707070707070707070707070707A4
+            F607F7089BFFFF000000FFFFFFF7F6F6F6F6A407070707070707070707070707
+            070707A4F60808089BFFFF000000FFFFFFF7FFF6F6F6A4070707070707070707
+            07070707070707A4F607F7089BFFFF000000FFFFFFF7FFF6F6F6A40707070707
+            0707070707070707070707A4F6F6F6F69BFFFF000000FFFFFFF7FFFFFFFFAC08
+            080808080808080808080808080808A4F607F7F69BFFFF000000FFFFFFF7FFFF
+            FFFFAC08080808080808080808080808080808A4F6F6F6F69BFFFF000000FFFF
+            FFB7F7F7F7F7F7F7F7F7F7F7A4A4A4A4A4A4A4A4A4A4A4A4F7A5A4A4B6FFFF00
+            0000FFFFFFFFFFFFFFFFA59BEDFFFFFFFFFFFFFFFFFFFFFFFF9B9BA4FFFFFFFF
+            FFFFFF000000FFFFFFFFFFFFFFFFAD5BEDFFFFFFFFFFFFFFFFFFFFFFFF9B5BA5
+            FFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFF5BEDFFFFFFFFFFFFFFFFFFFFFF
+            FF9B5BFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFF9BEDFFFFFFFFFFFFFF
+            FFFFFFFFFF9B9BFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFEDFFFFFF
+            FFFFFFFFFFFFFFFFFF9BFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFF
+            EDFFFFFFFFFFFFFFFFFFFFFFFF9BFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFF
+            FFFFFFFFEDFFFFFFFFFFFFFFFFFFFFFFFFA3FFFFFFFFFFFFFFFFFF000000FFFF
+            FFFFFFFFFFFFFFFFEDEDEDEDEDEDEDEDEDEDEDECECECFFFFFFFFFFFFFFFFFF00
+            0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000}
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_GeraOCPreVisualizaOCClick
+        end
       end
     end
   end

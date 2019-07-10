@@ -1,6 +1,6 @@
 object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
-  Left = 414
-  Top = 134
+  Left = 321
+  Top = 122
   AutoSize = True
   BorderIcons = []
   BorderStyle = bsSingle

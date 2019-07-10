@@ -109,7 +109,6 @@ type
     SDS_RelReposicao: TSQLDataSet;
     DSP_RelReposicao: TDataSetProvider;
     CDS_RelReposicao: TClientDataSet;
-    CDS_RelReposicaoLOJA: TStringField;
     CDS_RelReposicaoCNPJ: TStringField;
     CDS_RelReposicaoNUM_DOCTO: TIntegerField;
     CDS_RelReposicaoDTA_MOVTO: TDateField;
@@ -121,8 +120,6 @@ type
     CDS_RelReposicaoDES_PRODUTO: TStringField;
     CDS_RelReposicaoUSUARIO: TStringField;
     CDS_RelReposicaoOBS_DOCTO: TStringField;
-    DS_AnaliseReposicao: TDataSource;
-    CDS_V_AnaliseReposicao: TClientDataSet;
     CDS_ReposicaoDocsQTD_SUG_TRANSF: TFMTBCDField;
     CDS_ReposicaoDocsQTD_A_TRANSF: TFMTBCDField;
     CDS_ReposicaoDocsQTD_TRANSF: TFMTBCDField;
@@ -155,7 +152,6 @@ type
     CDS_ParamTransfQTD_MAX_PROD: TStringField;
     CDS_ParamTransfCOD_LOJA: TIntegerField;
     CDS_ParamTransfRAZAO_SOCIAL: TStringField;
-    CDS_ReposicaoTransfPRINCIPALFOR: TStringField;
     DS_QtdCxCDProdutos: TDataSource;
     CDS_QtdCxCDProdutos: TClientDataSet;
     DSP_QtdCxCDProdutos: TDataSetProvider;
@@ -300,26 +296,48 @@ type
     CDS_ContProdConferenciaQTD_TOTAL: TIntegerField;
     CDS_ContProdConferenciaQTD_PERCENTUAL: TFMTBCDField;
     CDS_ContProdConferenciaORDEM: TIntegerField;
+    CDS_EnderecoProd: TClientDataSet;
+    DSP_EnderecoProd: TDataSetProvider;
+    DS_EnderecoProd: TDataSource;
+    CDS_EnderecoProdCOD_PRODUTO: TFMTBCDField;
+    CDS_EnderecoProdNOME: TStringField;
+    CDS_EnderecoProdZONAENDERECO: TIntegerField;
+    CDS_EnderecoProdCORREDOR: TStringField;
+    CDS_EnderecoProdPRATELEIRA: TStringField;
+    CDS_EnderecoProdGAVETA: TStringField;
+    CDS_EnderecoProdATIVO: TStringField;
+    CDS_EnderecoProdCOD_LOJA: TStringField;
+    CDS_EnderecoProdCOD_LINX: TIntegerField;
+    CDS_RelReposicaoLOJA: TStringField;
+    CDS_EnderecoProdCOD_ITEM: TStringField;
+    CDS_EnderecoProdREFERENCIA: TStringField;
+    CDS_EnderecoProdCOD_BARRA: TStringField;
+    CDS_ReposicaoTransfPRINCIPALFOR: TIntegerField;
+    CDS_EnderecoProdSALDO: TIntegerField;
+    CDS_EnderecoProdCOD_FORNECEDOR: TIntegerField;
+    SQLQ_EnderecoProd: TSQLQuery;
+    CDS_RelReposicaoCODPRODUTO: TStringField;
+    CDS_EnderecoProdNOMEFORNECEDOR: TStringField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
-    // Odir
+    // Odir ====================================================================
     Procedure FechaTudoCentralTrocas;
 
     Procedure CriaQueryIB(sDataBase, sTransaction: String; Var IBQ_Free: TIBQuery; bMatriz, bCriaIBQ: Boolean);
+        // sDataBase    = Database a Conectar
+        // sTransaction = Transaction a Conectar
+        // IBQ_Free     = Nome do TIBQuery a Destruir e Reconstruir
+        // bMatriz      = Se Conexão é Matriz (Não Gera Sql Automaticamente)
+        // bCriaIBQ     = Se Destruir e Reconstruir IBQuery
+    // Odir ====================================================================
+
     procedure CDS_ReposicaoDocsAfterScroll(DataSet: TDataSet);
     procedure CDS_V_ReposDivergenciasAfterScroll(DataSet: TDataSet);
     procedure DataModuleCreate(Sender: TObject);
     procedure CDS_NFeAvariasAfterScroll(DataSet: TDataSet);
     procedure CDS_ReposicaoDocsAfterOpen(DataSet: TDataSet);
     procedure CDS_ReposicaoTransfAfterOpen(DataSet: TDataSet);
-        // sDataBase    = Database a Conectar
-        // sTransaction = Transaction a Conectar
-        // IBQ_Free     = Nome do TIBQuery a Destruir e Reconstruir
-        // bMatriz      = Se Conexão é Matriz (Não Gera Sql Automaticamente)
-        // bCriaIBQ     = Se Destruir e Reconstruir IBQuery
-
-    // Odir
-
+    procedure CDS_EnderecoProdAfterScroll(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -477,6 +495,12 @@ begin
   // Busca Total de Qtds de Reposição ==========================================
 //  FrmCentralTrocas.TotalQtdsReposicao;
 
+end;
+
+procedure TDMCentralTrocas.CDS_EnderecoProdAfterScroll(DataSet: TDataSet);
+begin
+  FrmCentralTrocas.dxSB_Endereco.Panels[1].Text:='Fornecedor: '+CDS_EnderecoProdNOMEFORNECEDOR.AsString+' [ '+
+                                                               CDS_EnderecoProdCOD_FORNECEDOR.AsString+' ]';
 end;
 
 end.

@@ -469,6 +469,7 @@ object FrmPesquisa: TFrmPesquisa
     TitleFont.Name = 'MS Sans Serif'
     TitleFont.Style = [fsBold]
     OnDblClick = Dbg_PesquisaDblClick
+    OnEnter = Dbg_PesquisaEnter
     OnKeyUp = Dbg_PesquisaKeyUp
     OnTitleClick = Dbg_PesquisaTitleClick
   end
@@ -598,5 +599,10 @@ object FrmPesquisa: TFrmPesquisa
       Visible = False
       OnClick = Bt_PesquisaNovoClick
     end
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    Left = 288
+    Top = 136
   end
 end

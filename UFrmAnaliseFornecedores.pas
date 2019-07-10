@@ -632,7 +632,8 @@ Begin
          // Se Todas as Lojas
          If Trim(sgCodLoja)='' Then
           MySql:=
-           MySql+' (SELECT mx.ind_curva FROM ES_PRODUTOS_MIX mx'+
+           MySql+' (SELECT mx.ind_curva'+
+                 '  FROM ES_PRODUTOS_MIX mx'+
                  '  WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=2) ABC,'+ // ABC da Empresa // 4
                  ' CAST(COALESCE((SELECT SUM(COALESCE(fa.vlr_fat,0.00))'+
                  '                FROM ES_FAT_PERIODO fa'+
@@ -642,12 +643,13 @@ Begin
          // Se Uma Loja
          If Trim(sgCodLoja)<>'' Then
           MySql:=
-           MySql+' (SELECT mx.ind_curva FROM ES_PRODUTOS_MIX mx'+
+           MySql+' (SELECT mx.ind_curva'+
+                 '  FROM ES_PRODUTOS_MIX mx'+
                  '  WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=23) ABC,'+ // ABC da Loja // 4
                  ' CAST(COALESCE((SELECT SUM(COALESCE(fa.vlr_fat,0.00))'+
-                 '                 FROM ES_FAT_PERIODO fa'+
-                 '                 WHERE fa.cod_produto=pr.cod_produto'+
-                 '                 AND   fa.empresa='+sgCodLoja+')'+
+                 '                FROM ES_FAT_PERIODO fa'+
+                 '                WHERE fa.cod_produto=pr.cod_produto'+
+                 '                AND   fa.empresa='+sgCodLoja+')'+
                  ' , 0.00) AS NUMERIC(12,2)) Fat_Periodo,'; // 5
 
   MySql:=
@@ -660,8 +662,10 @@ Begin
   Begin
     If DMBelShop.SQLQuery1.Locate('Empresa',i,[]) Then
      MySql:=
-      MySql+' (SELECT mx.est_minimo FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa='+IntToStr(i)+')  LOJA'+IntToStr(i)+','
-//      MySql+' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa='+IntToStr(i)+')  LOJA'+IntToStr(i)+','
+      MySql+' (SELECT mx.est_minimo'+
+            '  FROM ES_PRODUTOS_MIX mx'+
+            '  WHERE mx.cod_produto=pr.cod_produto'+
+            '  AND mx.empresa='+IntToStr(i)+')  LOJA'+IntToStr(i)+','
     Else
      MySql:=
       MySql+' 0 LOJA'+IntToStr(i)+',';
@@ -670,7 +674,9 @@ Begin
   MySql:=
    MySql+' pr.id_colecao,'+
          ' pr.cod_fornecedor,'+
-         ' (SELECT fo.nome_cliente FROM LINXCLIENTESFORNEC fo WHERE fo.cod_cliente=pr.cod_fornecedor) Forn'+
+         ' (SELECT fo.nome_cliente'+
+         '  FROM LINXCLIENTESFORNEC fo'+
+         '  WHERE fo.cod_cliente=pr.cod_fornecedor) Forn'+
 
          ' FROM lINXPRODUTOS pr'+
 
@@ -2857,13 +2863,16 @@ begin
   // (ERRO) ACERTA ROLAGEM DO MOUSE (SCROLL)
   If Msg.message = WM_MOUSEWHEEL then // primeiramente verificamos se é o evento a ser tratado...
   Begin
-    Msg.message := WM_KEYDOWN;
-    Msg.lParam := 0;
-    Sentido := HiWord(Msg.wParam);
-    if Sentido > 0 then
-     Msg.wParam := VK_UP
-    else
-     Msg.wParam := VK_DOWN;
+    If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
+      Msg.message := WM_KEYDOWN;
+      Msg.lParam := 0;
+      Sentido := HiWord(Msg.wParam);
+      if Sentido > 0 then
+       Msg.wParam := VK_UP
+      else
+       Msg.wParam := VK_DOWN;
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   End; // if Msg.message = WM_MOUSEWHEEL then
 end;
 

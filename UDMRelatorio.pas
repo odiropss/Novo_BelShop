@@ -109,14 +109,14 @@ Begin
          ' oc.obs_oc, oc.cod_comprador, us.des_usuario,'+
 
          ' COALESCE(pe.zonaendereco,''0'')||''.''||'+
-         ' COALESCE(pe.corredor,''0'')||''.''||'+
-         ' COALESCE(pe.prateleira,''0'')||''.''||'+
-         ' COALESCE(pe.gaveta,''0'') Enderecamento'+
+         ' COALESCE(pe.corredor,''000'')||''.''||'+
+         ' COALESCE(pe.prateleira,''000'')||''.''||'+
+         ' COALESCE(pe.gaveta,''0000'') Enderecamento'+
 
          ' FROM OC_COMPRAR oc'+
          '    LEFT JOIN EMP_CONEXOES  co  ON oc.cod_empresa=co.cod_filial'+
          '    LEFT JOIN PS_USUARIOS   us  ON oc.cod_comprador=us.cod_usuario'+
-         '    LEFT JOIN prod_endereco pe  ON pe.cod_loja=''99'''+
+         '    LEFT JOIN PROD_ENDERECO pe  ON pe.cod_loja=''99'''+
          '                               AND pe.cod_item=oc.cod_item'+
 
          ' where oc.num_documento='+QuotedStr(sNumDocto)+
@@ -124,55 +124,11 @@ Begin
          ' and   oc.num_oc_gerada='+ QuotedStr(sNumOCGerada)+
 
          ' group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,23,25,26,27,28'+
-         
+
          ' order by Enderecamento, oc.des_item';
   DMBelShop.IBQ_OrdemCompra.Close;
   DMBelShop.IBQ_OrdemCompra.SQL.Clear;
   DMBelShop.IBQ_OrdemCompra.SQL.Add(MySql);
-  DMBelShop.IBQ_OrdemCompra.Open;
-
-  // Atauliza Enderecamento ====================================================
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  Try
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    // Conecta MPMS - Atualizar
-    FrmBelShop.ConectaMPMS;
-
-    While Not DMBelShop.IBQ_OrdemCompra.Eof do
-    Begin
-      // Atualiza Enderecamento (MPMS)
-      DMBelShop.AtualizaEnderecamentoProduto('99',DMBelShop.IBQ_OrdemCompraCOD_ITEM.AsString, 'IBQ_Executa');
-
-      DMBelShop.IBQ_OrdemCompra.Next;
-    End; // While Not DMBelShop.IBQ_OrdemCompra.Eof do
-
-    // Atualiza Transacao =======================================
-    DMBelShop.IBT_BelShop.CommitRetaining;
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-
-  Except
-    on e : Exception do
-    Begin
-      // Abandona Transacao =====================================
-      DMBelShop.IBT_BelShop.RollbackRetaining;
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      MessageBox(Application.Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      Exit;
-    End; // on e : Exception do
-  End; // Try
-
-  // Busca Romaneio com Enderecamento Correto ==================================
-  DMBelShop.IBQ_OrdemCompra.Close;
   DMBelShop.IBQ_OrdemCompra.Open;
 
   // Dados da Filial ----------------------------------------------

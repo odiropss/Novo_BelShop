@@ -74,14 +74,13 @@ object FrmEstoques: TFrmEstoques
         Columns = <
           item
             Expanded = False
-            FieldName = 'NUM_LINHA'
+            FieldName = 'SEQ'
             ReadOnly = True
-            Title.Alignment = taCenter
+            Title.Alignment = taRightJustify
             Width = 40
             Visible = True
           end
           item
-            Alignment = taRightJustify
             Color = 14024703
             Expanded = False
             FieldName = 'COD_PRODUTO'
@@ -126,6 +125,7 @@ object FrmEstoques: TFrmEstoques
             Expanded = False
             FieldName = 'QTD_VD_M1'
             ReadOnly = True
+            Title.Alignment = taRightJustify
             Width = 65
             Visible = True
           end
@@ -133,6 +133,7 @@ object FrmEstoques: TFrmEstoques
             Expanded = False
             FieldName = 'QTD_VD_M2'
             ReadOnly = True
+            Title.Alignment = taRightJustify
             Width = 65
             Visible = True
           end
@@ -140,6 +141,7 @@ object FrmEstoques: TFrmEstoques
             Expanded = False
             FieldName = 'QTD_VD_M3'
             ReadOnly = True
+            Title.Alignment = taRightJustify
             Width = 65
             Visible = True
           end
@@ -147,6 +149,15 @@ object FrmEstoques: TFrmEstoques
             Expanded = False
             FieldName = 'QTD_VD_M4'
             ReadOnly = True
+            Title.Alignment = taRightJustify
+            Width = 65
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_VD_M5'
+            ReadOnly = True
+            Title.Alignment = taRightJustify
             Width = 65
             Visible = True
           end
@@ -229,14 +240,14 @@ object FrmEstoques: TFrmEstoques
             Expanded = False
             FieldName = 'DES_FORNECEDOR'
             ReadOnly = True
-            Width = 300
+            Width = 500
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'DES_COMPRADOR'
             ReadOnly = True
-            Width = 100
+            Width = 150
             Visible = True
           end
           item
@@ -298,19 +309,10 @@ object FrmEstoques: TFrmEstoques
           end
           item
             Expanded = False
-            FieldName = 'QTD_ESTCAGEM_4M'
+            FieldName = 'QTD_ESTOCAGEM_4M'
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Qt EstQ 4M'
-            Visible = False
-          end
-          item
-            Color = 15395541
-            Expanded = False
-            FieldName = 'VLR_DISP_PC_VENDA'
-            ReadOnly = True
-            Title.Alignment = taRightJustify
-            Title.Caption = 'Disp P'#231' Vd'
             Visible = False
           end
           item
@@ -324,43 +326,35 @@ object FrmEstoques: TFrmEstoques
             Visible = True
           end
           item
-            Alignment = taRightJustify
             Expanded = False
-            FieldName = 'CODGRUPO'
+            FieldName = 'NOME_COLECAO'
             ReadOnly = True
-            Width = 65
+            Title.Caption = 'Cole'#231#227'o'
+            Width = 200
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'NOMEGRUPO'
+            FieldName = 'NOME_LINHA'
             ReadOnly = True
-            Width = 150
-            Visible = True
-          end
-          item
-            Alignment = taRightJustify
-            Expanded = False
-            FieldName = 'CODSUBGRUPO'
-            ReadOnly = True
-            Title.Alignment = taRightJustify
-            Width = 92
+            Title.Caption = 'Linha'
+            Width = 200
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'NOMESUBGRUPO'
+            FieldName = 'NOME_MARCA'
             ReadOnly = True
-            Width = 150
+            Title.Caption = 'Marca'
+            Width = 200
             Visible = True
           end
           item
-            Alignment = taCenter
             Expanded = False
-            FieldName = 'IND_SITUACAO'
+            FieldName = 'NOME_SETOR'
             ReadOnly = True
-            Title.Alignment = taCenter
-            Visible = False
+            Title.Caption = 'Setor'
+            Visible = True
           end
           item
             Expanded = False
@@ -381,12 +375,14 @@ object FrmEstoques: TFrmEstoques
             Expanded = False
             FieldName = 'ORDENAR'
             ReadOnly = True
+            Title.Alignment = taRightJustify
             Visible = False
           end
           item
             Expanded = False
             FieldName = 'NUM_LINHA'
             ReadOnly = True
+            Title.Alignment = taRightJustify
             Title.Caption = 'num_linha'
             Visible = False
           end>
@@ -734,116 +730,6 @@ object FrmEstoques: TFrmEstoques
           end
         end
       end
-      object Dbg_EstoquesDemFinan: TDBGrid
-        Left = 37
-        Top = 391
-        Width = 875
-        Height = 143
-        DataSource = DMVirtual.DS_V_EstoquesFinan
-        FixedColor = clSilver
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
-        ParentFont = False
-        TabOrder = 3
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clBlack
-        TitleFont.Height = -11
-        TitleFont.Name = 'MS Sans Serif'
-        TitleFont.Style = [fsBold]
-        Visible = False
-        OnDrawColumnCell = Dbg_EstoquesDemFinanDrawColumnCell
-        Columns = <
-          item
-            Alignment = taCenter
-            Color = 8454143
-            Expanded = False
-            FieldName = 'CLASSE'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            Title.Alignment = taCenter
-            Title.Caption = 'Classe'
-            Width = 45
-            Visible = True
-          end
-          item
-            Color = 16053492
-            Expanded = False
-            FieldName = 'EST'
-            Title.Alignment = taRightJustify
-            Width = 80
-            Visible = True
-          end
-          item
-            Color = 16053492
-            Expanded = False
-            FieldName = 'DM'
-            Title.Alignment = taRightJustify
-            Width = 80
-            Visible = True
-          end
-          item
-            Color = 16053492
-            Expanded = False
-            FieldName = 'DIF_EST_DM'
-            Title.Alignment = taRightJustify
-            Width = 80
-            Visible = True
-          end
-          item
-            Color = 16765650
-            Expanded = False
-            FieldName = 'EST_PC'
-            Title.Alignment = taRightJustify
-            Width = 90
-            Visible = True
-          end
-          item
-            Color = 16765650
-            Expanded = False
-            FieldName = 'DM_PC'
-            Title.Alignment = taRightJustify
-            Width = 90
-            Visible = True
-          end
-          item
-            Color = 16765650
-            Expanded = False
-            FieldName = 'DIF_EST_DM_PC'
-            Title.Alignment = taRightJustify
-            Title.Caption = '# P'#231' Ct'
-            Width = 90
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'EST_PV'
-            Title.Alignment = taRightJustify
-            Width = 90
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DM_PV'
-            Title.Alignment = taRightJustify
-            Width = 90
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DIF_EST_DM_PV'
-            Title.Alignment = taRightJustify
-            Title.Caption = '# P'#231' Pv'
-            Width = 90
-            Visible = True
-          end>
-      end
       object Stb_Estoques: TdxStatusBar
         Left = 0
         Top = 474
@@ -869,13 +755,6 @@ object FrmEstoques: TFrmEstoques
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
-            Fixed = False
-            Text = '<F3> Localiza Produto LINX'
-            Width = 210
-          end
-          item
-            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-            PanelStyle.Alignment = taCenter
             PanelStyle.Color = clSilver
             PanelStyle.Font.Charset = DEFAULT_CHARSET
             PanelStyle.Font.Color = clWindowText
@@ -886,7 +765,7 @@ object FrmEstoques: TFrmEstoques
             BiDiMode = bdRightToLeft
             Fixed = False
             ParentBiDiMode = False
-            Text = '<F4> Localiza Produto SIDICOM'
+            Text = '<F4> Localiza Produto'
             Width = 250
           end
           item
@@ -1106,6 +985,7 @@ object FrmEstoques: TFrmEstoques
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
+          Visible = False
           OnClick = Bt_EstoquesSaldosClick
         end
         object Bt_EstoquesFiltroComprador: TJvXPButton
@@ -1175,6 +1055,7 @@ object FrmEstoques: TFrmEstoques
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
+          Visible = False
           OnClick = Bt_EstoquesFiltroCompradorClick
         end
         object Panel1: TPanel
@@ -1187,197 +1068,13 @@ object FrmEstoques: TFrmEstoques
           TabOrder = 5
         end
       end
-      object Dbg_EstoquesPrev: TDBGrid
-        Left = 125
-        Top = 346
-        Width = 672
-        Height = 41
-        DataSource = DMBelShop.DS_EstoquePrevisao
-        FixedColor = clSilver
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 5
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clBlack
-        TitleFont.Height = -11
-        TitleFont.Name = 'MS Sans Serif'
-        TitleFont.Style = [fsBold]
-        Visible = False
-        Columns = <
-          item
-            Expanded = False
-            FieldName = 'NUM_DIAS_ESTOCAGEM'
-            Title.Alignment = taRightJustify
-            Width = 70
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'QTD_VENDA_DIA'
-            Title.Alignment = taRightJustify
-            Width = 70
-            Visible = True
-          end
-          item
-            Color = 15395562
-            Expanded = False
-            FieldName = 'QTD_ESTOQUE'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            Title.Alignment = taRightJustify
-            Width = 70
-            Visible = True
-          end
-          item
-            Color = 15395562
-            Expanded = False
-            FieldName = 'EST_PC_CUSTO'
-            Title.Alignment = taRightJustify
-            Width = 70
-            Visible = True
-          end
-          item
-            Color = 15395562
-            Expanded = False
-            FieldName = 'EST_PC_VENDA'
-            Title.Alignment = taRightJustify
-            Width = 70
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DM_PREVISTA'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            Title.Alignment = taRightJustify
-            Width = 70
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DM_PREV_PC_CUSTO'
-            Title.Alignment = taRightJustify
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DM_PREV_PC_VENDA'
-            Title.Alignment = taRightJustify
-            Visible = True
-          end>
-      end
-      object Gb_EstoquesSituacaoProd: TGroupBox
-        Left = 287
-        Top = 300
-        Width = 154
-        Height = 41
-        Caption = '(N'#227'o Usado) Situa'#231#227'o Produto  '
-        Color = 14342874
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentColor = False
-        ParentFont = False
-        TabOrder = 6
-        Visible = False
-        object Cbx_EstoquesSituacaoProd: TComboBox
-          Left = 9
-          Top = 18
-          Width = 134
-          Height = 22
-          Style = csOwnerDrawFixed
-          Color = 14737632
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlue
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ItemHeight = 16
-          ItemIndex = 0
-          ParentFont = False
-          TabOrder = 0
-          Text = 'Ativo'
-          Items.Strings = (
-            'Ativo'
-            'N'#227'o Compra'
-            'Ativo/N'#227'o Compra')
-        end
-      end
-      object Bt_EstoquesDemonstrativo: TJvXPButton
-        Left = 441
-        Top = 300
-        Width = 164
-        Height = 41
-        Caption = 'Abrir Demonstrativo (N'#227'o Usado)'
-        TabOrder = 7
-        TabStop = False
-        Glyph.Data = {
-          07544269746D6170AA040000424DAA0400000000000036000000280000001400
-          000013000000010018000000000074040000C30E0000C30E0000000000000000
-          0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000000000000000
-          0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000
-          000000000000000000000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBF7F7F
-          7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F
-          00007F0000000000000000BFBFBFFFFFFFFFFFFF000000000000000000000000
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F00007F00
-          00000000BFBFBFFFFFFFFFFFFF000000BFBFBF00000000000000000000000000
-          0000000000000000000000BFBFBFBFBFBF7F00007F00007F00007F0000000000
-          BFBFBFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFF000000BFBFBFBFBFBFFF0000FF0000FF0000FF00000000007F7F7F7F
-          7F7F7F7F7F7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          000000BFBFBFBFBFBF7F00007F00007F00007F0000BFBFBFBFBFBFBFBFBF7F7F
-          7FFFFFFF7F00007F00007F00007F00007F00007F0000FFFFFFFFFFFF000000BF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F
-          00007F00007F00007F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F0000FFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFF7F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F00007F00007F0000
-          7F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBF7F7F7FFFFFFF7F00007F00007F00007F0000FFFFFFFFFFFFFFFF
-          FFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F
-          7FFFFFFF7F00007F00007F00007F00007F0000FFFFFFFFFFFFFFFFFF000000BF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F
-          7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF}
-        ShowFocusRect = True
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        Visible = False
-        OnClick = Bt_EstoquesDemonstrativoClick
-      end
     end
     object Ts_EstoquesFiltros: TTabSheet
       Tag = 9999
       Caption = ' Filtros '
       Highlighted = True
       ImageIndex = 1
+      OnExit = Ts_EstoquesFiltrosExit
       object Bt_Filtros: TPanel
         Left = 0
         Top = 506
@@ -1393,7 +1090,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 242
+          Left = 234
           Top = 11
           Width = 353
           Height = 13

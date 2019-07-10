@@ -1,8 +1,8 @@
 object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 236
-  Top = 108
+  Left = 239
+  Top = 109
   Height = 619
   Width = 1127
   object SQLC: TSQLConnection
@@ -27,21 +27,21 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'gds32.dll'
-    Left = 29
-    Top = 14
+    Left = 32
+    Top = 7
   end
   object SDS_Busca: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 32
-    Top = 301
+    Left = 35
+    Top = 294
   end
   object DSP_Usuario: TDataSetProvider
     DataSet = SDS_Usuario
     Options = [poRetainServerOrder]
-    Left = 70
-    Top = 592
+    Left = 73
+    Top = 585
   end
   object CDS_Usuario: TClientDataSet
     Aggregates = <>
@@ -98,13 +98,13 @@ object DMBelShop: TDMBelShop
     Params = <>
     ProviderName = 'DSP_Usuario'
     StoreDefs = True
-    Left = 110
-    Top = 581
+    Left = 113
+    Top = 574
   end
   object DS_Usuario: TDataSource
     DataSet = CDS_Usuario
-    Left = 146
-    Top = 594
+    Left = 149
+    Top = 587
   end
   object SDS_Usuario: TSQLDataSet
     ObjectView = True
@@ -112,39 +112,39 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 29
-    Top = 582
+    Left = 32
+    Top = 575
   end
   object SDS_Pesquisa: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 29
-    Top = 527
+    Left = 32
+    Top = 520
   end
   object CDS_Pesquisa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Pesquisa'
-    Left = 110
-    Top = 523
+    Left = 113
+    Top = 516
   end
   object DSP_Pesquisa: TDataSetProvider
     DataSet = SDS_Pesquisa
     Options = [poRetainServerOrder]
-    Left = 70
-    Top = 535
+    Left = 73
+    Top = 528
   end
   object DS_Pesquisa: TDataSource
     DataSet = CDS_Pesquisa
-    Left = 146
-    Top = 535
+    Left = 149
+    Top = 528
   end
   object DSP_Empresa: TDataSetProvider
     DataSet = SDS_Empresa
     Options = [poRetainServerOrder]
-    Left = 70
-    Top = 650
+    Left = 73
+    Top = 638
   end
   object CDS_Empresa: TClientDataSet
     Aggregates = <>
@@ -237,7 +237,7 @@ object DMBelShop: TDMBelShop
       item
         Name = 'COMPL_ENDERECO'
         DataType = ftString
-        Size = 30
+        Size = 50
       end
       item
         Name = 'DTA_LIM_TRANSF'
@@ -318,6 +318,21 @@ object DMBelShop: TDMBelShop
       item
         Name = 'COD_TRINKS'
         DataType = ftInteger
+      end
+      item
+        Name = 'SEP_ORDEM'
+        DataType = ftSmallint
+      end
+      item
+        Name = 'DES_EMAIL'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'EST_MINIMO'
+        Attributes = [faFixed]
+        DataType = ftString
+        Size = 3
       end>
     IndexDefs = <>
     IndexFieldNames = 'RAZAO_SOCIAL'
@@ -326,8 +341,8 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_Empresa'
     StoreDefs = True
     AfterScroll = CDS_EmpresaAfterScroll
-    Left = 110
-    Top = 638
+    Left = 113
+    Top = 631
     object CDS_EmpresaCOD_FILIAL: TStringField
       Alignment = taRightJustify
       FieldName = 'COD_FILIAL'
@@ -463,11 +478,23 @@ object DMBelShop: TDMBelShop
     object CDS_EmpresaCOD_TRINKS: TIntegerField
       FieldName = 'COD_TRINKS'
     end
+    object CDS_EmpresaSEP_ORDEM: TSmallintField
+      FieldName = 'SEP_ORDEM'
+    end
+    object CDS_EmpresaDES_EMAIL: TStringField
+      FieldName = 'DES_EMAIL'
+      Size = 50
+    end
+    object CDS_EmpresaEST_MINIMO: TStringField
+      FieldName = 'EST_MINIMO'
+      FixedChar = True
+      Size = 3
+    end
   end
   object DS_Empresa: TDataSource
     DataSet = CDS_Empresa
-    Left = 146
-    Top = 652
+    Left = 149
+    Top = 640
   end
   object SDS_Empresa: TSQLDataSet
     ObjectView = True
@@ -475,13 +502,13 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 29
-    Top = 637
+    Left = 32
+    Top = 630
   end
   object DS_AComprar: TDataSource
     DataSet = IBQ_AComprar
-    Left = 1271
-    Top = 224
+    Left = 1274
+    Top = 223
   end
   object SDS_AComprarItens: TSQLDataSet
     CommandText = 
@@ -497,8 +524,8 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 245
-    Top = 384
+    Left = 248
+    Top = 377
   end
   object CDS_AComprarItens: TClientDataSet
     Aggregates = <>
@@ -506,8 +533,8 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_AComprarItens'
     BeforeScroll = CDS_AComprarItensBeforeScroll
     AfterScroll = CDS_AComprarItensAfterScroll
-    Left = 324
-    Top = 382
+    Left = 327
+    Top = 375
     object CDS_AComprarItensCOD_ITEM: TStringField
       FieldName = 'COD_ITEM'
       Size = 6
@@ -538,19 +565,19 @@ object DMBelShop: TDMBelShop
   object DSP_AComprarItens: TDataSetProvider
     DataSet = SDS_AComprarItens
     Options = [poRetainServerOrder]
-    Left = 287
-    Top = 400
+    Left = 290
+    Top = 393
   end
   object DS_AComprarItens: TDataSource
     DataSet = CDS_AComprarItens
-    Left = 362
-    Top = 400
+    Left = 365
+    Top = 393
   end
   object DSP_AComprarOCs: TDataSetProvider
     DataSet = SDS_AComprarOCs
     Options = [poRetainServerOrder]
-    Left = 287
-    Top = 465
+    Left = 290
+    Top = 458
   end
   object CDS_AComprarOCs: TClientDataSet
     Aggregates = <>
@@ -709,8 +736,8 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_AComprarOCs'
     StoreDefs = True
     AfterScroll = CDS_AComprarOCsAfterScroll
-    Left = 324
-    Top = 453
+    Left = 327
+    Top = 446
     object CDS_AComprarOCsGERAR: TStringField
       FieldName = 'GERAR'
       Required = True
@@ -891,22 +918,22 @@ object DMBelShop: TDMBelShop
   end
   object DS_AComprarOCs: TDataSource
     DataSet = CDS_AComprarOCs
-    Left = 362
-    Top = 466
+    Left = 365
+    Top = 459
   end
   object SDS_AComprarOCs: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 245
-    Top = 452
+    Left = 248
+    Top = 445
   end
   object CDS_Sugestao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Sugestao'
-    Left = 1262
-    Top = 412
+    Left = 1265
+    Top = 411
     object CDS_SugestaoNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Required = True
@@ -1449,13 +1476,13 @@ object DMBelShop: TDMBelShop
         Value = '01/01/2017'
       end>
     SQLConnection = SQLC
-    Left = 1181
-    Top = 412
+    Left = 1184
+    Top = 411
   end
   object DSP_Sugestao: TDataSetProvider
     DataSet = SDS_Sugestao
-    Left = 1223
-    Top = 428
+    Left = 1226
+    Top = 427
   end
   object IBDB_BelShop: TIBDatabase
     DatabaseName = 'localhost:C:\Projetos\BelShop\Dados\BelShop.FDB'
@@ -1467,22 +1494,21 @@ object DMBelShop: TDMBelShop
     IdleTimer = 0
     SQLDialect = 3
     TraceFlags = []
-    Left = 1183
-    Top = 16
+    Left = 1186
+    Top = 15
   end
   object IBT_BelShop: TIBTransaction
     Active = False
     DefaultDatabase = IBDB_BelShop
     AutoStopAction = saNone
-    Left = 1231
-    Top = 29
+    Left = 1234
+    Top = 28
   end
   object IBQ_AComprar: TIBQuery
     Database = IBDB_BelShop
     Transaction = IBT_BelShop
     AfterOpen = IBQ_AComprarAfterOpen
     AfterPost = IBQ_AComprarAfterPost
-    AfterScroll = IBQ_AComprarAfterScroll
     BeforePost = IBQ_AComprarBeforePost
     BufferChunks = 1000
     CachedUpdates = False
@@ -1496,8 +1522,8 @@ object DMBelShop: TDMBelShop
       'ORDER BY oc.cod_empresa, oc.qtd_transf desc'
       '')
     UpdateObject = IBU_AComprar
-    Left = 1183
-    Top = 224
+    Left = 1186
+    Top = 223
     ParamData = <
       item
         DataType = ftInteger
@@ -2529,29 +2555,29 @@ object DMBelShop: TDMBelShop
       'where'
       '  NUM_SEQ = :NUM_SEQ'
       '  and NUM_DOCUMENTO = :NUM_DOCUMENTO')
-    Left = 1231
-    Top = 238
+    Left = 1234
+    Top = 237
   end
   object IBQ_Executa: TIBQuery
     Database = IBDB_BelShop
     Transaction = IBT_BelShop
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 1191
-    Top = 131
+    Left = 1194
+    Top = 130
   end
   object IBQ_Busca: TIBQuery
     Database = IBDB_BelShop
     Transaction = IBT_BelShop
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 1192
-    Top = 75
+    Left = 1195
+    Top = 74
   end
   object DS_OrdemCompra: TDataSource
     DataSet = IBQ_OrdemCompra
-    Left = 1231
-    Top = 491
+    Left = 1234
+    Top = 490
   end
   object IBQ_OrdemCompra: TIBQuery
     Database = IBDB_BelShop
@@ -2621,8 +2647,8 @@ object DMBelShop: TDMBelShop
       'AND   oc.num_oc_gerada=1000043'
       ''
       'ORDER BY Enderecamento,oc.des_item')
-    Left = 1183
-    Top = 480
+    Left = 1186
+    Top = 479
     object IBQ_OrdemCompraDES_EMPRESA: TIBStringField
       FieldName = 'DES_EMPRESA'
       Origin = 'OC_COMPRAR.DES_EMPRESA'
@@ -2759,8 +2785,8 @@ object DMBelShop: TDMBelShop
   end
   object DS_Busca: TDataSource
     DataSet = CDS_Busca
-    Left = 149
-    Top = 318
+    Left = 152
+    Top = 311
   end
   object SDS_DtaHoraServidor: TSQLDataSet
     CommandText = 
@@ -2769,8 +2795,8 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 110
-    Top = 33
+    Left = 113
+    Top = 26
   end
   object SDS_FluxoFornecedor: TSQLDataSet
     CommandText = 
@@ -2858,16 +2884,16 @@ object DMBelShop: TDMBelShop
         ParamType = ptInput
       end>
     SQLConnection = SQLC
-    Left = 933
-    Top = 155
+    Left = 936
+    Top = 154
   end
   object CDS_FluxoFornecedor: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoFornecedor'
     AfterScroll = CDS_FluxoFornecedorAfterScroll
-    Left = 1014
-    Top = 154
+    Left = 1017
+    Top = 153
     object CDS_FluxoFornecedorDATA: TDateField
       FieldName = 'DATA'
     end
@@ -2995,33 +3021,33 @@ object DMBelShop: TDMBelShop
   object DSP_FluxoFornecedor: TDataSetProvider
     DataSet = SDS_FluxoFornecedor
     Options = [poRetainServerOrder]
-    Left = 974
-    Top = 163
+    Left = 977
+    Top = 162
   end
   object DS_FluxoFornecedor: TDataSource
     DataSet = CDS_FluxoFornecedor
-    Left = 1050
-    Top = 163
+    Left = 1053
+    Top = 162
   end
   object SDS_While: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 32
-    Top = 245
+    Left = 35
+    Top = 238
   end
   object CDS_While: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_While'
-    Left = 113
-    Top = 250
+    Left = 116
+    Top = 243
   end
   object DSP_While: TDataSetProvider
     DataSet = SDS_While
     Options = [poRetainServerOrder]
-    Left = 73
-    Top = 262
+    Left = 76
+    Top = 255
   end
   object SDS_EmpProcessa: TSQLDataSet
     CommandText = 
@@ -3037,15 +3063,15 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 245
-    Top = 127
+    Left = 248
+    Top = 120
   end
   object CDS_EmpProcessa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_EmpProcessa'
-    Left = 324
-    Top = 128
+    Left = 327
+    Top = 121
     object CDS_EmpProcessaPROC: TStringField
       DisplayLabel = 'Selec'
       FieldName = 'PROC'
@@ -3167,18 +3193,18 @@ object DMBelShop: TDMBelShop
   object DSP_EmpProcessa: TDataSetProvider
     DataSet = SDS_EmpProcessa
     Options = [poRetainServerOrder]
-    Left = 287
-    Top = 144
+    Left = 290
+    Top = 137
   end
   object DS_EmpProcessa: TDataSource
     DataSet = CDS_EmpProcessa
-    Left = 362
-    Top = 144
+    Left = 365
+    Top = 137
   end
   object DS_AComprarEdita: TDataSource
     DataSet = IBQ_AComprarEdita
-    Left = 1271
-    Top = 281
+    Left = 1274
+    Top = 280
   end
   object IBQ_AComprarEdita: TIBQuery
     Database = IBDB_BelShop
@@ -3193,8 +3219,8 @@ object DMBelShop: TDMBelShop
       'from oc_comprar o'
       'where o.num_seq<14')
     UpdateObject = IBU_AComprarEdita
-    Left = 1183
-    Top = 288
+    Left = 1186
+    Top = 287
     object IBQ_AComprarEditaNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Origin = 'OC_COMPRAR.NUM_SEQ'
@@ -4197,14 +4223,14 @@ object DMBelShop: TDMBelShop
       'where'
       '  NUM_SEQ = :NUM_SEQ'
       '  and NUM_DOCUMENTO = :NUM_DOCUMENTO')
-    Left = 1231
-    Top = 294
+    Left = 1234
+    Top = 293
   end
   object DSP_OCs: TDataSetProvider
     DataSet = SDS_OCs
     Options = [poRetainServerOrder]
-    Left = 287
-    Top = 590
+    Left = 290
+    Top = 583
   end
   object CDS_OCs: TClientDataSet
     Aggregates = <>
@@ -4313,8 +4339,8 @@ object DMBelShop: TDMBelShop
     Params = <>
     ProviderName = 'DSP_OCs'
     StoreDefs = True
-    Left = 324
-    Top = 574
+    Left = 327
+    Top = 567
     object CDS_OCsNUM_DOCUMENTO: TIntegerField
       FieldName = 'NUM_DOCUMENTO'
       Required = True
@@ -4430,22 +4456,22 @@ object DMBelShop: TDMBelShop
   end
   object DS_OCs: TDataSource
     DataSet = CDS_OCs
-    Left = 362
-    Top = 591
+    Left = 365
+    Top = 584
   end
   object SDS_OCs: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 245
-    Top = 577
+    Left = 248
+    Top = 570
   end
   object CDS_VerTransito: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_VerTransito'
-    Left = 545
-    Top = 136
+    Left = 548
+    Top = 129
     object CDS_VerTransitoCODFILIAL: TStringField
       FieldName = 'CODFILIAL'
       Size = 2
@@ -4526,13 +4552,13 @@ object DMBelShop: TDMBelShop
   object DSP_VerTransito: TDataSetProvider
     DataSet = SDS_VerTransito
     Options = [poRetainServerOrder]
-    Left = 501
-    Top = 152
+    Left = 504
+    Top = 145
   end
   object DS_VerTransito: TDataSource
     DataSet = CDS_VerTransito
-    Left = 592
-    Top = 152
+    Left = 595
+    Top = 145
   end
   object SDS_VerTransito: TSQLDataSet
     CommandText = 
@@ -4554,40 +4580,40 @@ object DMBelShop: TDMBelShop
         Value = '004977'
       end>
     SQLConnection = SQLC
-    Left = 461
-    Top = 136
+    Left = 464
+    Top = 129
   end
   object SDS_BuscaRapida: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 32
-    Top = 359
+    Left = 35
+    Top = 352
   end
   object CDS_BuscaRapida: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_BuscaRapida'
-    Left = 113
-    Top = 364
+    Left = 116
+    Top = 357
   end
   object DSP_BuscaRapida: TDataSetProvider
     DataSet = SDS_BuscaRapida
     Options = [poRetainServerOrder]
-    Left = 73
-    Top = 376
+    Left = 76
+    Top = 369
   end
   object DS_BuscaRapida: TDataSource
     DataSet = CDS_BuscaRapida
-    Left = 149
-    Top = 376
+    Left = 152
+    Top = 369
   end
   object CDS_Comprovantes: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Comprovantes'
-    Left = 545
-    Top = 199
+    Left = 548
+    Top = 192
     object CDS_ComprovantesCOD_COMPROV: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod Comp'
@@ -4648,13 +4674,13 @@ object DMBelShop: TDMBelShop
   object DSP_Comprovantes: TDataSetProvider
     DataSet = SDS_Comprovantes
     Options = [poRetainServerOrder]
-    Left = 501
-    Top = 215
+    Left = 504
+    Top = 208
   end
   object DS_Comprovantes: TDataSource
     DataSet = CDS_Comprovantes
-    Left = 592
-    Top = 215
+    Left = 595
+    Top = 208
   end
   object SDS_Comprovantes: TSQLDataSet
     CommandText = 
@@ -4666,15 +4692,15 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 461
-    Top = 199
+    Left = 464
+    Top = 192
   end
   object CDS_Comprovante: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Comprovante'
-    Left = 545
-    Top = 260
+    Left = 548
+    Top = 253
     object CDS_ComprovanteCOD_COMPROV: TStringField
       FieldName = 'COD_COMPROV'
       Required = True
@@ -4730,29 +4756,29 @@ object DMBelShop: TDMBelShop
   object DSP_Comprovante: TDataSetProvider
     DataSet = SDS_Comprovante
     Options = [poRetainServerOrder]
-    Left = 501
-    Top = 275
+    Left = 504
+    Top = 268
   end
   object DS_Comprovante: TDataSource
     DataSet = CDS_Comprovante
-    Left = 592
-    Top = 276
+    Left = 595
+    Top = 269
   end
   object SDS_Comprovante: TSQLDataSet
     CommandText = 'select *'#13#10'from fin_comprovantes'#13#10'Where cod_gr_finan<0'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 461
-    Top = 260
+    Left = 464
+    Top = 253
   end
   object CDS_Gr_Financeiro: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Gr_Financeiro'
     AfterScroll = CDS_Gr_FinanceiroAfterScroll
-    Left = 545
-    Top = 321
+    Left = 548
+    Top = 314
     object CDS_Gr_FinanceiroCOD_GR_FINAN: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_GR_FINAN'
@@ -4794,28 +4820,28 @@ object DMBelShop: TDMBelShop
   object DSP_Gr_Financeiro: TDataSetProvider
     DataSet = SDS_Gr_Financeiro
     Options = [poRetainServerOrder]
-    Left = 501
-    Top = 337
+    Left = 504
+    Top = 330
   end
   object DS_Gr_Financeiro: TDataSource
     DataSet = CDS_Gr_Financeiro
-    Left = 592
-    Top = 337
+    Left = 595
+    Top = 330
   end
   object SDS_Gr_Financeiro: TSQLDataSet
     CommandText = 'select *'#13#10'from fin_gr_financeiro'#13#10'order by DES_GR_FINAN'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 461
-    Top = 321
+    Left = 464
+    Top = 314
   end
   object CDS_DemonsResultado: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_DemonsResultado'
-    Left = 545
-    Top = 385
+    Left = 548
+    Top = 378
     object CDS_DemonsResultadoCOD_VISAO: TIntegerField
       DisplayLabel = 'Cod_Visao'
       FieldName = 'COD_VISAO'
@@ -4861,13 +4887,13 @@ object DMBelShop: TDMBelShop
   object DSP_DemonsResultado: TDataSetProvider
     DataSet = SDS_DemonsResultado
     Options = [poRetainServerOrder]
-    Left = 501
-    Top = 401
+    Left = 504
+    Top = 394
   end
   object DS_DemonsResultado: TDataSource
     DataSet = CDS_DemonsResultado
-    Left = 592
-    Top = 401
+    Left = 595
+    Top = 394
   end
   object SDS_DemonsResultado: TSQLDataSet
     CommandText = 
@@ -4876,35 +4902,35 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 461
-    Top = 385
+    Left = 464
+    Top = 378
   end
   object SDS_Demandas: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 245
-    Top = 188
+    Left = 248
+    Top = 181
   end
   object DSP_Demandas: TDataSetProvider
     DataSet = SDS_Demandas
     Options = [poRetainServerOrder]
-    Left = 287
-    Top = 204
+    Left = 290
+    Top = 197
   end
   object CDS_Demandas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Demandas'
-    Left = 332
-    Top = 192
+    Left = 335
+    Top = 185
   end
   object CDS_VisualObjetos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_VisualObjetos'
-    Left = 545
-    Top = 74
+    Left = 548
+    Top = 67
     object CDS_VisualObjetosCOD_USUARIO: TIntegerField
       DisplayLabel = 'Cod'
       FieldName = 'COD_USUARIO'
@@ -4918,13 +4944,13 @@ object DMBelShop: TDMBelShop
   object DSP_VisualObjetos: TDataSetProvider
     DataSet = SDS_VisualObjetos
     Options = [poRetainServerOrder]
-    Left = 501
-    Top = 90
+    Left = 504
+    Top = 83
   end
   object DS_VisualObjetos: TDataSource
     DataSet = CDS_VisualObjetos
-    Left = 592
-    Top = 90
+    Left = 595
+    Top = 83
   end
   object SDS_VisualObjetos: TSQLDataSet
     CommandText = 
@@ -4947,16 +4973,16 @@ object DMBelShop: TDMBelShop
         Value = '1'
       end>
     SQLConnection = SQLC
-    Left = 461
-    Top = 74
+    Left = 464
+    Top = 67
   end
   object CDS_Objetivos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Objetivos'
     AfterScroll = CDS_ObjetivosAfterScroll
-    Left = 771
-    Top = 16
+    Left = 774
+    Top = 15
     object CDS_ObjetivosPROC: TStringField
       DisplayLabel = 'Proc?'
       FieldName = 'PROC'
@@ -5024,13 +5050,13 @@ object DMBelShop: TDMBelShop
   object DSP_Objetivos: TDataSetProvider
     DataSet = SDS_Objetivos
     Options = [poRetainServerOrder]
-    Left = 736
-    Top = 32
+    Left = 739
+    Top = 31
   end
   object DS_Objetivos: TDataSource
     DataSet = CDS_Objetivos
-    Left = 811
-    Top = 32
+    Left = 814
+    Top = 31
   end
   object SDS_Objetivos: TSQLDataSet
     CommandText = 
@@ -5039,14 +5065,14 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 701
-    Top = 16
+    Left = 704
+    Top = 15
   end
   object DSP_ObjetivosEmpresas: TDataSetProvider
     DataSet = SDS_ObjetivosEmpresas
     Options = [poRetainServerOrder]
-    Left = 736
-    Top = 95
+    Left = 739
+    Top = 94
   end
   object CDS_ObjetivosEmpresas: TClientDataSet
     Aggregates = <>
@@ -5209,8 +5235,8 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_ObjetivosEmpresas'
     StoreDefs = True
     AfterScroll = CDS_ObjetivosEmpresasAfterScroll
-    Left = 771
-    Top = 75
+    Left = 774
+    Top = 74
     object CDS_ObjetivosEmpresasCOD_FILIAL: TStringField
       Alignment = taCenter
       DisplayLabel = 'Cod'
@@ -5231,8 +5257,8 @@ object DMBelShop: TDMBelShop
   end
   object DS_ObjetivosEmpresas: TDataSource
     DataSet = CDS_ObjetivosEmpresas
-    Left = 811
-    Top = 97
+    Left = 814
+    Top = 96
   end
   object SDS_ObjetivosEmpresas: TSQLDataSet
     ObjectView = True
@@ -5242,15 +5268,15 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 701
-    Top = 83
+    Left = 704
+    Top = 82
   end
   object CDS_ObjetivosMetas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ObjetivosMetas'
-    Left = 771
-    Top = 144
+    Left = 774
+    Top = 143
     object CDS_ObjetivosMetasCOD_FILIAL: TStringField
       FieldName = 'COD_FILIAL'
       Size = 2
@@ -5349,28 +5375,28 @@ object DMBelShop: TDMBelShop
   object DSP_ObjetivosMetas: TDataSetProvider
     DataSet = SDS_ObjetivosMetas
     Options = [poRetainServerOrder]
-    Left = 736
-    Top = 160
+    Left = 739
+    Top = 159
   end
   object DS_ObjetivosMetas: TDataSource
     DataSet = CDS_ObjetivosMetas
-    Left = 811
-    Top = 160
+    Left = 814
+    Top = 159
   end
   object SDS_ObjetivosMetas: TSQLDataSet
     CommandText = 'Select *'#13#10'From fin_objetivos_metas e'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 701
-    Top = 144
+    Left = 704
+    Top = 143
   end
   object CDS_FeriadosAno: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FeriadosAno'
-    Left = 329
-    Top = 636
+    Left = 332
+    Top = 629
     object CDS_FeriadosAnoDTA_FERIADO: TDateField
       Alignment = taCenter
       DisplayLabel = 'Dia'
@@ -5394,91 +5420,91 @@ object DMBelShop: TDMBelShop
   object DSP_FeriadosAno: TDataSetProvider
     DataSet = SDS_FeriadosAno
     Options = [poRetainServerOrder]
-    Left = 285
-    Top = 650
+    Left = 288
+    Top = 638
   end
   object DS_FeriadosAno: TDataSource
     DataSet = CDS_FeriadosAno
-    Left = 376
-    Top = 650
+    Left = 379
+    Top = 638
   end
   object SDS_FeriadosAno: TSQLDataSet
     CommandText = 'Select *'#13#10'From FIN_FERIADOS_ANO'#13#10'Order by DTA_FERIADO'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 245
-    Top = 636
+    Left = 248
+    Top = 629
   end
   object SDS_ConectaEmpresa: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 42
-    Top = 181
+    Left = 45
+    Top = 174
   end
   object CDS_ConectaEmpresa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ConectaEmpresa'
-    Left = 113
-    Top = 186
+    Left = 116
+    Top = 179
   end
   object DSP_ConectaEmpresa: TDataSetProvider
     DataSet = SDS_ConectaEmpresa
     Options = [poRetainServerOrder]
-    Left = 73
-    Top = 198
+    Left = 76
+    Top = 191
   end
   object SDS_Join: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 29
-    Top = 121
+    Left = 32
+    Top = 114
   end
   object DSP_Join: TDataSetProvider
     DataSet = SDS_Join
     Options = [poRetainServerOrder]
-    Left = 71
-    Top = 137
+    Left = 74
+    Top = 130
   end
   object CDS_Join: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Join'
-    Left = 108
-    Top = 121
+    Left = 111
+    Top = 114
   end
   object DS_Join: TDataSource
     DataSet = CDS_Join
-    Left = 146
-    Top = 137
+    Left = 149
+    Top = 130
   end
   object SDS_FechaCaixa: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 693
-    Top = 218
+    Left = 696
+    Top = 217
   end
   object DS_FechaCaixa: TDataSource
     DataSet = CDS_FechaCaixa
-    Left = 810
-    Top = 234
+    Left = 813
+    Top = 233
   end
   object DSP_FechaCaixa: TDataSetProvider
     DataSet = SDS_FechaCaixa
     Options = [poRetainServerOrder]
-    Left = 734
-    Top = 234
+    Left = 737
+    Top = 233
   end
   object CDS_FechaCaixa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaCaixa'
-    Left = 774
-    Top = 222
+    Left = 777
+    Top = 221
     object CDS_FechaCaixaCOD_CREDITO: TIntegerField
       DisplayLabel = 'Cod'
       FieldName = 'COD_CREDITO'
@@ -5533,26 +5559,26 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 693
-    Top = 278
+    Left = 696
+    Top = 277
   end
   object DS_FechaCaixaTotais: TDataSource
     DataSet = CDS_FechaCaixaTotais
-    Left = 810
-    Top = 294
+    Left = 813
+    Top = 293
   end
   object DSP_FechaCaixaTotais: TDataSetProvider
     DataSet = SDS_FechaCaixaTotais
     Options = [poRetainServerOrder]
-    Left = 734
-    Top = 294
+    Left = 737
+    Top = 293
   end
   object CDS_FechaCaixaTotais: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaCaixaTotais'
-    Left = 774
-    Top = 282
+    Left = 777
+    Top = 281
     object CDS_FechaCaixaTotaisCOD_CREDITO: TIntegerField
       DisplayLabel = 'Cod'
       FieldName = 'COD_CREDITO'
@@ -5603,183 +5629,9 @@ object DMBelShop: TDMBelShop
       Size = 32
     end
   end
-  object SDS_FechaDiarioMov: TSQLDataSet
-    CommandText = 
-      'select d.num_seq, d.tip_docto,'#13#10'Case'#13#10'  When d.tip_docto=1  Then' +
-      ' '#39'Pagamento'#39#13#10'  When d.tip_docto=2  Then '#39'Dep'#243'sito'#39#13#10'  When d.ti' +
-      'p_docto=3  Then '#39'Valor Recebido'#39#13#10'  When d.tip_docto=90 Then '#39'To' +
-      'tal Realizado'#39#13#10'  When d.tip_docto=95 Then '#39'Valor Plano de Conta' +
-      's'#39#13#10'  When d.tip_docto=99 Then '#39'Fechamento Di'#225'rio'#39#13#10'End Des_Tipo' +
-      ','#13#10'd.num_docto, d.des_docto, d.num_nota, d.dta_vencimento, d.vlr' +
-      '_docto,'#13#10'd.ind_realizado, d.vlr_realizado, d.vlr_diferenca'#13#10#13#10'fr' +
-      'om fin_fechamento_diario d'#13#10'where d.tip_docto<90'#13#10'and d.cod_loja' +
-      '= :CodLoja'#13#10'and d.dta_dia= :Dia'#13#10'Order by d.tip_docto'
-    MaxBlobSize = -1
-    Params = <
-      item
-        DataType = ftString
-        Name = 'CodLoja'
-        ParamType = ptInput
-        Value = '01'
-      end
-      item
-        DataType = ftString
-        Name = 'Dia'
-        ParamType = ptInput
-        Value = '16.05.2013'
-      end>
-    SQLConnection = SQLC
-    Left = 693
-    Top = 401
-  end
-  object DSP_FechaDiarioMov: TDataSetProvider
-    DataSet = SDS_FechaDiarioMov
-    Options = [poRetainServerOrder]
-    Left = 734
-    Top = 417
-  end
-  object CDS_FechaDiarioMov: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'DSP_FechaDiarioMov'
-    Left = 774
-    Top = 405
-    object CDS_FechaDiarioMovNUM_SEQ: TIntegerField
-      FieldName = 'NUM_SEQ'
-      Required = True
-    end
-    object CDS_FechaDiarioMovTIP_DOCTO: TIntegerField
-      FieldName = 'TIP_DOCTO'
-    end
-    object CDS_FechaDiarioMovDES_TIPO: TStringField
-      DisplayLabel = 'Tipo do Movto'
-      FieldName = 'DES_TIPO'
-      FixedChar = True
-      Size = 21
-    end
-    object CDS_FechaDiarioMovNUM_DOCTO: TStringField
-      Alignment = taRightJustify
-      DisplayLabel = 'N'#186' Docto'
-      FieldName = 'NUM_DOCTO'
-      Size = 6
-    end
-    object CDS_FechaDiarioMovDES_DOCTO: TStringField
-      DisplayLabel = 'Descri'#231#227'o do Docto'
-      FieldName = 'DES_DOCTO'
-      Size = 40
-    end
-    object CDS_FechaDiarioMovNUM_NOTA: TStringField
-      Alignment = taRightJustify
-      DisplayLabel = 'N'#186' Nota'
-      FieldName = 'NUM_NOTA'
-      Size = 6
-    end
-    object CDS_FechaDiarioMovDTA_VENCIMENTO: TDateField
-      DisplayLabel = 'Vencimento'
-      FieldName = 'DTA_VENCIMENTO'
-    end
-    object CDS_FechaDiarioMovVLR_DOCTO: TFMTBCDField
-      DisplayLabel = 'Vlr Docto'
-      FieldName = 'VLR_DOCTO'
-      DisplayFormat = '0.,00'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_FechaDiarioMovIND_REALIZADO: TStringField
-      DisplayLabel = 'Realizado ?'
-      FieldName = 'IND_REALIZADO'
-      Size = 3
-    end
-    object CDS_FechaDiarioMovVLR_REALIZADO: TFMTBCDField
-      DisplayLabel = 'Vlr Realizado'
-      FieldName = 'VLR_REALIZADO'
-      DisplayFormat = '0.,00'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_FechaDiarioMovVLR_DIFERENCA: TFMTBCDField
-      DisplayLabel = 'Vlr Diferen'#231'a'
-      FieldName = 'VLR_DIFERENCA'
-      DisplayFormat = '0.,00'
-      Precision = 15
-      Size = 2
-    end
-  end
-  object DS_FechaDiarioMov: TDataSource
-    DataSet = CDS_FechaDiarioMov
-    Left = 810
-    Top = 417
-  end
-  object SDS_FechaDiarioTot: TSQLDataSet
-    CommandText = 
-      'select d.num_seq, d.tip_docto,'#13#10'd.num_docto, d.des_docto, d.vlr_' +
-      'docto'#13#10#13#10'from fin_fechamento_diario d'#13#10'where d.tip_docto>=90'#13#10'an' +
-      'd d.cod_loja= :CodLoja'#13#10'and d.dta_dia= :Dia'#13#10'Order by d.tip_doct' +
-      'o'
-    MaxBlobSize = -1
-    Params = <
-      item
-        DataType = ftString
-        Name = 'CodLoja'
-        ParamType = ptInput
-        Value = '01'
-      end
-      item
-        DataType = ftString
-        Name = 'Dia'
-        ParamType = ptInput
-        Value = '16.05.2013'
-      end>
-    SQLConnection = SQLC
-    Left = 693
-    Top = 464
-  end
-  object DSP_FechaDiarioTot: TDataSetProvider
-    DataSet = SDS_FechaDiarioTot
-    Options = [poRetainServerOrder]
-    Left = 734
-    Top = 475
-  end
-  object CDS_FechaDiarioTot: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'DSP_FechaDiarioTot'
-    Left = 774
-    Top = 463
-    object CDS_FechaDiarioTotNUM_SEQ: TIntegerField
-      FieldName = 'NUM_SEQ'
-      Required = True
-    end
-    object CDS_FechaDiarioTotTIP_DOCTO: TIntegerField
-      FieldName = 'TIP_DOCTO'
-    end
-    object CDS_FechaDiarioTotNUM_DOCTO: TStringField
-      Alignment = taRightJustify
-      DisplayLabel = 'N'#186' Docto'
-      FieldName = 'NUM_DOCTO'
-      Size = 6
-    end
-    object CDS_FechaDiarioTotDES_DOCTO: TStringField
-      DisplayLabel = 'Descri'#231#227'o do Docto'
-      FieldName = 'DES_DOCTO'
-      Size = 40
-    end
-    object CDS_FechaDiarioTotVLR_DOCTO: TFMTBCDField
-      DisplayLabel = 'Vlr Docto'
-      FieldName = 'VLR_DOCTO'
-      DisplayFormat = '0.,00'
-      Precision = 15
-      Size = 2
-    end
-  end
-  object DS_FechaDiarioTot: TDataSource
-    DataSet = CDS_FechaDiarioTot
-    Left = 810
-    Top = 475
-  end
   object DS_Geral: TDataSource
-    Left = 189
-    Top = 30
+    Left = 192
+    Top = 23
   end
   object SDS_Seguranca: TSQLDataSet
     CommandText = 
@@ -5794,14 +5646,14 @@ object DMBelShop: TDMBelShop
         Value = ''
       end>
     SQLConnection = SQLC
-    Left = 461
-    Top = 575
+    Left = 464
+    Top = 568
   end
   object DSP_Seguranca: TDataSetProvider
     DataSet = SDS_Seguranca
     Options = [poRetainServerOrder]
-    Left = 501
-    Top = 581
+    Left = 504
+    Top = 574
   end
   object CDS_Seguranca: TClientDataSet
     Aggregates = <>
@@ -5813,8 +5665,8 @@ object DMBelShop: TDMBelShop
         Value = ''
       end>
     ProviderName = 'DSP_Seguranca'
-    Left = 541
-    Top = 573
+    Left = 544
+    Top = 566
     object CDS_SegurancaUSUARIO: TStringField
       FieldName = 'USUARIO'
       Required = True
@@ -5842,36 +5694,36 @@ object DMBelShop: TDMBelShop
   end
   object DS_Seguranca: TDataSource
     DataSet = CDS_Seguranca
-    Left = 589
-    Top = 581
+    Left = 592
+    Top = 574
   end
   object SQLSP: TSQLStoredProc
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 149
-    Top = 14
+    Left = 152
+    Top = 7
   end
   object IBQ_Contar: TIBQuery
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 252
-    Top = 14
+    Left = 255
+    Top = 7
   end
   object SDS_ParametrosSis: TSQLDataSet
     CommandText = 'Select *'#13#10'from PARAMETROS'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 240
-    Top = 66
+    Left = 243
+    Top = 59
   end
   object CDS_ParametrosSis: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ParametrosSIS'
-    Left = 329
-    Top = 71
+    Left = 332
+    Top = 64
     object CDS_ParametrosSisNUM_DIAS_CONCILIA: TIntegerField
       FieldName = 'NUM_DIAS_CONCILIA'
     end
@@ -5937,13 +5789,13 @@ object DMBelShop: TDMBelShop
   object DSP_ParametrosSis: TDataSetProvider
     DataSet = SDS_ParametrosSis
     Options = [poRetainServerOrder]
-    Left = 281
-    Top = 83
+    Left = 284
+    Top = 76
   end
   object DS_ParametrosSis: TDataSource
     DataSet = CDS_ParametrosSis
-    Left = 379
-    Top = 83
+    Left = 382
+    Top = 76
   end
   object SDS_Consistencias: TSQLDataSet
     CommandText = 
@@ -5958,21 +5810,21 @@ object DMBelShop: TDMBelShop
         Value = '1'
       end>
     SQLConnection = SQLC
-    Left = 917
-    Top = 16
+    Left = 920
+    Top = 15
   end
   object DSP_Consistencias: TDataSetProvider
     DataSet = SDS_Consistencias
     Options = [poRetainServerOrder]
-    Left = 959
-    Top = 32
+    Left = 962
+    Top = 31
   end
   object CDS_Consistencias: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Consistencias'
-    Left = 996
-    Top = 16
+    Left = 999
+    Top = 15
     object CDS_ConsistenciasNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Visible = False
@@ -6016,73 +5868,73 @@ object DMBelShop: TDMBelShop
   end
   object DS_Consistencias: TDataSource
     DataSet = CDS_Consistencias
-    Left = 1034
-    Top = 32
+    Left = 1037
+    Top = 31
   end
   object SDS_EmpBusca: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 461
-    Top = 11
+    Left = 464
+    Top = 4
   end
   object CDS_EmpBusca: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_EmpBusca'
-    Left = 545
-    Top = 16
+    Left = 548
+    Top = 9
   end
   object DSP_EmpBusca: TDataSetProvider
     DataSet = SDS_EmpBusca
     Options = [poRetainServerOrder]
-    Left = 501
-    Top = 28
+    Left = 504
+    Top = 21
   end
   object DS_EmpBusca: TDataSource
     DataSet = CDS_EmpBusca
-    Left = 592
-    Top = 28
+    Left = 595
+    Top = 21
   end
   object SQLQuery2: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 86
-    Top = 73
+    Left = 89
+    Top = 66
   end
   object SQLQuery3: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 150
-    Top = 73
+    Left = 153
+    Top = 66
   end
   object SDS_CurvaFinanceira: TSQLDataSet
     CommandText = 'SELECT *'#13#10'FROM es_finan_curva_abc c'#13#10'WHERE c.cod_loja=999'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 693
-    Top = 339
+    Left = 696
+    Top = 338
   end
   object DS_CurvaFinanceira: TDataSource
     DataSet = CDS_CurvaFinanceira
-    Left = 810
-    Top = 355
+    Left = 813
+    Top = 354
   end
   object DSP_CurvaFinanceira: TDataSetProvider
     DataSet = SDS_CurvaFinanceira
     Options = [poRetainServerOrder]
-    Left = 734
-    Top = 355
+    Left = 737
+    Top = 354
   end
   object CDS_CurvaFinanceira: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CurvaFinanceira'
-    Left = 774
-    Top = 343
+    Left = 777
+    Top = 342
     object CDS_CurvaFinanceiraCOD_LOJA: TStringField
       FieldName = 'COD_LOJA'
       Required = True
@@ -6119,8 +5971,8 @@ object DMBelShop: TDMBelShop
       'From oc_comprar oc'
       'Where oc.num_documento<1')
     UpdateObject = IBUP_OC_ComprarAdd
-    Left = 1183
-    Top = 344
+    Left = 1186
+    Top = 343
     object IntegerField1: TIntegerField
       FieldName = 'NUM_SEQ'
       Origin = 'OC_COMPRAR.NUM_SEQ'
@@ -7189,8 +7041,8 @@ object DMBelShop: TDMBelShop
       'where'
       '  NUM_SEQ = :NUM_SEQ'
       '  and NUM_DOCUMENTO = :NUM_DOCUMENTO')
-    Left = 1231
-    Top = 358
+    Left = 1234
+    Top = 357
   end
   object SDS_DemandasNovo: TSQLDataSet
     GetMetadata = False
@@ -7216,21 +7068,21 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 245
-    Top = 254
+    Left = 248
+    Top = 247
   end
   object DSP_DemandasNovo: TDataSetProvider
     DataSet = SDS_DemandasNovo
     Options = [poRetainServerOrder]
-    Left = 287
-    Top = 270
+    Left = 290
+    Top = 263
   end
   object CDS_DemandasNovo: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_DemandasNovo'
-    Left = 324
-    Top = 251
+    Left = 327
+    Top = 244
     object CDS_DemandasNovoCODPRODUTO: TStringField
       FieldName = 'CODPRODUTO'
       Required = True
@@ -7258,27 +7110,27 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 245
-    Top = 319
+    Left = 248
+    Top = 312
   end
   object DSP_UltCompraTransito: TDataSetProvider
     DataSet = SDS_UltCompraTransito
     Options = [poRetainServerOrder]
-    Left = 287
-    Top = 335
+    Left = 290
+    Top = 328
   end
   object CDS_UltCompraTransito: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_UltCompraTransito'
-    Left = 324
-    Top = 316
+    Left = 327
+    Top = 309
   end
   object DSP_OCComparaPedidos: TDataSetProvider
     DataSet = SDS_OCComparaPedidos
     Options = [poRetainServerOrder]
-    Left = 287
-    Top = 530
+    Left = 290
+    Top = 523
   end
   object CDS_OCComparaPedidos: TClientDataSet
     Aggregates = <>
@@ -7396,8 +7248,8 @@ object DMBelShop: TDMBelShop
     Params = <>
     ProviderName = 'DSP_OCComparaPedidos'
     StoreDefs = True
-    Left = 324
-    Top = 514
+    Left = 327
+    Top = 507
     object CDS_OCComparaPedidosCOD_LOJA: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod Loja'
@@ -7526,8 +7378,8 @@ object DMBelShop: TDMBelShop
   end
   object DS_OCComparaPedidos: TDataSource
     DataSet = CDS_OCComparaPedidos
-    Left = 362
-    Top = 531
+    Left = 365
+    Top = 524
   end
   object SDS_OCComparaPedidos: TSQLDataSet
     CommandText = 
@@ -7911,62 +7763,62 @@ object DMBelShop: TDMBelShop
         ParamType = ptInput
       end>
     SQLConnection = SQLC
-    Left = 245
-    Top = 517
+    Left = 248
+    Top = 510
   end
   object SDS_Busca1: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 32
-    Top = 407
+    Left = 35
+    Top = 400
   end
   object CDS_Busca1: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Busca1'
-    Left = 113
-    Top = 412
+    Left = 116
+    Top = 405
   end
   object DSP_Busca1: TDataSetProvider
     DataSet = SDS_Busca1
     Options = [poRetainServerOrder]
-    Left = 73
-    Top = 424
+    Left = 76
+    Top = 417
   end
   object DS_Busca1: TDataSource
     DataSet = CDS_Busca1
-    Left = 149
-    Top = 424
+    Left = 152
+    Top = 417
   end
   object IBQ_ConsultaFilial: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 302
-    Top = 29
+    Left = 305
+    Top = 22
   end
   object IBQ_BuscaRapida: TIBQuery
     Database = IBDB_BelShop
     Transaction = IBT_BelShop
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 1263
-    Top = 91
+    Left = 1266
+    Top = 90
   end
   object SQLQuery1: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 22
-    Top = 65
+    Left = 25
+    Top = 58
   end
   object SQLQ_Busca: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 30
-    Top = 467
+    Left = 33
+    Top = 460
   end
   object SDS_BuscaCurva: TSQLQuery
     MaxBlobSize = -1
@@ -7991,8 +7843,8 @@ object DMBelShop: TDMBelShop
       'WHERE c.COD_LOJA = :CodLoja'
       'AND c.cod_produto = :CodProd')
     SQLConnection = SQLC
-    Left = 374
-    Top = 16
+    Left = 377
+    Top = 9
     object SDS_BuscaCurvaIND_CURVA_QTD: TStringField
       FieldName = 'IND_CURVA_QTD'
       Size = 1
@@ -8005,53 +7857,53 @@ object DMBelShop: TDMBelShop
   object DSP_Busca: TDataSetProvider
     DataSet = SDS_Busca
     Options = [poRetainServerOrder]
-    Left = 81
-    Top = 318
+    Left = 84
+    Top = 311
   end
   object CDS_Busca: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Busca'
-    Left = 121
-    Top = 306
+    Left = 124
+    Top = 299
   end
   object DSP_SQLQ_Busca: TDataSetProvider
     DataSet = SQLQ_Busca
     Options = [poRetainServerOrder]
-    Left = 78
-    Top = 481
+    Left = 81
+    Top = 474
   end
   object CDS_SQLQ_Busca: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_SQLQ_Busca'
-    Left = 130
-    Top = 476
+    Left = 133
+    Top = 469
   end
   object SDS_FaltasCDLojas: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 461
-    Top = 447
+    Left = 464
+    Top = 440
   end
   object CDS_FaltasCDLojas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FaltasCDLojas'
-    Left = 551
-    Top = 451
+    Left = 554
+    Top = 444
   end
   object DSP_FaltasCDLojas: TDataSetProvider
     DataSet = SDS_FaltasCDLojas
     Options = [poRetainServerOrder]
-    Left = 501
-    Top = 464
+    Left = 504
+    Top = 457
   end
   object DS_FaltasCDLojas: TDataSource
     DataSet = CDS_FaltasCDLojas
-    Left = 592
-    Top = 464
+    Left = 595
+    Top = 457
   end
   object SDS_FluxoFornecedores: TSQLDataSet
     CommandText = 
@@ -8107,8 +7959,8 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 933
-    Top = 91
+    Left = 936
+    Top = 90
   end
   object CDS_FluxoFornecedores: TClientDataSet
     Aggregates = <>
@@ -8117,8 +7969,8 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_FluxoFornecedores'
     AfterOpen = CDS_FluxoFornecedoresAfterOpen
     AfterScroll = CDS_FluxoFornecedoresAfterScroll
-    Left = 1022
-    Top = 90
+    Left = 1025
+    Top = 89
     object CDS_FluxoFornecedoresORDEM: TIntegerField
       FieldName = 'ORDEM'
     end
@@ -8180,13 +8032,13 @@ object DMBelShop: TDMBelShop
   object DSP_FluxoFornecedores: TDataSetProvider
     DataSet = SDS_FluxoFornecedores
     Options = [poRetainServerOrder]
-    Left = 974
-    Top = 107
+    Left = 977
+    Top = 106
   end
   object DS_FluxoFornecedores: TDataSource
     DataSet = CDS_FluxoFornecedores
-    Left = 1050
-    Top = 107
+    Left = 1053
+    Top = 106
   end
   object SDS_FluxoFornHistorico: TSQLDataSet
     CommandText = 
@@ -8198,15 +8050,15 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 933
-    Top = 209
+    Left = 936
+    Top = 208
   end
   object CDS_FluxoFornHistorico: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoFornHistorico'
-    Left = 1014
-    Top = 208
+    Left = 1017
+    Top = 207
     object CDS_FluxoFornHistoricoDES_HISTORICO: TStringField
       DisplayLabel = 'Descri'#231#227'o'
       FieldName = 'DES_HISTORICO'
@@ -8228,103 +8080,13 @@ object DMBelShop: TDMBelShop
   object DSP_FluxoFornHistorico: TDataSetProvider
     DataSet = SDS_FluxoFornHistorico
     Options = [poRetainServerOrder]
-    Left = 974
-    Top = 220
+    Left = 977
+    Top = 219
   end
   object DS_FluxoFornHistorico: TDataSource
     DataSet = CDS_FluxoFornHistorico
-    Left = 1050
-    Top = 220
-  end
-  object SDS_EstoquePrevisao: TSQLDataSet
-    CommandText = 
-      'SELECT'#13#10' CAST(fc.num_dias_estocagem AS INTEGER) NUM_DIAS_ESTOCAG' +
-      'EM,'#13#10' CAST('#39'25.61'#39' AS NUMERIC(12,4)) QTD_VENDA_DIA,'#13#10' CAST('#39'13'#39' ' +
-      'AS INTEGER) QTD_ESTOQUE,'#13#10' CAST((13 * 39.81) AS NUMERIC(12,2)) E' +
-      'ST_PC_CUSTO,'#13#10' CAST((13 * 74.98) AS NUMERIC(12,2)) EST_PC_VENDA,' +
-      #13#10' CAST((fc.num_dias_estocagem * 25.61) AS INTEGER) DM_PREVISTA,' +
-      #13#10' CAST(((fc.num_dias_estocagem * 25.61) * 39.81) AS NUMERIC(12,' +
-      '2)) DM_PREV_PC_CUSTO,'#13#10' CAST(((fc.num_dias_estocagem * 25.61) * ' +
-      '74.98) AS NUMERIC(12,2)) DM_PREV_PC_VENDA'#13#10#13#10' FROM ES_FINAN_CURV' +
-      'A_ABC fc'#13#10' WHERE fc.cod_loja = '#39'01'#39#13#10' and   fc.cod_produto = '#39'02' +
-      '9811'#39
-    MaxBlobSize = -1
-    Params = <>
-    SQLConnection = SQLC
-    Left = 465
-    Top = 512
-  end
-  object DSP_EstoquePrevisao: TDataSetProvider
-    DataSet = SDS_EstoquePrevisao
-    Options = [poRetainServerOrder]
-    Left = 507
-    Top = 528
-  end
-  object CDS_EstoquePrevisao: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'DSP_EstoquePrevisao'
-    Left = 544
-    Top = 512
-    object CDS_EstoquePrevisaoNUM_DIAS_ESTOCAGEM: TIntegerField
-      DisplayLabel = 'Dias EstG'
-      FieldName = 'NUM_DIAS_ESTOCAGEM'
-      DisplayFormat = '0,'
-    end
-    object CDS_EstoquePrevisaoQTD_VENDA_DIA: TFMTBCDField
-      DisplayLabel = 'Qt Vd Dia'
-      FieldName = 'QTD_VENDA_DIA'
-      Required = True
-      DisplayFormat = '0,.0000'
-      Precision = 15
-      Size = 4
-    end
-    object CDS_EstoquePrevisaoQTD_ESTOQUE: TIntegerField
-      DisplayLabel = 'Qt Est'
-      FieldName = 'QTD_ESTOQUE'
-      Required = True
-      DisplayFormat = '0,'
-    end
-    object CDS_EstoquePrevisaoEST_PC_CUSTO: TFMTBCDField
-      DisplayLabel = 'Est P'#231' Ct'
-      FieldName = 'EST_PC_CUSTO'
-      Required = True
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_EstoquePrevisaoEST_PC_VENDA: TFMTBCDField
-      DisplayLabel = 'Est P'#231' Vd'
-      FieldName = 'EST_PC_VENDA'
-      Required = True
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_EstoquePrevisaoDM_PREVISTA: TIntegerField
-      DisplayLabel = 'Dm Prev'
-      FieldName = 'DM_PREVISTA'
-      DisplayFormat = '0,'
-    end
-    object CDS_EstoquePrevisaoDM_PREV_PC_CUSTO: TFMTBCDField
-      DisplayLabel = 'Dm Prev P'#231' Ct'
-      FieldName = 'DM_PREV_PC_CUSTO'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_EstoquePrevisaoDM_PREV_PC_VENDA: TFMTBCDField
-      DisplayLabel = 'Dm Prev P'#231' Vd'
-      FieldName = 'DM_PREV_PC_VENDA'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 2
-    end
-  end
-  object DS_EstoquePrevisao: TDataSource
-    DataSet = CDS_EstoquePrevisao
-    Left = 582
-    Top = 528
+    Left = 1053
+    Top = 219
   end
   object SDS_FluxoFornReducao: TSQLDataSet
     CommandText = 
@@ -8334,16 +8096,16 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 933
-    Top = 267
+    Left = 936
+    Top = 266
   end
   object CDS_FluxoFornReducao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoFornReducao'
     AfterScroll = CDS_FluxoFornReducaoAfterScroll
-    Left = 1014
-    Top = 266
+    Left = 1017
+    Top = 265
     object CDS_FluxoFornReducaoCOD_FORNECEDOR: TIntegerField
       DisplayLabel = 'C'#243'd Forn'
       FieldName = 'COD_FORNECEDOR'
@@ -8357,13 +8119,13 @@ object DMBelShop: TDMBelShop
   object DSP_FluxoFornReducao: TDataSetProvider
     DataSet = SDS_FluxoFornReducao
     Options = [poRetainServerOrder]
-    Left = 974
-    Top = 283
+    Left = 977
+    Top = 282
   end
   object DS_FluxoFornReducao: TDataSource
     DataSet = CDS_FluxoFornReducao
-    Left = 1050
-    Top = 283
+    Left = 1053
+    Top = 282
   end
   object SDS_FluxoPercReducao: TSQLDataSet
     CommandText = 
@@ -8380,15 +8142,15 @@ object DMBelShop: TDMBelShop
         ParamType = ptInput
       end>
     SQLConnection = SQLC
-    Left = 933
-    Top = 330
+    Left = 936
+    Top = 329
   end
   object CDS_FluxoPercReducao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoPercReducao'
-    Left = 1014
-    Top = 329
+    Left = 1017
+    Top = 328
     object CDS_FluxoPercReducaoNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
     end
@@ -8425,13 +8187,13 @@ object DMBelShop: TDMBelShop
   object DSP_FluxoPercReducao: TDataSetProvider
     DataSet = SDS_FluxoPercReducao
     Options = [poRetainServerOrder]
-    Left = 974
-    Top = 346
+    Left = 977
+    Top = 345
   end
   object DS_FluxoPercReducao: TDataSource
     DataSet = CDS_FluxoPercReducao
-    Left = 1050
-    Top = 346
+    Left = 1053
+    Top = 345
   end
   object SDS_Prioridades: TSQLDataSet
     CommandText = 
@@ -8452,16 +8214,16 @@ object DMBelShop: TDMBelShop
         Value = 'NAO'
       end>
     SQLConnection = SQLC
-    Left = 693
-    Top = 544
+    Left = 696
+    Top = 543
   end
   object CDS_Prioridades: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Prioridades'
     AfterScroll = CDS_PrioridadesAfterScroll
-    Left = 774
-    Top = 543
+    Left = 777
+    Top = 542
     object CDS_PrioridadesCOD_PRIORIDADE: TIntegerField
       FieldName = 'COD_PRIORIDADE'
       Required = True
@@ -8503,13 +8265,13 @@ object DMBelShop: TDMBelShop
   object DSP_Prioridades: TDataSetProvider
     DataSet = SDS_Prioridades
     Options = [poRetainServerOrder]
-    Left = 734
-    Top = 560
+    Left = 737
+    Top = 559
   end
   object DS_Prioridades: TDataSource
     DataSet = CDS_Prioridades
-    Left = 810
-    Top = 560
+    Left = 813
+    Top = 559
   end
   object SDS_PrioridadeProd: TSQLDataSet
     CommandText = 
@@ -8526,15 +8288,15 @@ object DMBelShop: TDMBelShop
         ParamType = ptInput
       end>
     SQLConnection = SQLC
-    Left = 693
-    Top = 608
+    Left = 696
+    Top = 607
   end
   object CDS_PrioridadeProd: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_PrioridadeProd'
-    Left = 774
-    Top = 607
+    Left = 777
+    Top = 606
     object CDS_PrioridadeProdCOD_PRODUTO: TFMTBCDField
       DisplayLabel = 'C'#243'd Linx'
       FieldName = 'COD_PRODUTO'
@@ -8566,13 +8328,13 @@ object DMBelShop: TDMBelShop
   object DSP_PrioridadeProd: TDataSetProvider
     DataSet = SDS_PrioridadeProd
     Options = [poRetainServerOrder]
-    Left = 734
-    Top = 624
+    Left = 737
+    Top = 623
   end
   object DS_PrioridadeProd: TDataSource
     DataSet = CDS_PrioridadeProd
-    Left = 810
-    Top = 624
+    Left = 813
+    Top = 623
   end
   object SDS_NivelAtendCurvas: TSQLDataSet
     CommandText = 
@@ -8607,26 +8369,26 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 1155
-    Top = 539
+    Left = 1158
+    Top = 538
   end
   object DS_NivelAtendCurvas: TDataSource
     DataSet = CDS_NivelAtendCurvas
-    Left = 1282
-    Top = 556
+    Left = 1285
+    Top = 555
   end
   object DSP_NivelAtendCurvas: TDataSetProvider
     DataSet = SDS_NivelAtendCurvas
     Options = [poRetainServerOrder]
-    Left = 1198
-    Top = 556
+    Left = 1201
+    Top = 555
   end
   object CDS_NivelAtendCurvas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_NivelAtendCurvas'
-    Left = 1238
-    Top = 544
+    Left = 1241
+    Top = 543
     object CDS_NivelAtendCurvasCOD_LOJA_LINX: TIntegerField
       DisplayLabel = 'C'#243'd'
       FieldName = 'COD_LOJA_LINX'
@@ -8675,26 +8437,26 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 1155
-    Top = 603
+    Left = 1158
+    Top = 602
   end
   object DS_NivelAtendLojas: TDataSource
     DataSet = CDS_NivelAtendLojas
-    Left = 1282
-    Top = 620
+    Left = 1285
+    Top = 619
   end
   object DSP_NivelAtendLojas: TDataSetProvider
     DataSet = SDS_NivelAtendLojas
     Options = [poRetainServerOrder]
-    Left = 1198
-    Top = 620
+    Left = 1201
+    Top = 619
   end
   object CDS_NivelAtendLojas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_NivelAtendLojas'
-    Left = 1238
-    Top = 608
+    Left = 1241
+    Top = 607
     object CDS_NivelAtendLojasNOME_EMP: TStringField
       DisplayLabel = 'Nome da Loja'
       FieldName = 'NOME_EMP'
@@ -8715,8 +8477,8 @@ object DMBelShop: TDMBelShop
   end
   object DS_FluxoFornVinculados: TDataSource
     DataSet = CDS_FluxoFornVinculados
-    Left = 1056
-    Top = 480
+    Left = 1059
+    Top = 479
   end
   object CDS_FluxoFornVinculados: TClientDataSet
     Aggregates = <>
@@ -8724,8 +8486,8 @@ object DMBelShop: TDMBelShop
     Params = <>
     ProviderName = 'DSP_FluxoFornVinculados'
     AfterPost = CDS_FluxoFornVinculadosAfterPost
-    Left = 1006
-    Top = 462
+    Left = 1009
+    Top = 461
     object CDS_FluxoFornVinculadosCOD_VINCULADO: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_VINCULADO'
@@ -8751,8 +8513,8 @@ object DMBelShop: TDMBelShop
   end
   object DS_FluxoFornVinculo: TDataSource
     DataSet = CDS_FluxoFornVinculo
-    Left = 1042
-    Top = 416
+    Left = 1045
+    Top = 415
   end
   object CDS_FluxoFornVinculo: TClientDataSet
     Aggregates = <>
@@ -8761,8 +8523,8 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_FluxoFornVinculo'
     AfterPost = CDS_FluxoFornVinculoAfterPost
     AfterScroll = CDS_FluxoFornVinculoAfterScroll
-    Left = 1006
-    Top = 404
+    Left = 1009
+    Top = 403
     object CDS_FluxoFornVinculoCOD_FORNECEDOR: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_FORNECEDOR'
@@ -8791,14 +8553,14 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 933
-    Top = 402
+    Left = 936
+    Top = 401
   end
   object DSP_FluxoFornVinculo: TDataSetProvider
     DataSet = SDS_FluxoFornVinculo
     Options = [poRetainServerOrder]
-    Left = 974
-    Top = 418
+    Left = 977
+    Top = 417
   end
   object SDS_FluxoFornVinculados: TSQLDataSet
     CommandText = 
@@ -8809,14 +8571,14 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 933
-    Top = 466
+    Left = 936
+    Top = 465
   end
   object DSP_FluxoFornVinculados: TDataSetProvider
     DataSet = SDS_FluxoFornVinculados
     Options = [poRetainServerOrder]
-    Left = 966
-    Top = 488
+    Left = 969
+    Top = 487
   end
   object IBDS_Busca: TIBDataSet
     Database = IBDB_BelShop
@@ -8923,20 +8685,20 @@ object DMBelShop: TDMBelShop
       ' AND   pr.desativado='#39'N'#39
       ' AND   pr.cod_auxiliar IS NOT NULL'
       ' AND   pr.cod_fornecedor=56')
-    Left = 1272
-    Top = 148
+    Left = 1275
+    Top = 147
   end
   object DS_ComprasEstoqueCD: TDataSource
     DataSet = CDS_ComprasEstoqueCD
-    Left = 1056
-    Top = 576
+    Left = 1059
+    Top = 575
   end
   object CDS_ComprasEstoqueCD: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ComprasEstoqueCD'
-    Left = 1006
-    Top = 558
+    Left = 1009
+    Top = 557
     object CDS_ComprasEstoqueCDCOD_PRODUTO: TFMTBCDField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_PRODUTO'
@@ -9041,13 +8803,13 @@ object DMBelShop: TDMBelShop
         ParamType = ptInput
       end>
     SQLConnection = SQLC
-    Left = 925
-    Top = 562
+    Left = 928
+    Top = 561
   end
   object DSP_ComprasEstoqueCD: TDataSetProvider
     DataSet = SDS_ComprasEstoqueCD
     Options = [poRetainServerOrder]
-    Left = 966
-    Top = 576
+    Left = 969
+    Top = 575
   end
 end

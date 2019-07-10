@@ -1,4 +1,5 @@
 unit UFrmAtualizaSeteHoras;
+//OdirRetornar
 
 interface
 
@@ -25,9 +26,12 @@ type
     Procedure BuscaMovtosDebCreLINX;
     Procedure CalculaFluxoCaixaFornecedores(sDt: String=''; sCodForn: String ='');
 
-    Procedure CodigoBarras;
+    // OdirApagar - 07/06/2019 -- SIDICOM Desativado
+    // Procedure CodigoBarras;
 
-    Procedure AcertaEstoqueLoja;
+    // OdirApagar - 07/06/2019 -- SIDICOM Desativado
+    // Procedure AcertaEstoqueLoja; // Iguala Todos os Produtos de Todas a Lojas com o CD
+
 
     Procedure SidicomDataBackup;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -50,6 +54,8 @@ var
   TD1: TTransactionDesc;
 
   IBQ_ConsultaFilial: TIBQuery;
+
+  bgRodaCCorrente: Boolean; // Se Roda o Processametno do Conta Corrente
 
   igDiasUteis : Integer;
 
@@ -143,223 +149,228 @@ Begin
   ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
 End; // Acerta Data de Backup do Sidicom >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Iguala Todos os Produtos de Todas a Lojas com o CD >>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAtualizaSeteHoras.AcertaEstoqueLoja;
-Var
-  MySql: String;
-  sCodLoja: String;
-Begin
-  // Verifica se Transação esta Ativa
-  If DMAtualizaSeteHoras.SQLC.InTransaction Then
-   DMAtualizaSeteHoras.SQLC.Rollback(TD);
+// OdirApagar - 07/06/2019 -- SIDICOM Desativado
+//// Iguala Todos os Produtos de Todas a Lojas com o CD >>>>>>>>>>>>>>>>>>>>>>>>>>
+//Procedure TFrmAtualizaSeteHoras.AcertaEstoqueLoja;
+//Var
+//  MySql: String;
+//  sCodLoja: String;
+//Begin
+//  // Verifica se Transação esta Ativa
+//  If DMAtualizaSeteHoras.SQLC.InTransaction Then
+//   DMAtualizaSeteHoras.SQLC.Rollback(TD);
+//
+//  MySql:=' SELECT e.cod_filial'+
+//         ' FROM EMP_CONEXOES e'+
+//         //OpssAqui
+//         // Somente Uma Loja
+//         // ' WHERE e.cod_linx=28'+ // Blumenau
+//         ' WHERE e.ind_ativo=''SIM'''+
+//         ' AND   e.dta_inicio_linx IS NOT NULL'+
+//         ' ORDER BY 1';
+//  DMAtualizaSeteHoras.CDS_Lojas.Close;
+//  DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
+//  DMAtualizaSeteHoras.CDS_Lojas.Open;
+//
+//  DMAtualizaSeteHoras.CDS_Lojas.DisableControls;
+//  While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
+//  Begin
+//    // Monta Transacao =========================================================
+//    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//    TD.IsolationLevel:=xilREADCOMMITTED;
+//    DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
+//    Try // Try da Transação
+//      DateSeparator:='.';
+//      DecimalSeparator:='.';
+//
+//      sCodLoja:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('Cod_Filial').AsString;
+//
+//      // Insere Produtos do CD na Loja =========================================
+//      MySql:=' INSERT INTO ESTOQUE'+
+//             ' SELECT'+
+//             QuotedStr(sCodLoja)+' CODFILIAL,'+
+//             ' e.CODPRODUTO,'+
+//             ' 0.0000 SALDOATUAL,'+
+//             ' 0.0000 PEDIDOPENDENTE,'+
+//             ' 0 ZONAENDERECO,'+
+//             ' ''000'' CORREDOR,'+
+//             ' ''000'' PRATELEIRA,'+
+//             ' ''0000'' GAVETA,'+
+//             ' 0.00 CUSMEDVALOR,'+
+//             ' 0.0000 CUSTOMEDIO,'+
+//             ' 0.0000 LASTPRECOCOMPRA,'+
+//             ' 0.0000 LASTCUSTOMEDIO,'+
+//             ' 0.0000 ESTOQUEIDEAL,'+
+//             ' 0.0000 ESTOQUEMAXIMO,'+
+//             ' e.DATAALTERACADASTRO,'+
+//             ' e.DATAALTERAESTOQUE,'+
+//             ' e.DATAALTERAESTOQUE_PED,'+
+//             ' e.PRINCIPALFOR,'+
+//             ' 0.0000 SALDO_FINAL_SIDICOM,'+
+//             ' e.DTA_ATUALIZACAO,'+
+//             ' e.HRA_ATUALIZACAO'+
+//
+//             ' FROM ESTOQUE e'+
+//
+//             ' WHERE e.codfilial=''99'''+
+//             ' AND NOT EXISTS (SELECT 1'+
+//             '                 FROM ESTOQUE e9'+
+//             '                 WHERE e9.codfilial='+QuotedStr(sCodLoja)+
+//             '                 AND  e9.codproduto=e.codproduto)';
+//      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+//
+//      // Exclui Produtos a mais no Cadastro em Relação ao CD ===================
+//      MySql:=' DELETE FROM ESTOQUE e'+
+//             ' WHERE e.codfilial='+QuotedStr(sCodLoja)+
+//             ' AND NOT EXISTS (SELECT 1'+
+//             '                 FROM ESTOQUE e9'+
+//             '                 WHERE e9.codfilial=''99'''+
+//             '                 AND   e9.codproduto=e.codproduto)';
+//      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+//
+//      // Atualiza Transacao ======================================================
+//      DMAtualizaSeteHoras.SQLC.Commit(TD);
+//
+//      DateSeparator:='/';
+//      DecimalSeparator:=',';
+//
+//      tgMySqlErro.Add('AcertaEstoqueLoja: Loja '+sCodLoja+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+//      tgMySqlErro.Add('==================================');
+//      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
+//    Except // Except da Transação
+//      on e : Exception do
+//      Begin
+//        // Abandona Transacao ====================================================
+//        DMAtualizaSeteHoras.SQLC.Rollback(TD);
+//
+//        DateSeparator:='/';
+//        DecimalSeparator:=',';
+//
+//        tgMySqlErro.Add('AcertaEstoqueLoja: Loja '+sCodLoja+' - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+//        tgMySqlErro.Add('ERROR: '+e.message);
+//        tgMySqlErro.Add(MySql);
+//        tgMySqlErro.Add('==================================');
+//        tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
+//      End; // on e : Exception do
+//    End; // Try da Transação
+//
+//    DMAtualizaSeteHoras.CDS_Lojas.Next;
+//  End; // While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
+//  DMAtualizaSeteHoras.CDS_Lojas.EnableControls;
+//  DMAtualizaSeteHoras.CDS_Lojas.Close;
+//
+//end; // Igual Todos os Produtos de Todas a Lojas com o CD >>>>>>>>>>>>>>>>>>>>>>
 
-  MySql:=' SELECT e.cod_filial'+
-         ' FROM EMP_CONEXOES e'+
-         ' WHERE e.ind_ativo=''SIM'''+
-         ' AND   e.dta_inicio_linx IS NOT NULL'+
-         ' ORDER BY 1';
-  DMAtualizaSeteHoras.CDS_Lojas.Close;
-  DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
-  DMAtualizaSeteHoras.CDS_Lojas.Open;
-
-  DMAtualizaSeteHoras.CDS_Lojas.DisableControls;
-  While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
-  Begin
-    // Monta Transacao =========================================================
-    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-    TD.IsolationLevel:=xilREADCOMMITTED;
-    DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
-    Try // Try da Transação
-      DateSeparator:='.';
-      DecimalSeparator:='.';
-
-      sCodLoja:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('Cod_Filial').AsString;
-
-      // Insere Produtos do CD na Loja =========================================
-      MySql:=' INSERT INTO ESTOQUE'+
-             ' SELECT'+
-             QuotedStr(sCodLoja)+' CODFILIAL,'+
-             ' e.CODPRODUTO,'+
-             ' 0.0000 SALDOATUAL,'+
-             ' 0.0000 PEDIDOPENDENTE,'+
-             ' 0 ZONAENDERECO,'+
-             ' ''000'' CORREDOR,'+
-             ' ''000'' PRATELEIRA,'+
-             ' ''0000'' GAVETA,'+
-             ' 0.00 CUSMEDVALOR,'+
-             ' 0.0000 CUSTOMEDIO,'+
-             ' 0.0000 LASTPRECOCOMPRA,'+
-             ' 0.0000 LASTCUSTOMEDIO,'+
-             ' 0.0000 ESTOQUEIDEAL,'+
-             ' 0.0000 ESTOQUEMAXIMO,'+
-             ' e.DATAALTERACADASTRO,'+
-             ' e.DATAALTERAESTOQUE,'+
-             ' e.DATAALTERAESTOQUE_PED,'+
-             ' e.PRINCIPALFOR,'+
-             ' 0.0000 SALDO_FINAL_SIDICOM,'+
-             ' e.DTA_ATUALIZACAO,'+
-             ' e.HRA_ATUALIZACAO'+
-
-             ' FROM ESTOQUE e'+
-
-             ' WHERE e.codfilial=''99'''+
-             ' AND NOT EXISTS (SELECT 1'+
-             '                 FROM ESTOQUE e9'+
-             '                 WHERE e9.codfilial='+QuotedStr(sCodLoja)+
-             '                 AND  e9.codproduto=e.codproduto)';
-      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-
-      // Exclui Produtos a mais no Cadastro em Relação ao CD ===================
-      MySql:=' DELETE FROM ESTOQUE e'+
-             ' WHERE e.codfilial='+QuotedStr(sCodLoja)+
-             ' AND NOT EXISTS (SELECT 1'+
-             '                 FROM ESTOQUE e9'+
-             '                 WHERE e9.codfilial=''99'''+
-             '                 AND   e9.codproduto=e.codproduto)';
-      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-
-      // Atualiza Transacao ======================================================
-      DMAtualizaSeteHoras.SQLC.Commit(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      tgMySqlErro.Add('AcertaEstoqueLoja: Loja '+sCodLoja+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
-      tgMySqlErro.Add('==================================');
-      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
-    Except // Except da Transação
-      on e : Exception do
-      Begin
-        // Abandona Transacao ====================================================
-        DMAtualizaSeteHoras.SQLC.Rollback(TD);
-
-        DateSeparator:='/';
-        DecimalSeparator:=',';
-
-        tgMySqlErro.Add('AcertaEstoqueLoja: Loja '+sCodLoja+' - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
-        tgMySqlErro.Add('ERROR: '+e.message);
-        tgMySqlErro.Add(MySql);
-        tgMySqlErro.Add('==================================');
-        tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
-      End; // on e : Exception do
-    End; // Try da Transação
-
-    DMAtualizaSeteHoras.CDS_Lojas.Next;
-  End; // While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
-  DMAtualizaSeteHoras.CDS_Lojas.EnableControls;
-  DMAtualizaSeteHoras.CDS_Lojas.Close;
-
-end; // Igual Todos os Produtos de Todas a Lojas com o CD >>>>>>>>>>>>>>>>>>>>>>
-
-// Busca Codigo de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAtualizaSeteHoras.CodigoBarras;
-Var
-   bSiga: Boolean;
-   i: Integer;
-   MySql: String;
-Begin
-  bSiga:=False;
-  sgCodEmp:='99';
-
-  // Conecta Loja =======================================================
-  If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
-   Begin
-     // Cria Query da Empresa ------------------------------------
-     CriaQueryIB('IBDB_'+sgCodEmp,'IBT_'+sgCodEmp, IBQ_ConsultaFilial, True);
-     bSiga:=True;
-   End
-  Else
-   Begin
-     bSiga:=False;
-   End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
-
-  If bSiga Then
-  Begin
-    // Abre Query -----------------------------------------------
-    i:=0;
-    bSiga:=False;
-    While Not bSiga do
-    Begin
-      Try
-        MySql:=' SELECT CODBARRA, CODPRODUTO, UNIDADEPORCAIXA, ETIQUETAS_SN'+
-               ' FROM PRODUTOSBARRA';
-        IBQ_ConsultaFilial.Close;
-        IBQ_ConsultaFilial.SQL.Clear;
-        IBQ_ConsultaFilial.SQL.Add(MySql);
-        IBQ_ConsultaFilial.Open;
-
-        bSiga:=True;
-      Except
-        Inc(i);
-      End; // Try
-
-      If i>2 Then
-      Begin
-        Break;
-      End; // If i>10 Then
-    End; // While Not bSiga do
-
-    // Processamento ===========================================================
-    If bSiga Then // Query Executada
-    Begin
-      // Monta Transacao =======================================================
-      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-      TD.IsolationLevel:=xilREADCOMMITTED;
-      DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
-      Try
-        DateSeparator:='.';
-        DecimalSeparator:='.';
-
-        // Exclui Centro de Custos =============================================
-        MySql:=' DELETE FROM PRODUTOSBARRA';
-        DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-
-        While Not IBQ_ConsultaFilial.Eof do
-        Begin
-          // Insere Centro de Custos -------------------------------------------
-          MySql:=' INSERT INTO PRODUTOSBARRA'+
-                 ' (CODBARRA, CODPRODUTO, UNIDADEPORCAIXA, ETIQUETAS_SN)'+
-
-                 ' VALUES ('+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODBARRA').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODPRODUTO').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('UNIDADEPORCAIXA').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('ETIQUETAS_SN').AsString)+')';
-          DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
-
-          IBQ_ConsultaFilial.Next;
-        End; // While Not IBQ_ConsultaFilial.Eof do
-        IBQ_ConsultaFilial.Close;
-
-        // Fecha Transacao =================================================
-        DMAtualizaSeteHoras.SQLC.Commit(TD);
-
-        DateSeparator:='/';
-        DecimalSeparator:=',';
-
-        tgMySqlErro.Add('CodigoBarras - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
-        tgMySqlErro.Add('==================================');
-        tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
-      Except
-        on e : Exception do
-        Begin
-          DMAtualizaSeteHoras.SQLC.Rollback(TD);
-
-          DateSeparator:='/';
-          DecimalSeparator:=',';
-
-          tgMySqlErro.Add('CodigoBarras - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
-          tgMySqlErro.Add('ERROR: '+e.message);
-          tgMySqlErro.Add(MySql);
-          tgMySqlErro.Add('==================================');
-          tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
-        End; // on e : Exception do
-      End; // Try
-    End; // If bSiga Then
-    ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F')
-  End; // If bSiga Then
-
-end; // Atualiza Centro de Custos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// OdirApagar - 07/06/2019 -- SIDICOM Desativado
+//// Busca Codigo de Barras no SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Procedure TFrmAtualizaSeteHoras.CodigoBarras;
+//Var
+//   bSiga: Boolean;
+//   i: Integer;
+//   MySql: String;
+//Begin
+//  bSiga:=False;
+//  sgCodEmp:='99';
+//
+//  // Conecta Loja =======================================================
+//  If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+//   Begin
+//     // Cria Query da Empresa ------------------------------------
+//     CriaQueryIB('IBDB_'+sgCodEmp,'IBT_'+sgCodEmp, IBQ_ConsultaFilial, True);
+//     bSiga:=True;
+//   End
+//  Else
+//   Begin
+//     bSiga:=False;
+//   End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+//
+//  If bSiga Then
+//  Begin
+//    // Abre Query -----------------------------------------------
+//    i:=0;
+//    bSiga:=False;
+//    While Not bSiga do
+//    Begin
+//      Try
+//        MySql:=' SELECT CODBARRA, CODPRODUTO, UNIDADEPORCAIXA, ETIQUETAS_SN'+
+//               ' FROM PRODUTOSBARRA';
+//        IBQ_ConsultaFilial.Close;
+//        IBQ_ConsultaFilial.SQL.Clear;
+//        IBQ_ConsultaFilial.SQL.Add(MySql);
+//        IBQ_ConsultaFilial.Open;
+//
+//        bSiga:=True;
+//      Except
+//        Inc(i);
+//      End; // Try
+//
+//      If i>2 Then
+//      Begin
+//        Break;
+//      End; // If i>10 Then
+//    End; // While Not bSiga do
+//
+//    // Processamento ===========================================================
+//    If bSiga Then // Query Executada
+//    Begin
+//      // Monta Transacao =======================================================
+//      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//      TD.IsolationLevel:=xilREADCOMMITTED;
+//      DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
+//      Try
+//        DateSeparator:='.';
+//        DecimalSeparator:='.';
+//
+//        // Exclui Centro de Custos =============================================
+//        MySql:=' DELETE FROM PRODUTOSBARRA';
+//        DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+//
+//        While Not IBQ_ConsultaFilial.Eof do
+//        Begin
+//          // Insere Centro de Custos -------------------------------------------
+//          MySql:=' INSERT INTO PRODUTOSBARRA'+
+//                 ' (CODBARRA, CODPRODUTO, UNIDADEPORCAIXA, ETIQUETAS_SN)'+
+//
+//                 ' VALUES ('+
+//                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODBARRA').AsString)+', '+
+//                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODPRODUTO').AsString)+', '+
+//                 QuotedStr(IBQ_ConsultaFilial.FieldByName('UNIDADEPORCAIXA').AsString)+', '+
+//                 QuotedStr(IBQ_ConsultaFilial.FieldByName('ETIQUETAS_SN').AsString)+')';
+//          DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
+//
+//          IBQ_ConsultaFilial.Next;
+//        End; // While Not IBQ_ConsultaFilial.Eof do
+//        IBQ_ConsultaFilial.Close;
+//
+//        // Fecha Transacao =================================================
+//        DMAtualizaSeteHoras.SQLC.Commit(TD);
+//
+//        DateSeparator:='/';
+//        DecimalSeparator:=',';
+//
+//        tgMySqlErro.Add('CodigoBarras - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+//        tgMySqlErro.Add('==================================');
+//        tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
+//      Except
+//        on e : Exception do
+//        Begin
+//          DMAtualizaSeteHoras.SQLC.Rollback(TD);
+//
+//          DateSeparator:='/';
+//          DecimalSeparator:=',';
+//
+//          tgMySqlErro.Add('CodigoBarras - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+//          tgMySqlErro.Add('ERROR: '+e.message);
+//          tgMySqlErro.Add(MySql);
+//          tgMySqlErro.Add('==================================');
+//          tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
+//        End; // on e : Exception do
+//      End; // Try
+//    End; // If bSiga Then
+//    ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F')
+//  End; // If bSiga Then
+//
+//end; // Busca Codigo de Barras no SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Monta SQL's Para Busca SIDICOM / LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.MontaSqlsSidicomLinx;
@@ -370,91 +381,95 @@ Begin
   // Monta Select de Busca de Debitos e Créditos (LINX) ========================
   //============================================================================
   // Todos Cfops dos Fornecedores que estão no Conta Corrente ==================
-      MySql:=' SELECT'+
-             ' fo.cod_fornecedor COD_FORNECEDOR,'+ // 1'+
-             ' fo.des_fornecedor DES_FORNECEDOR,'+ // 2'+
-             ' fo.cod_vinculado COD_VINCULADO,'+ // 3'+
-             ' fo.des_vinculado DES_VINCULADO,'+ // 4'+
+  MySql:=' SELECT'+
+         ' fo.cod_fornecedor COD_FORNECEDOR,'+ // 1'+
+         ' fo.des_fornecedor DES_FORNECEDOR,'+ // 2'+
+         ' fo.cod_vinculado COD_VINCULADO,'+ // 3'+
+         ' fo.des_vinculado DES_VINCULADO,'+ // 4'+
 
-             ' CAST((ROUND((SUM('+ // 5
-             '    CASE'+
-             '       WHEN (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=6603) or (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=5603) THEN'+ // Ressarcimento ICMS_ST
-             '          COALESCE(mf.valor_icms_st,0.00)'+
-             '       ELSE'+
-             '          COALESCE(mf.valor_total,0.00)'+
-             '    END'+
-             ' )), 2)) AS NUMERIC(18,2)) VLR_ORIGEM,'+
+         ' CAST((ROUND((SUM('+ // 5
+         '    CASE'+
+         '       WHEN (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=6603) or (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=5603) THEN'+ // Ressarcimento ICMS_ST
+         '          COALESCE(mf.valor_icms_st,0.00)'+
+         '       ELSE'+
+         '          COALESCE(mf.valor_total,0.00)'+
+         '    END'+
+         ' )), 2)) AS NUMERIC(18,2)) VLR_ORIGEM,'+
 
-             ' CAST(mf.data_documento AS DATE) DTA_ORIGEM,'+ // 6'+
-             ' CAST(mf.data_lancamento AS DATE) DTA_CAIXA,'+ // 7'+
-             ' mf.data_lancamento,'+ // 8'+
-             ' 0  NUM_SEQ,'+ // 9'+
-             ' TRIM(mf.chave_nf) NUM_CHAVENF,'+ // 10'+
-             ' mf.empresa COD_EMPRESA,'+ // 11'+
-             ' hi.cod_historico COD_HISTORICO,'+ // 12'+
-             ' NULL TXT_OBS,'+ // 13'+
-             ' CAST(SUBSTRING(mf.documento FROM 1 FOR 12) AS VARCHAR(12)) NUM_DOCUMENTO,'+ // 14'+
-             ' CAST(TRIM(mf.serie) AS VARCHAR(4)) NUM_SERIE,'+ // 15'+
+         ' CAST(mf.data_documento AS DATE) DTA_ORIGEM,'+ // 6'+
+         ' CAST(mf.data_lancamento AS DATE) DTA_CAIXA,'+ // 7'+
+         ' mf.data_lancamento,'+ // 8'+
+         ' 0  NUM_SEQ,'+ // 9'+
+         ' TRIM(mf.chave_nf) NUM_CHAVENF,'+ // 10'+
+         ' mf.empresa COD_EMPRESA,'+ // 11'+
+         ' hi.cod_historico COD_HISTORICO,'+ // 12'+
+         ' NULL TXT_OBS,'+ // 13'+
+         ' CAST(SUBSTRING(mf.documento FROM 1 FOR 12) AS VARCHAR(12)) NUM_DOCUMENTO,'+ // 14'+
+         ' CAST(TRIM(mf.serie) AS VARCHAR(4)) NUM_SERIE,'+ // 15'+
 
-             // Percentual de Redução -------------------------------
-             ' COALESCE((SELECT r.per_reducao'+
-             '           FROM FL_CAIXA_PERC_REDUCAO r'+
-             '           WHERE r.cod_fornecedor = fo.cod_vinculado'+
-             '           AND   r.cod_comprovante = hi.cod_historico'+
-             '           AND   r.dta_incio<=CAST(mf.data_lancamento AS DATE)'+
-             '           AND   COALESCE(r.dta_fim, CAST(''31.12.3000'' AS DATE))>=CAST(mf.data_lancamento AS DATE))'+
-             ' ,0.00) PER_REDUCAO,'+ // 16'+
+         // Percentual de Redução -------------------------------
+         ' COALESCE((SELECT r.per_reducao'+
+         '           FROM FL_CAIXA_PERC_REDUCAO r'+
+         '           WHERE r.cod_fornecedor = fo.cod_vinculado'+
+         '           AND   r.cod_comprovante = hi.cod_historico'+
+         '           AND   r.dta_incio<=CAST(mf.data_lancamento AS DATE)'+
+         '           AND   COALESCE(r.dta_fim, CAST(''31.12.3000'' AS DATE))>=CAST(mf.data_lancamento AS DATE))'+
+         ' ,0.00) PER_REDUCAO,'+ // 16'+
 
-             ' hi.ind_debcre TIP_DEBCRE,'+ // 17'+
+         ' hi.ind_debcre TIP_DEBCRE,'+ // 17'+
 
-             ' CAST((ROUND((SUM('+ // 18
-             '    CASE'+
-             '       WHEN (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=6603) or (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=5603) THEN'+ // Ressarcimento ICMS_ST
-             '          COALESCE(mf.valor_icms_st,0.00)'+
-             '       ELSE'+
-             '          COALESCE(mf.valor_total,0.00)'+
-             '    END'+
-             ' )), 2)) AS NUMERIC(18,2)) VLR_CAIXA,'+ // 18'+
+         ' CAST((ROUND((SUM('+ // 18
+         '    CASE'+
+         '       WHEN (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=6603) or (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=5603) THEN'+ // Ressarcimento ICMS_ST
+         '          COALESCE(mf.valor_icms_st,0.00)'+
+         '       ELSE'+
+         '          COALESCE(mf.valor_total,0.00)'+
+         '    END'+
+         ' )), 2)) AS NUMERIC(18,2)) VLR_CAIXA,'+ // 18'+
 
-             ' 0.00 VLR_SALDO,'+ // 19'+
+         ' 0.00 VLR_SALDO,'+ // 19'+
 
-             // Fornecedor Sidicom ----------------------------------
-             ' fr.doc_cliente,'+ // 20'+
-             ' COALESCE((SELECT max(fs.codfornecedor) codfornecedor'+
-             '           FROM FORNECEDOR fs'+
-             '           WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
-             '                 REPLACE(REPLACE(REPLACE(TRIM(fr.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', ''''))'+
-             ' , ''000000'') CODFORNECEDOR,'+ // 21'+
+         ' fr.doc_cliente,'+ // 20'+
 
-             ' mf.empresa COD_LOJA_LINX,'+ // 22'+
-             ' mf.cod_loja COD_LOJA_SIDICOM'+ // 23'+
+// OdirApagar - 07/06/2019 -- SIDICOM Desativado
+//         // Fornecedor Sidicom ----------------------------------
+//         ' COALESCE((SELECT max(fs.codfornecedor) codfornecedor'+
+//         '           FROM FORNECEDOR fs'+
+//         '           WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
+//         '                 REPLACE(REPLACE(REPLACE(TRIM(fr.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', ''''))'+
+//         ' , ''000000'') CODFORNECEDOR,'+ // 21'+
+         // Fornecedor Sidicom ----------------------------------
+         ' ''000000'' CODFORNECEDOR,'+ // 21'+
 
-             ' FROM LINXMOVIMENTO mf, TAB_AUXILIAR cf,'+
-             '      FL_CAIXA_HISTORICOS hi, LINXCLIENTESFORNEC fr,'+
-             '      (SELECT DISTINCT ff.cod_fornecedor, ff.des_fornecedor,'+
-             '                       ff.cod_vinculado, ff.des_vinculado'+
-             '       FROM FL_CAIXA_FORNECEDORES ff'+
-             '       WHERE ff.num_seq NOT IN (0,999999)) fo'+
+         ' mf.empresa COD_LOJA_LINX,'+ // 22'+
+         ' mf.cod_loja COD_LOJA_SIDICOM'+ // 23'+
 
-             ' WHERE CAST(TRIM(COALESCE(mf.id_cfop,''0'')) AS INTEGER)=cf.cod_aux'+
-             ' AND   mf.codigo_cliente=fo.cod_vinculado'+
-             ' AND   CAST(cf.des_aux as INTEGER)=hi.cod_historico'+
-             ' AND   mf.codigo_cliente=fr.cod_cliente'+
-             ' AND   cf.tip_aux=25'+ // CONTA CORRENTE FORNECEDORES - CFops Utilizados
-             ' AND   mf.cancelado= ''N'''+
-             ' AND   mf.excluido = ''N'''+
-             ' AND   COALESCE(mf.tipo_transacao, '''') <> ''J'''+ // NÃO Pode Ajustes de Estoques
+         ' FROM LINXMOVIMENTO mf, TAB_AUXILIAR cf,'+
+         '      FL_CAIXA_HISTORICOS hi, LINXCLIENTESFORNEC fr,'+
+         '      (SELECT DISTINCT ff.cod_fornecedor, ff.des_fornecedor,'+
+         '                       ff.cod_vinculado, ff.des_vinculado'+
+         '       FROM FL_CAIXA_FORNECEDORES ff'+
+         '       WHERE ff.num_seq NOT IN (0,999999)) fo'+
 
-             ' AND   mf.empresa = :CodEmpLinx'+ // Codigo da Empresa Linx
-             ' AND   CAST(mf.data_lancamento AS DATE) >= :DtaInicioLinx'; // Data Inicio do Limite
+         ' WHERE CAST(TRIM(COALESCE(mf.id_cfop,''0'')) AS INTEGER)=cf.cod_aux'+
+         ' AND   mf.codigo_cliente=fo.cod_vinculado'+
+         ' AND   CAST(cf.des_aux as INTEGER)=hi.cod_historico'+
+         ' AND   mf.codigo_cliente=fr.cod_cliente'+
+         ' AND   cf.tip_aux=25'+ // CONTA CORRENTE FORNECEDORES - CFops Utilizados
+         ' AND   mf.cancelado= ''N'''+
+         ' AND   mf.excluido = ''N'''+
+         ' AND   COALESCE(mf.tipo_transacao, '''') <> ''J'''+ // NÃO Pode Ajustes de Estoques
 
-             // Se Parametro sgCodForn ------------------------------
-             If Trim(sgCodForn)<>'' Then
-              MySql:=
-               MySql+' AND   mf.codigo_cliente=:CodForn';
+         ' AND   mf.empresa = :CodEmpLinx'+ // Codigo da Empresa Linx
+         ' AND   CAST(mf.data_lancamento AS DATE) >= :DtaInicioLinx'; // Data Inicio do Limite
 
-      MySql:=
-       MySql+' GROUP BY 1,2,3,4,6,7,8,10,11,12,14,15,16,17,20,21,22,23';
+         // Se Parametro sgCodForn ------------------------------
+         If Trim(sgCodForn)<>'' Then
+          MySql:=
+           MySql+' AND   mf.codigo_cliente=:CodForn';
+
+  MySql:=
+   MySql+' GROUP BY 1,2,3,4,6,7,8,10,11,12,14,15,16,17,20,21,22,23';
 
   // Cfops 5923 - Perdas dos Fornecedores que estão no Conta Corrente ==========
   MySqlLinx:=
@@ -516,14 +531,18 @@ Begin
              ' CAST((ROUND((SUM(mf.valor_total)), 2)) AS NUMERIC(18,2)) VLR_CAIXA,'+ // 18
              ' 0.00 VLR_SALDO,'+ // 19
 
-             // Fornecedor Sidicom
              ' fr.doc_cliente,'+ // 20
-             ' COALESCE((SELECT max(fs.codfornecedor) codfornecedor'+
-             '           FROM FORNECEDOR fs'+
-             '           WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
-             '                 REPLACE(REPLACE(REPLACE(TRIM(fr.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', ''''))'+
-             ' , ''000000'') CODFORNECEDOR,'+ // 21
 
+// OdirApagar - 07/06/2019 -- SIDICOM Desativado
+//             // Fornecedor Sidicom
+//             ' COALESCE((SELECT max(fs.codfornecedor) codfornecedor'+
+//             '           FROM FORNECEDOR fs'+
+//             '           WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
+//             '                 REPLACE(REPLACE(REPLACE(TRIM(fr.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', ''''))'+
+//             ' , ''000000'') CODFORNECEDOR,'+ // 21
+             // Fornecedor Sidicom ----------------------------------
+             ' ''000000'' CODFORNECEDOR,'+ // 21
+                         
              ' mf.empresa COD_LOJA_LINX,'+ // 22
              ' mf.cod_loja COD_LOJA_SIDICOM'+ // 23
 
@@ -673,10 +692,14 @@ End; // Atualiza Produtos / Compradores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.Demanda4Meses;
 Var
   MySql: String;
+
   dDtaHoje, dDtaInicio, dDtaFim, dDtaCalculo: TDate;
+
+  sCodLjSID, sCodLjLinx,
   sMes1, sMes2, sMes3, sMes4, sMes5: String;
-  i, ii: Integer;
-  e: Extended;
+
+  i: Integer;
+  bDomingo: Boolean;
 Begin
   dDtaHoje  :=DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor);
   dDtaInicio:=IncMonth(dDtaHoje,-4);
@@ -685,8 +708,6 @@ Begin
 
   sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',DateToStr(dDtaInicio)));
   sgDtaFim   :=f_Troca('/','.',f_Troca('-','.',DateToStr(dDtaFim)));
-
-  igDiasUteis   :=DiasUteisBelShop(dDtaInicio, dDtaFim, False, True);
 
   // Calcula os Meses de Demandas Vendas =======================================
   i:=0;
@@ -707,161 +728,198 @@ Begin
   If DMAtualizaSeteHoras.SQLC.InTransaction Then
    DMAtualizaSeteHoras.SQLC.Rollback(TD);
 
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
-  Try
-    DateSeparator:='.';
-    DecimalSeparator:='.';
+  MySql:=' SELECT e.cod_filial, e.cod_linx, e.ind_domingo'+
+         ' FROM EMP_CONEXOES e'+
+         ' WHERE e.ind_ativo=''SIM'''+
+         ' AND   e.dta_inicio_linx IS NOT NULL'+
+         //OpssAqui
+         // Somente Uma Loja
+         // ' AND   e.cod_linx=28'+ // Blumenaur
+         ' ORDER BY 3,2';
+  DMAtualizaSeteHoras.CDS_Lojas.Close;
+  DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
+  DMAtualizaSeteHoras.CDS_Lojas.Open;
 
-    MySql:=' DELETE FROM ES_DEMANDAS_4MESES';
-    DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+  DMAtualizaSeteHoras.CDS_Lojas.DisableControls;
+  While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
+  Begin
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
+    Try
+      DateSeparator:='.';
+      DecimalSeparator:='.';
 
-    MySql:=' INSERT INTO ES_DEMANDAS_4MESES'+
-           ' SELECT dem.codfilial, dem.codproduto,'+
+      sCodLjSID  :=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('Cod_Filial').AsString;
+      sCodLjLinx :=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('Cod_Linx').AsString;
+      bDomingo   :=(DMAtualizaSeteHoras.CDS_Lojas.FieldByName('Ind_Domingo').AsString='S');
+      igDiasUteis:=DiasUteisBelShop(dDtaInicio, dDtaFim, bDomingo, True);
 
-           ' CAST(SUM('+
-           '   CASE'+
-           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes1)+' Then'+
-           '       CAST(dem.quant_ref AS INTEGER)'+
-           '     Else'+
-           '       0'+
-           '   End)'+
-           ' AS INTEGER) qtd_venda_M1,'+
+      MySql:=' DELETE'+
+             ' FROM ES_DEMANDAS_4MESES d4'+
+             ' WHERE d4.cod_linx='+sCodLjLinx;
+      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
 
-           ' CAST(SUM('+
-           '   CASE'+
-           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes2)+' Then'+
-           '       CAST(dem.quant_ref AS INTEGER)'+
-           '     Else'+
-           '       0'+
-           '   End)'+
-           ' AS INTEGER) qtd_venda_M2,'+
+      MySql:=' INSERT INTO ES_DEMANDAS_4MESES'+
+             ' (CODFILIAL, COD_LINX, CODPRODUTO, COD_PROD_LINX, QTD_VENDA_M1,'+
+             '  QTD_VENDA_M2, QTD_VENDA_M3, QTD_VENDA_M4, QTD_VENDA_M5,'+
+             '  QTD_VENDA, QTD_VENDA_DIA, VLR_VENDA_M1, VLR_VENDA_M2,'+
+             '  VLR_VENDA_M3, VLR_VENDA_M4, VLR_VENDA_M5, VLR_VENDA, VLR_VENDA_DIA,'+
+             '  PERIODO_INICIO, PERIODO_FIM, DIAS_UTEIS, DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
 
-           ' CAST(SUM('+
-           '   CASE'+
-           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes3)+' Then'+
-           '       CAST(dem.quant_ref AS INTEGER)'+
-           '     Else'+
-           '       0'+
-           '   End)'+
-           ' AS INTEGER) qtd_venda_M3,'+
+             ' SELECT dem.codfilial, emp.cod_linx, dem.codproduto, dem.cod_prod_linx,'+
 
-           ' CAST(SUM('+
-           '   CASE'+
-           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes4)+' Then'+
-           '       CAST(dem.quant_ref AS INTEGER)'+
-           '     Else'+
-           '       0'+
-           '   End)'+
-           ' AS INTEGER) qtd_venda_M4,'+
+             ' CAST(SUM('+
+             '   CASE'+
+             '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes1)+' Then'+
+             '       CAST(dem.quant_ref AS INTEGER)'+
+             '     Else'+
+             '       0'+
+             '   End)'+
+             ' AS INTEGER) qtd_venda_M1,'+
 
-           ' CAST(SUM('+
-           '   CASE'+
-           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes5)+' Then'+
-           '       CAST(dem.quant_ref AS INTEGER)'+
-           '     Else'+
-           '       0'+
-           '   End)'+
-           ' AS INTEGER) qtd_venda_M5,'+
+             ' CAST(SUM('+
+             '   CASE'+
+             '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes2)+' Then'+
+             '       CAST(dem.quant_ref AS INTEGER)'+
+             '     Else'+
+             '       0'+
+             '   End)'+
+             ' AS INTEGER) qtd_venda_M2,'+
 
-           ' CAST(SUM(dem.quant_ref) AS INTEGER) qtd_venda,'+
+             ' CAST(SUM('+
+             '   CASE'+
+             '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes3)+' Then'+
+             '       CAST(dem.quant_ref AS INTEGER)'+
+             '     Else'+
+             '       0'+
+             '   End)'+
+             ' AS INTEGER) qtd_venda_M3,'+
+
+             ' CAST(SUM('+
+             '   CASE'+
+             '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes4)+' Then'+
+             '       CAST(dem.quant_ref AS INTEGER)'+
+             '     Else'+
+             '       0'+
+             '   End)'+
+             ' AS INTEGER) qtd_venda_M4,'+
+
+             ' CAST(SUM('+
+             '   CASE'+
+             '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes5)+' Then'+
+             '       CAST(dem.quant_ref AS INTEGER)'+
+             '     Else'+
+             '       0'+
+             '   End)'+
+             ' AS INTEGER) qtd_venda_M5,'+
+
+             ' CAST(SUM(dem.quant_ref) AS INTEGER) qtd_venda,'+
 
 
-           ' CAST((SUM(CAST(dem.quant_ref AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,4)) qtd_venda_dia,'+
+             ' CAST((SUM(CAST(dem.quant_ref AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,4)) qtd_venda_dia,'+
 
-           ' CAST(SUM('+
-           '   CASE'+
-           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes1)+' Then'+
-           '       CAST(dem.preco AS NUMERIC(12,2))'+
-           '     Else'+
-           '       0'+
-           '   End)'+
-           ' AS NUMERIC(12,2)) vlr_venda_M1,'+
+             ' CAST(SUM('+
+             '   CASE'+
+             '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes1)+' Then'+
+             '       CAST(dem.preco AS NUMERIC(12,2))'+
+             '     Else'+
+             '       0'+
+             '   End)'+
+             ' AS NUMERIC(12,2)) vlr_venda_M1,'+
 
-           ' CAST(SUM('+
-           '   CASE'+
-           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes2)+' Then'+
-           '       CAST(dem.preco AS NUMERIC(12,2))'+
-           '     Else'+
-           '       0'+
-           '   End)'+
-           ' AS NUMERIC(12,2)) vlr_venda_M2,'+
+             ' CAST(SUM('+
+             '   CASE'+
+             '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes2)+' Then'+
+             '       CAST(dem.preco AS NUMERIC(12,2))'+
+             '     Else'+
+             '       0'+
+             '   End)'+
+             ' AS NUMERIC(12,2)) vlr_venda_M2,'+
 
-           ' CAST(SUM('+
-           '   CASE'+
-           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes3)+' Then'+
-           '       CAST(dem.preco AS NUMERIC(12,2))'+
-           '     Else'+
-           '       0'+
-           '   End)'+
-           ' AS NUMERIC(12,2)) vlr_venda_M3,'+
+             ' CAST(SUM('+
+             '   CASE'+
+             '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes3)+' Then'+
+             '       CAST(dem.preco AS NUMERIC(12,2))'+
+             '     Else'+
+             '       0'+
+             '   End)'+
+             ' AS NUMERIC(12,2)) vlr_venda_M3,'+
 
-           ' CAST(SUM('+
-           '   CASE'+
-           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes4)+' Then'+
-           '       CAST(dem.preco AS NUMERIC(12,2))'+
-           '     Else'+
-           '       0'+
-           '   End)'+
-           ' AS NUMERIC(12,2)) vlr_venda_M4,'+
+             ' CAST(SUM('+
+             '   CASE'+
+             '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes4)+' Then'+
+             '       CAST(dem.preco AS NUMERIC(12,2))'+
+             '     Else'+
+             '       0'+
+             '   End)'+
+             ' AS NUMERIC(12,2)) vlr_venda_M4,'+
 
-           ' CAST(SUM('+
-           '   CASE'+
-           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes5)+' Then'+
-           '       CAST(dem.preco AS NUMERIC(12,2))'+
-           '     Else'+
-           '       0'+
-           '   End)'+
-           ' AS NUMERIC(12,2)) vlr_venda_M5,'+
+             ' CAST(SUM('+
+             '   CASE'+
+             '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+QuotedStr(sMes5)+' Then'+
+             '       CAST(dem.preco AS NUMERIC(12,2))'+
+             '     Else'+
+             '       0'+
+             '   End)'+
+             ' AS NUMERIC(12,2)) vlr_venda_M5,'+
 
-           ' CAST(SUM(dem.preco) AS NUMERIC(12,2)) vlr_venda,'+
+             ' CAST(SUM(dem.preco) AS NUMERIC(12,2)) vlr_venda,'+
 
-           ' CAST((SUM(CAST(dem.preco AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,2)) vlr_venda_dia,'+
+             ' CAST((SUM(CAST(dem.preco AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,2)) vlr_venda_dia, '+
 
-           ' '+QuotedStr(sgDtaInicio)+' periodo_inicio,'+
-           ' '+QuotedStr(sgDtaFim)+'    periodo_fim,'+
+             QuotedStr(sgDtaInicio)+' periodo_inicio, '+
+             QuotedStr(sgDtaFim)+' periodo_fim, '+
+             IntToStr(igDiasUteis)+' dias_uteis,'+
 
-           IntToStr(igDiasUteis)+' dias_uteis,'+
+             ' CURRENT_DATE dta_atualizacao,'+
+             ' CURRENT_TIME hra_atualizacao'+
 
-           ' CURRENT_DATE dta_atualizacao,'+
-           ' CURRENT_TIME hra_atualizacao'+
+             ' FROM MOVTOS_EMPRESAS dem, EMP_CONEXOES emp'+
+             ' WHERE dem.codfilial=emp.cod_filial'+
+             ' AND   dem.cod_linx=emp.cod_linx'+
+             ' AND   dem.ind_tipo = ''DM'''+
+             ' AND   dem.dta_ref >= '+QuotedStr(sgDtaInicio)+
+             ' AND   dem.dta_ref <='+QuotedStr(sgDtaFim)+
+             ' AND   dem.codfilial='+QuotedStr(sCodLjSID)+
+             ' AND   dem.cod_linx='+sCodLjLinx+
 
-           ' FROM MOVTOS_EMPRESAS dem'+
-           ' WHERE dem.ind_tipo = ''DM'''+
-           ' AND   dem.dta_ref >= '+QuotedStr(sgDtaInicio)+
-           ' AND   dem.dta_ref <='+QuotedStr(sgDtaFim)+
-           ' GROUP BY 1, 2';
-    DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+             ' GROUP BY 1, 2, 3, 4';
+      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
 
-    // Atualiza Transacao ======================================================
-    DMAtualizaSeteHoras.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-
-    tgMySqlErro.Add('Demanda4Meses - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
-    tgMySqlErro.Add('==================================');
-    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
-
-  Except
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMAtualizaSeteHoras.SQLC.Rollback(TD);
+      // Atualiza Transacao ======================================================
+      DMAtualizaSeteHoras.SQLC.Commit(TD);
 
       DateSeparator:='/';
       DecimalSeparator:=',';
 
-      tgMySqlErro.Add('Demanda4Meses - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
-      tgMySqlErro.Add('ERROR: '+e.message);
-      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('Demanda4Meses OK - Loja Linx: '+sCodLjLinx+' Proc: '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
       tgMySqlErro.Add('==================================');
       tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
 
-    End; // on e : Exception do
-  End; // Try
+    Except
+      on e : Exception do
+      Begin
+        // Abandona Transacao ====================================================
+        DMAtualizaSeteHoras.SQLC.Rollback(TD);
+
+        DateSeparator:='/';
+        DecimalSeparator:=',';
+
+        tgMySqlErro.Add('Demanda4Meses ERRO - Loja Linx: '+sCodLjLinx+' Proc: '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+        tgMySqlErro.Add('ERROR: '+e.message);
+        tgMySqlErro.Add(MySql);
+        tgMySqlErro.Add('==================================');
+        tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
+
+      End; // on e : Exception do
+    End; // Try
+
+    DMAtualizaSeteHoras.CDS_Lojas.Next;
+  End; // While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
+  DMAtualizaSeteHoras.CDS_Lojas.EnableControls;
+  DMAtualizaSeteHoras.CDS_Lojas.Close;
 
 End; // Calcula Demanda de 4 Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -937,7 +995,7 @@ Begin
       Exit;
     End;
 
-//opss - retornar
+//opss - Retornar
     // Guarda Codigo do Fornecedor =============================================
     MySql:=' SELECT DISTINCT f.cod_fornecedor, f.cod_vinculado'+
            ' FROM FL_CAIXA_FORNECEDORES f'+
@@ -1768,9 +1826,6 @@ Var
   cVlrSaldo: Currency;
   iUltimo: Integer;
   sCodigo: String;
-
-  sNumSeqIF: String; // Cria Saldo Inicial Final
-  b: Boolean;
 Begin
   // Monta Transacao ===========================================================
   TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
@@ -2031,7 +2086,7 @@ begin
   //============================================================================
   // Acerta Data de Backup do Sidicom ==========================================
   //============================================================================
-//opss
+//OpssAqui
   sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
   SidicomDataBackup;
   // Acerta Data de Backup do Sidicom ==========================================
@@ -2040,16 +2095,17 @@ begin
   //============================================================================
   // Atualiza Codigos de Barras ================================================
   //============================================================================
-//opss
-  sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
-  CodigoBarras;
+//OpssAqui
+// OdirApagar - 07/06/2019 -- SIDICOM Desativado
+//  sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
+//  CodigoBarras;
   // Atualiza Codigos de Barras ================================================
   //============================================================================
 
   //============================================================================
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
-//opss
+//OpssAqui <<=== Alterar Para Uma Loja se Necessário
   sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
   Demanda4Meses;
   // Atualiza Demanda 4 Meses ==================================================
@@ -2059,7 +2115,7 @@ begin
   // Atualiza Produtos / Fornecedores / Vendas 15 Dias =========================
   // RODAR APÓS ATUALIZA DEMANDA 4 MESES =======================================
   //============================================================================
-//opss
+//OpssAqui
   sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
   ProdutosCompradores;
   // RODAR APÓS ATUALIZA DEMANDA 4 MESES =======================================
@@ -2081,83 +2137,87 @@ begin
   //============================================================================
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
   //============================================================================
-  // Verifica Parametro Enviado ================================================
-  // OBS: Enviar Somente Um Código por Vez
-  //======================================
-
-  //opss ===>> TIRA O CODIGO
-  sgCodForn:='';
-  for i := 1 to ParamCount do
+//OpssAqui
+// Não Rodar: Alterar Para FALSE
+  bgRodaCCorrente:=True;
+  If bgRodaCCorrente Then
   Begin
-    sgCodForn:=LowerCase(ParamStr(i));
-  End;
-
-  // Inicializa Data Inicial ===================================================
-  sgDtaProcCC:=DateToStr(Date);
-  sgDtaInicio:=DateToStr(IncMonth(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor),-4));
-  sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
-
-  // Monta SQL's Para Busca SIDICOM / LINX =====================================
-  MontaSqlsSidicomLinx;
-
-  // Busca Lojas ===============================================================
-  MySql:=' SELECT e.cod_filial, e.cod_linx, e.dta_inicio_linx'+
-         ' FROM EMP_CONEXOES e'+
-         // opss somente uma loja
-         // ' WHERE e.cod_linx=2'+
-         ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
-         ' AND   e.dta_inicio_linx IS NOT NULL'+
-
-         ' ORDER BY 1';
-  DMAtualizaSeteHoras.CDS_Lojas.Close;
-  DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
-  DMAtualizaSeteHoras.CDS_Lojas.Open;
-
-  bgExcSemMovto:=True;
-  DMAtualizaSeteHoras.CDS_Lojas.First;
-  While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
-  Begin
-    sgCodEmp    :=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_FILIAL').AsString;
-    sgCodEmpLINX:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_LINX').AsString;
-    sgDtaIniLINX:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('DTA_INICIO_LINX').AsString;
-
-    // Limpa Codigos de Fornecedores ===========================================
-    Mem_Odir.Lines.Clear;
-
-    // Busca Débitos/Crétidos no LINX ==========================================
-    If sgCodEmpLINX<>'0' Then
+    //======================================
+    // Verifica Parametro Enviado
+    // OBS: Enviar Somente Um Código por Vez
+    //======================================
+    //OpssAqui ===>> TIRA O CODIGO
+    sgCodForn:='';
+    for i := 1 to ParamCount do
     Begin
-      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
-      BuscaMovtosDebCreLINX;
+      sgCodForn:=LowerCase(ParamStr(i));
     End;
 
-    // Calcula Fluxo de Caixa do Fornecedore =====================================
-    For i:=0 to Mem_Odir.Lines.Count-1 do
+    // Inicializa Data Inicial ===================================================
+    sgDtaProcCC:=DateToStr(Date);
+    sgDtaInicio:=DateToStr(IncMonth(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor),-4));
+    sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
+
+    // Monta SQL's Para Busca SIDICOM / LINX =====================================
+    MontaSqlsSidicomLinx;
+
+    // Busca Lojas ===============================================================
+    MySql:=' SELECT e.cod_filial, e.cod_linx, e.dta_inicio_linx, e.ind_domingo'+
+           ' FROM EMP_CONEXOES e'+
+           ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
+           ' AND   e.dta_inicio_linx IS NOT NULL'+
+           ' ORDER BY 4, 2';
+    DMAtualizaSeteHoras.CDS_Lojas.Close;
+    DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
+    DMAtualizaSeteHoras.CDS_Lojas.Open;
+
+    bgExcSemMovto:=True;
+    DMAtualizaSeteHoras.CDS_Lojas.First;
+    While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
     Begin
-      ii:=pos('-',Mem_Odir.Lines[i]);
+      sgCodEmp    :=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_FILIAL').AsString;
+      sgCodEmpLINX:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_LINX').AsString;
+      sgDtaIniLINX:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('DTA_INICIO_LINX').AsString;
 
-      sCodFornCalcCC:=Trim(Copy(Mem_Odir.Lines[i],1,ii-1));
-      sDtaCalcCC:=Trim(Copy(Mem_Odir.Lines[i],ii+1, Length(Mem_Odir.Lines[i])));
+      // Limpa Codigos de Fornecedores ===========================================
+      Mem_Odir.Lines.Clear;
 
-      If Trim(sCodFornCalcCC)<>'' Then
-       CalculaFluxoCaixaFornecedores(sDtaCalcCC, sCodFornCalcCC);
-    End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
-    Mem_Odir.Lines.Clear;
+      // Busca Débitos/Crétidos no LINX ==========================================
+      If sgCodEmpLINX<>'0' Then
+      Begin
+        sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
+        BuscaMovtosDebCreLINX;
+      End;
 
-    DMAtualizaSeteHoras.CDS_Lojas.Next;
-  End; // While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
-  DMAtualizaSeteHoras.CDS_Lojas.Close;
+      // Calcula Fluxo de Caixa do Fornecedore =====================================
+      For i:=0 to Mem_Odir.Lines.Count-1 do
+      Begin
+        ii:=pos('-',Mem_Odir.Lines[i]);
+
+        sCodFornCalcCC:=Trim(Copy(Mem_Odir.Lines[i],1,ii-1));
+        sDtaCalcCC:=Trim(Copy(Mem_Odir.Lines[i],ii+1, Length(Mem_Odir.Lines[i])));
+
+        If Trim(sCodFornCalcCC)<>'' Then
+         CalculaFluxoCaixaFornecedores(sDtaCalcCC, sCodFornCalcCC);
+      End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+      Mem_Odir.Lines.Clear;
+
+      DMAtualizaSeteHoras.CDS_Lojas.Next;
+    End; // While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
+    DMAtualizaSeteHoras.CDS_Lojas.Close;
+  End; // If bgRodaCCorrente Then
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
   //============================================================================
 
-  //============================================================================
-  // Igual Todos os Produtos de Todas a Lojas com o CD =========================
-  //============================================================================
-//opss
-  sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
-  AcertaEstoqueLoja;
-  // Igual Todos os Produtos de Todas a Lojas com o CD =========================
-  //============================================================================
+// OdirApagar - 07/06/2019 -- SIDICOM Desativado
+//  //============================================================================
+//  // Iguala Todos os Produtos de Todas a Lojas com o CD ========================
+//  //============================================================================
+////OpssAqui <<=== ALterar Somente Uma Loja
+//  sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
+//  AcertaEstoqueLoja;
+//  // Igual Todos os Produtos de Todas a Lojas com o CD =========================
+//  //============================================================================
 
   tgMySqlErro.Add('==================================');
   tgMySqlErro.Add('Processamento FIM: '+DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor)));

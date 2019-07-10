@@ -2481,7 +2481,7 @@ var
 begin
   // primeiramente verificamos se é o evento a ser tratado...
   if Msg.message = WM_MOUSEWHEEL then
-  if ActiveControl is TDBGrid then // *** <=== AQUI você testa se classe é TDBGRID
+  If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   begin
     Msg.message := WM_KEYDOWN;
     Msg.lParam := 0;
@@ -2491,7 +2491,7 @@ begin
      Msg.wParam := VK_UP
     else
      Msg.wParam := VK_DOWN;
-  end;
+  end; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
 end; // DIVERSOS - Habilita o Scroll do Mouse no DBGrid >>>>>>>>>>>>>>>>>>>>>>>>
 
 
@@ -4942,7 +4942,7 @@ begin
          '        d.des_comprador, d.origem, d.dta_docto Dta_Documento, d.cod_comprador'+
          ' FROM oc_comprar_docs d'+
          ' WHERE d.dta_docto='+QuotedStr(f_Troca('/','.',(f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date)))))+
-         ' AND   d.Origem<>'+QuotedStr('Linx')+
+         ' AND UPPER(TRIM(d.Origem)) LIKE '+QuotedStr('%BEL%')+
          ' ORDER BY 1';
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
@@ -5061,7 +5061,7 @@ begin
          ' FROM OC_COMPRAR oc'+
          '       LEFT JOIN PS_USUARIOS us     ON us.cod_usuario = oc.cod_comprador'+
          '       LEFT JOIN OC_COMPRAR_DOCS od ON od.num_docto = oc.num_documento'+
-         ' WHERE od.origem<>'+QuotedStr('Linx')+
+         ' WHERE UPPER(TRIM(od.Origem)) LIKE '+QuotedStr('%BEL%')+
          ' AND   oc.num_documento='+VarToStr(EdtGeraOCBuscaDocto.Value)+
          ' ORDER BY oc.des_item';
   DMBelShop.CDS_AComprarItens.Close;
@@ -8001,13 +8001,16 @@ begin
   // primeiramente verificamos se é o evento a ser tratado...
   If Msg.message = WM_MOUSEWHEEL then
   Begin
-    Msg.message := WM_KEYDOWN;
-    Msg.lParam := 0;
-    Sentido := HiWord(Msg.wParam);
-    if Sentido > 0 then
-     Msg.wParam := VK_UP
-    else
-     Msg.wParam := VK_DOWN;
+    If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
+      Msg.message := WM_KEYDOWN;
+      Msg.lParam := 0;
+      Sentido := HiWord(Msg.wParam);
+      if Sentido > 0 then
+       Msg.wParam := VK_UP
+      else
+       Msg.wParam := VK_DOWN;
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   End; // if Msg.message = WM_MOUSEWHEEL then
 end;
 

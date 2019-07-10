@@ -1,6 +1,6 @@
 object FrmPesquisa: TFrmPesquisa
-  Left = 275
-  Top = 114
+  Left = 261
+  Top = 86
   ActiveControl = EdtDescricao
   BorderIcons = []
   BorderStyle = bsToolWindow
@@ -470,7 +470,6 @@ object FrmPesquisa: TFrmPesquisa
     TitleFont.Style = [fsBold]
     OnDblClick = Dbg_PesquisaDblClick
     OnKeyDown = Dbg_PesquisaKeyDown
-    OnKeyUp = Dbg_PesquisaKeyUp
     OnTitleClick = Dbg_PesquisaTitleClick
   end
   object Panel2: TPanel
@@ -563,5 +562,10 @@ object FrmPesquisa: TFrmPesquisa
       ParentFont = False
       OnClick = Bt_PesquisaRetornaClick
     end
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    Left = 352
+    Top = 144
   end
 end

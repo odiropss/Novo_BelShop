@@ -118,7 +118,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       ParentFont = False
     end
     object Bt_BuscaMetodo: TJvXPButton
-      Left = 400
+      Left = 488
       Top = 168
       Width = 161
       Height = 31
@@ -250,6 +250,21 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Width = 121
       Height = 21
       TabOrder = 3
+    end
+    object Bt_BuscaLojas: TJvXPButton
+      Left = 320
+      Top = 168
+      Width = 161
+      Height = 31
+      Caption = ' Buscar Loja(s)'
+      TabOrder = 8
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = Bt_BuscaLojasClick
     end
   end
   object OdirPanApres: TPanel

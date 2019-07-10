@@ -203,72 +203,15 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_EmpProcessa'
-    Left = 190
+    Left = 192
     Top = 168
     object CDS_EmpProcessaCOD_FILIAL: TStringField
       FieldName = 'COD_FILIAL'
       Required = True
       Size = 2
     end
-    object CDS_EmpProcessaENDERECO_IP: TStringField
-      FieldName = 'ENDERECO_IP'
-      Required = True
-      Size = 30
-    end
-    object CDS_EmpProcessaENDERECO_IP_EXTERNO: TStringField
-      FieldName = 'ENDERECO_IP_EXTERNO'
-      Size = 30
-    end
-    object CDS_EmpProcessaPASTA_BASE_DADOS: TStringField
-      FieldName = 'PASTA_BASE_DADOS'
-      Required = True
-      Size = 100
-    end
-    object CDS_EmpProcessaDES_BASE_DADOS: TStringField
-      FieldName = 'DES_BASE_DADOS'
-      Required = True
-      Size = 100
-    end
-    object CDS_EmpProcessaCOD_EMP: TStringField
-      FieldName = 'COD_EMP'
-      Required = True
-      Size = 6
-    end
-    object CDS_EmpProcessaRAZAO_SOCIAL: TStringField
-      FieldName = 'RAZAO_SOCIAL'
-      Size = 60
-    end
-    object CDS_EmpProcessaTIP_EMP: TStringField
-      FieldName = 'TIP_EMP'
-      Size = 1
-    end
-    object CDS_EmpProcessaIND_ATIVO: TStringField
-      FieldName = 'IND_ATIVO'
-      Size = 3
-    end
-    object CDS_EmpProcessaDATABASE: TStringField
-      FieldName = 'DATABASE'
-      Required = True
-      Size = 7
-    end
-    object CDS_EmpProcessaTRANSACAO: TStringField
-      FieldName = 'TRANSACAO'
-      Required = True
-      Size = 6
-    end
     object CDS_EmpProcessaCOD_LINX: TIntegerField
       FieldName = 'COD_LINX'
-    end
-    object CDS_EmpProcessaDTA_INICIO_LINX: TDateField
-      FieldName = 'DTA_INICIO_LINX'
-    end
-    object CDS_EmpProcessaDTA_INVENTARIO_LINX: TDateField
-      FieldName = 'DTA_INVENTARIO_LINX'
-    end
-    object CDS_EmpProcessaIND_DOMINGO: TStringField
-      FieldName = 'IND_DOMINGO'
-      FixedChar = True
-      Size = 1
     end
   end
   object SDS_LojaLinx: TSQLDataSet

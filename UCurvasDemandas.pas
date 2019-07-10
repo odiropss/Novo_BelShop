@@ -1,4 +1,5 @@
 unit UCurvasDemandas;
+// OdirRetornar
 
 interface
 
@@ -15,18 +16,27 @@ type
     EdtParamStr: TEdit;
 
     // Odir ====================================================================
-    Function  ConexaoEmpIndividual(sDataBase, sTransaction, sProcedimento: String; bTestar: Boolean = False): Boolean;
-    Procedure CriaQueryIB(sDataBase, sTransaction: String; Var IBQ_Free: TIBQuery; bMatriz, bCriaIBQ: Boolean);
+// OdirApagar - SIDICOM - 22/06/2019
+//    Function  ConexaoEmpIndividual(sDataBase, sTransaction, sProcedimento: String; bTestar: Boolean = False): Boolean;
+
+// OdirApagar - SIDICOM - 22/06/2019
+//    Procedure CriaQueryIB(sDataBase, sTransaction: String; Var IBQ_Free: TIBQuery; bMatriz, bCriaIBQ: Boolean);
         // sDataBase    = Database a Conectar
         // sTransaction = Transaction a Conectar
         // IBQ_Free     = Nome do TIBQuery a Destruir e Reconstruir
         // bMatriz      = Se Conexão é Matriz (Não Gera Sql Automaticamente)
         // bCriaIBQ     = Se Destruir e Reconstruir IBQuery
-    Function  IBTransacao(sSituacao, sTransaction: String): Boolean;
+
+// OdirApagar - SIDICOM - 22/06/2019
+//    Function  IBTransacao(sSituacao, sTransaction: String): Boolean;
 
     Procedure CalculaCurvas;
 
-    Procedure AtualizaCurvaCD;  //   // Atualiza Curva ABC no CD - SIDICOM
+    // OdirApagar - SIDICOM - 22/06/2019
+    // Procedure AtualizaCurvaCD; // Atualiza Curva ABC no CD - SIDICOM
+
+    // OdirApagar - SIDICOM - 22/06/2019
+    // Procedure Es_Finan_Curva_ABC_CodLinx; // Atualiza Codigos Linx para Produtos Sem Codigo
 
     // Odir ====================================================================
 
@@ -47,17 +57,18 @@ const //  RODA PROGRAMA NA BARRA DE TAREFAS
 var
   FrmCurvasDemandas: TFrmCurvasDemandas;
 
+  // Cria Ponteiro de Transacão
+  TD: TTransactionDesc;
+
   bExecutaDireto: Boolean;
 
-  sgCodLoja: String;
+  sgCodLjSid, sgCodLjLinx: String;
   cgPerCurvaA, cgPerCurvaB, cgPerCurvaC, cgPerCurvaD, cgPerCurvaE: Currency;
 
   igDiasEstocagemA, igDiasEstocagemB, igDiasEstocagemC, igDiasEstocagemD, igDiasEstocagemE: Integer;
 
-  // Cria Ponteiro de Transacão
-  TD: TTransactionDesc;
+  tgMySqlErro: TStringList; // Arquivo de Processamento e Erros
 
-  IBQ_MPMS : TIBQuery;
 implementation
 
 uses UDMConexoes, UDMMovtosEmpresas, DK_Procs1, DateUtils, IBCustomDataSet;
@@ -66,314 +77,365 @@ uses UDMConexoes, UDMMovtosEmpresas, DK_Procs1, DateUtils, IBCustomDataSet;
 
 // Odir
 
-Function TFrmCurvasDemandas.IBTransacao(sSituacao, sTransaction: String): Boolean;
-Var
-  i, ii: Integer;
-  b: Boolean;
-Begin
-  Result:=False;
-  b:=False;
+// OdirApagar - SIDICOM - 22/06/2019
+//// Atualiza Codigos Linx para Produtos Sem Codigo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Procedure TFrmCurvasDemandas.Es_Finan_Curva_ABC_CodLinx;
+//Var
+//  MySql: String;
+//Begin
+//  // Verifica se Transação esta Ativa
+//  If DMMovtosEmpresas.SQLC.InTransaction Then
+//   DMMovtosEmpresas.SQLC.Rollback(TD);
+//
+//  // Monta Transacao Para Arrumar Produtos Descontinuados nos Mixs =============
+//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//  TD.IsolationLevel:=xilREADCOMMITTED;
+//  DMMovtosEmpresas.SQLC.StartTransaction(TD);
+//
+//  // Tira Produtos Descontinuados dos Mix ======================================
+//  Try // Try da Transação
+//    DateSeparator:='.';
+//    DecimalSeparator:='.';
+//
+//    MySql:=' UPDATE ES_FINAN_CURVA_ABC f'+
+//           ' SET f.cod_prod_linx=(SELECT p.cod_produto'+
+//           '                      FROM LINXPRODUTOS p'+
+//           '                      WHERE p.cod_auxiliar=f.cod_produto'+
+//           '                      AND   p.desativado=''N'''+
+//           '                      AND   EXISTS (SELECT 1'+
+//           '                                    FROM LINXPRODUTOS p1'+
+//           '                                    WHERE p1.cod_auxiliar IS NOT NULL'+
+//           '                                    AND   p1.cod_auxiliar=p.cod_auxiliar'+
+//           '                                    GROUP BY p1.cod_auxiliar'+
+//           '                                    HAVING COUNT(p1.cod_auxiliar)=1))';
+//    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//
+//    // Atualiza Transacao ======================================================
+//    DMMovtosEmpresas.SQLC.Commit(TD);
+//  Except // Except da Transação
+//    on e : Exception do
+//    Begin
+//      // Abandona Transacao ====================================================
+//      DMMovtosEmpresas.SQLC.Rollback(TD);
+//    End; // on e : Exception do
+//  End; // Try da Transação
+//  DateSeparator:='/';
+//  DecimalSeparator:=',';
+//End; // Atualiza Codigos Linx para Produtos Sem Codigo >>>>>>>>>>>>>>>>>>>>>>>>>
 
-  ii:=0;
-  While Not b do
-  Begin
-    Try
-      If ii=0 Then
-       Begin
-         For i:=0 to DMConexoes.ComponentCount-1 do
-         Begin
-           If DMConexoes.Components[i] is TIBTransaction Then
-           Begin
-             If (DMConexoes.Components[i] as TIBTransaction).Name=sTransaction Then
-             Begin
+// OdirApagar - SIDICOM - 22/06/2019
+//// Transacao IB >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Function TFrmCurvasDemandas.IBTransacao(sSituacao, sTransaction: String): Boolean;
+//Var
+//  i, ii: Integer;
+//  b: Boolean;
+//Begin
+//  Result:=False;
+//  b:=False;
+//
+//  ii:=0;
+//  While Not b do
+//  Begin
+//    Try
+//      If ii=0 Then
+//       Begin
+//         For i:=0 to DMConexoes.ComponentCount-1 do
+//         Begin
+//           If DMConexoes.Components[i] is TIBTransaction Then
+//           Begin
+//             If (DMConexoes.Components[i] as TIBTransaction).Name=sTransaction Then
+//             Begin
+//
+//               If sSituacao='S' Then
+//               Begin
+//                 If (DMConexoes.Components[i] as TIBTransaction).Active Then
+//                  (DMConexoes.Components[i] as TIBTransaction).Rollback;
+//
+//                 (DMConexoes.Components[i] as TIBTransaction).StartTransaction;
+//               End; // If sSituacao='S' Then
+//
+//               If sSituacao='C' Then
+//               Begin
+//                 (DMConexoes.Components[i] as TIBTransaction).Commit;
+//               End;
+//
+//               If sSituacao='R' Then
+//               Begin
+//                 (DMConexoes.Components[i] as TIBTransaction).Rollback;
+//               End;
+//
+//               Result:=True;
+//               ii:=99;
+//               Break;
+//             End; // If (DMConexoes.Components[i] as TIBTransaction).Name=sTransaction Then
+//           End; // If DMConexoes.Components[i] is TIBTransaction Then
+//         End; // For i:=0 to DMConexoes.ComponentCount-1 do
+//       End
+//      Else // If ii=0 Then
+//       Begin
+//         If sSituacao='S' Then
+//          (DMConexoes.Components[i] as TIBTransaction).StartTransaction;
+//
+//         If sSituacao='C' Then
+//          (DMConexoes.Components[i] as TIBTransaction).Commit;
+//
+//         If sSituacao='R' Then
+//          (DMConexoes.Components[i] as TIBTransaction).Rollback;
+//
+//         Result:=True;
+//         ii:=99;
+//         Break;
+//       End;
+//    Except
+//      Inc(ii)
+//    End; // Try
+//
+//    If (ii=0) or (ii>4) Then
+//     Break;
+//  End; // While Not b do
+//End; // Transacao IB >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-               If sSituacao='S' Then
-               Begin
-                 If (DMConexoes.Components[i] as TIBTransaction).Active Then
-                  (DMConexoes.Components[i] as TIBTransaction).Rollback;
+// OdirApagar - SIDICOM - 22/06/2019
+//// Atualiza Conexao TIBQuery >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Procedure TFrmCurvasDemandas.CriaQueryIB(sDataBase, sTransaction: String; Var IBQ_Free: TIBQuery; bMatriz, bCriaIBQ: Boolean);
+//Var
+//  i: Integer;
+//  iOk: Integer;
+//Begin
+//  iOk:=0;
+//
+//  If bCriaIBQ Then
+//  Begin
+//    Try
+//      If IBQ_Free <> Nil Then
+//       FreeAndNil(IBQ_Free);
+//    Except
+//    End;
+//
+//    IBQ_Free:=TIBQuery.Create(Self);
+//    IBQ_Free.BufferChunks := 100;   // Defaut = 1000 , coloque 100
+//    IBQ_Free.Unidirectional := False;
+//    IBQ_Free.FetchAll;
+//  End;
+//
+//  IBQ_Free.Close;
+//
+//  For i:=0 to DMConexoes.ComponentCount-1 do
+//  Begin
+//    If DMConexoes.Components[i] is TIBDatabase Then
+//    Begin
+//      If (DMConexoes.Components[i] as TIBDatabase).Name=sDataBase Then
+//      Begin
+//        IBQ_Free.Database:=(DMConexoes.Components[i] as TIBDatabase);
+//        Inc(iOk);
+//      End;
+//    End;
+//
+//    If DMConexoes.Components[i] is TIBTransaction Then
+//    Begin
+//      If (DMConexoes.Components[i] as TIBTransaction).Name=sTransaction Then
+//      Begin
+//        IBQ_Free.Transaction:=(DMConexoes.Components[i] as TIBTransaction);
+//        Inc(iOk);
+//      End;
+//    End;
+//
+//    If iOk = 2 Then
+//    Begin
+//      Break;
+//    End;
+//  End;
+//End; // Atualiza Conexao TIBQuery >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-                 (DMConexoes.Components[i] as TIBTransaction).StartTransaction;
-               End; // If sSituacao='S' Then
+// OdirApagar - SIDICOM - 22/06/2019
+//// Conexao IB Individual >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//// Procedimento: (A) Abrir Conexão (F) Fechar Conexão
+//Function TFrmCurvasDemandas.ConexaoEmpIndividual(sDataBase, sTransaction, sProcedimento: String; bTestar: Boolean = False): Boolean;
+//Var
+//  i, ii: Integer;
+//  b: Boolean;
+//Begin
+//  Result:=False;
+//  b:=False;
+//
+//  ii:=0;
+//  While Not b do
+//  Begin
+//    Try
+//      If ii=0 Then
+//       Begin
+//         For i:=0 to DMConexoes.ComponentCount-1 do
+//         Begin
+//           If DMConexoes.Components[i] is TIBDatabase Then
+//           Begin
+//             If (DMConexoes.Components[i] as TIBDatabase).Name=sDataBase Then
+//             Begin
+//
+//               // Abre Conexão --------------------------------------
+//               If sProcedimento='A' Then
+//               Begin
+//                 If (DMConexoes.Components[i] as TIBDatabase).Connected Then
+//                  (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
+//
+//                 (DMConexoes.Components[i] as TIBDatabase).Connected:=True;
+//                 Result:=True;
+//                 ii:=99;
+//                 Break;
+//               End; // If sProcedimento='A' Then
+//
+//               // Fecha Conexão --------------------------------------
+//               If sProcedimento='F' Then
+//               Begin
+//                 (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
+//                 Result:=True;
+//                 ii:=99;
+//                 Break;
+//               End; // If sProcedimento='A' Then
+//             End;
+//           End; // If DMConexoes.Components[i] is TIBDatabase Then
+//         End; // For i:=0 to DMConexoes.ComponentCount-1 do
+//       End
+//      Else // If ii=0 Then
+//       Begin
+//
+//         // Abre Conexão --------------------------------------
+//         If sProcedimento='A' Then
+//         Begin
+//           If (DMConexoes.Components[i] as TIBDatabase).Connected Then
+//            (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
+//
+//           (DMConexoes.Components[i] as TIBDatabase).Connected:=True;
+//           Result:=True;
+//           ii:=99;
+//           Break;
+//         End; // If sProcedimento='A' Then
+//
+//         // Fecha Conexão -------------------------------------
+//         If sProcedimento='F' Then
+//         Begin
+//           (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
+//           Result:=True;
+//           ii:=99;
+//           Break;
+//         End; // If sProcedimento='A' Then
+//
+//       End;
+//    Except
+//      Begin
+//        If bTestar Then
+//        Begin
+//          Break;
+//          Exit;
+//        End;
+//        Inc(ii);
+//      End;
+//    End; // Try
+//
+//    If (ii=0) or (ii>2) Then // 2 vezes
+//     Break;
+//  End; // While Not b do
+//End; // Conexao IB Individual >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-               If sSituacao='C' Then
-               Begin
-                 (DMConexoes.Components[i] as TIBTransaction).Commit;
-               End;
-
-               If sSituacao='R' Then
-               Begin
-                 (DMConexoes.Components[i] as TIBTransaction).Rollback;
-               End;
-
-               Result:=True;
-               ii:=99;
-               Break;
-             End; // If (DMConexoes.Components[i] as TIBTransaction).Name=sTransaction Then
-           End; // If DMConexoes.Components[i] is TIBTransaction Then
-         End; // For i:=0 to DMConexoes.ComponentCount-1 do
-       End
-      Else // If ii=0 Then
-       Begin
-         If sSituacao='S' Then
-          (DMConexoes.Components[i] as TIBTransaction).StartTransaction;
-
-         If sSituacao='C' Then
-          (DMConexoes.Components[i] as TIBTransaction).Commit;
-
-         If sSituacao='R' Then
-          (DMConexoes.Components[i] as TIBTransaction).Rollback;
-
-         Result:=True;
-         ii:=99;
-         Break;
-       End;
-    Except
-      Inc(ii)
-    End; // Try
-
-    If (ii=0) or (ii>4) Then
-     Break;
-  End; // While Not b do
-End; // Transacao IB >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// Atualiza Conexao TIBQuery >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmCurvasDemandas.CriaQueryIB(sDataBase, sTransaction: String; Var IBQ_Free: TIBQuery; bMatriz, bCriaIBQ: Boolean);
-Var
-  i: Integer;
-  iOk: Integer;
-Begin
-  iOk:=0;
-
-  If bCriaIBQ Then
-  Begin
-    Try
-      If IBQ_Free <> Nil Then
-       FreeAndNil(IBQ_Free);
-    Except
-    End;
-
-    IBQ_Free:=TIBQuery.Create(Self);
-    IBQ_Free.BufferChunks := 100;   // Defaut = 1000 , coloque 100
-    IBQ_Free.Unidirectional := False;
-    IBQ_Free.FetchAll;
-  End;
-
-  IBQ_Free.Close;
-
-  For i:=0 to DMConexoes.ComponentCount-1 do
-  Begin
-    If DMConexoes.Components[i] is TIBDatabase Then
-    Begin
-      If (DMConexoes.Components[i] as TIBDatabase).Name=sDataBase Then
-      Begin
-        IBQ_Free.Database:=(DMConexoes.Components[i] as TIBDatabase);
-        Inc(iOk);
-      End;
-    End;
-
-    If DMConexoes.Components[i] is TIBTransaction Then
-    Begin
-      If (DMConexoes.Components[i] as TIBTransaction).Name=sTransaction Then
-      Begin
-        IBQ_Free.Transaction:=(DMConexoes.Components[i] as TIBTransaction);
-        Inc(iOk);
-      End;
-    End;
-
-    If iOk = 2 Then
-    Begin
-      Break;
-    End;
-  End;
-End; // Atualiza Conexao TIBQuery >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// Conexao IB Individual >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Procedimento: (A) Abrir Conexão (F) Fechar Conexão
-Function TFrmCurvasDemandas.ConexaoEmpIndividual(sDataBase, sTransaction, sProcedimento: String; bTestar: Boolean = False): Boolean;
-Var
-  i, ii: Integer;
-  b: Boolean;
-Begin
-  Result:=False;
-  b:=False;
-
-  ii:=0;
-  While Not b do
-  Begin
-    Try
-      If ii=0 Then
-       Begin
-         For i:=0 to DMConexoes.ComponentCount-1 do
-         Begin
-           If DMConexoes.Components[i] is TIBDatabase Then
-           Begin
-             If (DMConexoes.Components[i] as TIBDatabase).Name=sDataBase Then
-             Begin
-
-               // Abre Conexão --------------------------------------
-               If sProcedimento='A' Then
-               Begin
-                 If (DMConexoes.Components[i] as TIBDatabase).Connected Then
-                  (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
-
-                 (DMConexoes.Components[i] as TIBDatabase).Connected:=True;
-                 Result:=True;
-                 ii:=99;
-                 Break;
-               End; // If sProcedimento='A' Then
-
-               // Fecha Conexão --------------------------------------
-               If sProcedimento='F' Then
-               Begin
-                 (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
-                 Result:=True;
-                 ii:=99;
-                 Break;
-               End; // If sProcedimento='A' Then
-             End;
-           End; // If DMConexoes.Components[i] is TIBDatabase Then
-         End; // For i:=0 to DMConexoes.ComponentCount-1 do
-       End
-      Else // If ii=0 Then
-       Begin
-
-         // Abre Conexão --------------------------------------
-         If sProcedimento='A' Then
-         Begin
-           If (DMConexoes.Components[i] as TIBDatabase).Connected Then
-            (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
-
-           (DMConexoes.Components[i] as TIBDatabase).Connected:=True;
-           Result:=True;
-           ii:=99;
-           Break;
-         End; // If sProcedimento='A' Then
-
-         // Fecha Conexão -------------------------------------
-         If sProcedimento='F' Then
-         Begin
-           (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
-           Result:=True;
-           ii:=99;
-           Break;
-         End; // If sProcedimento='A' Then
-
-       End;
-    Except
-      Begin
-        If bTestar Then
-        Begin
-          Break;
-          Exit;
-        End;
-        Inc(ii);
-      End;
-    End; // Try
-
-    If (ii=0) or (ii>2) Then // 2 vezes
-     Break;
-  End; // While Not b do
-End; // Conexao IB Individual >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// Atualiza Curva ABC no CD - SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmCurvasDemandas.AtualizaCurvaCD;
-Var
-  b: Boolean;
-  MySql: String;
-Begin
-  // Conecta Empresa ===========================================================
-  If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
-  Begin
-    Exit;
-  End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
-
-  // Cria Query da Empresa =====================================================
-  CriaQueryIB('IBDB_99','IBT_99', IBQ_MPMS, True, True);
-
-  // Monta Transacao ===========================================================
-  b:=False;
-  While Not b do
-  Begin
-    b:=IBTransacao('S', 'IBT_99');
-  End; // While Not b do
-
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMMovtosEmpresas.SQLC.StartTransaction(TD);
-
-  Try
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    // Atualiza SIDICOM CD
-    MySql:=' UPDATE PRODUTO pr'+
-           ' SET pr.CLASSEABC='+QuotedStr('E')+
-           ' WHERE ((pr.principalfor NOT IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
-           '         OR'+
-           '        (pr.codaplicacao Not in (''0015'',''0016'',''0017'')))'+
-           ' AND   pr.CLASSEABC<>'+QuotedStr('E');
-    IBQ_MPMS.Close;
-    IBQ_MPMS.SQL.Clear;
-    IBQ_MPMS.SQL.Add(MySql);
-    IBQ_MPMS.ExecSQL;
-
-    // Atualiza BelShop
-    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
-    MySql:=' SELECT ca.cod_produto, ca.ind_curva'+
-           ' FROM ES_FINAN_CURVA_ABC ca'+
-           ' WHERE ca.cod_loja='+QuotedStr('99')+
-           ' AND   ca.ind_curva<>'+QuotedStr('E')+
-           ' ORDER BY ca.cod_produto';
-     DMMovtosEmpresas.CDS_Busca.Close;
-     DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
-     DMMovtosEmpresas.CDS_Busca.Open;
-     While Not DMMovtosEmpresas.CDS_Busca.Eof do
-     Begin
-       // Atualiza SIDICOM CD
-       MySql:=' UPDATE PRODUTO pr'+
-              ' SET pr.CLASSEABC='+QuotedStr(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Curva').AsString)+
-              ' WHERE pr.codproduto='+QuotedStr(DMMovtosEmpresas.CDS_Busca.FieldByName('Cod_Produto').AsString);
-       IBQ_MPMS.Close;
-       IBQ_MPMS.SQL.Clear;
-       IBQ_MPMS.SQL.Add(MySql);
-       IBQ_MPMS.ExecSQL;
-
-       // Atualiza BelShop
-       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
-       DMMovtosEmpresas.CDS_Busca.Next;
-     End; // While Not DMMovtosEmpresas.CDS_Busca.Eof do
-     DMMovtosEmpresas.CDS_Busca.Close;
-
-    // Commita Transação ------------------------------------------
-    DMMovtosEmpresas.SQLC.Commit(TD);
-
-    b:=False;
-    While Not b do
-    Begin
-      b:=IBTransacao('C', 'IBT_99');
-    End; // While Not b do
-  Except
-    on e : Exception do
-    Begin
-      // Rollback Transacao -----------------------------------------
-      DMMovtosEmpresas.SQLC.Rollback(TD);
-
-      b:=False;
-      While Not b do
-      Begin
-        b:=IBTransacao('R', 'IBT_99');
-      End; // While Not b do
-    End; // on e : Exception do
-  End;
-
-  DateSeparator:='/';
-  DecimalSeparator:=',';
-
-  // Fecha Conexão =============================================================
-  ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
-End; // Atualiza Curva ABC no CD - SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// OdirApagar - SIDICOM - 22/06/2019
+//// Atualiza Curva ABC no CD - SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Procedure TFrmCurvasDemandas.AtualizaCurvaCD;
+//Var
+//  b: Boolean;
+//  MySql: String;
+//Begin
+//  // Conecta Empresa ===========================================================
+//  If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
+//  Begin
+//    Exit;
+//  End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+//
+//  // Cria Query da Empresa =====================================================
+//  CriaQueryIB('IBDB_99','IBT_99', IBQ_MPMS, True, True);
+//
+//  // Monta Transacao ===========================================================
+//  b:=False;
+//  While Not b do
+//  Begin
+//    b:=IBTransacao('S', 'IBT_99');
+//  End; // While Not b do
+//
+//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//  TD.IsolationLevel:=xilREADCOMMITTED;
+//  DMMovtosEmpresas.SQLC.StartTransaction(TD);
+//
+//  Try
+//    DateSeparator:='.';
+//    DecimalSeparator:='.';
+//
+//    // Atualiza SIDICOM CD
+//    MySql:=' UPDATE PRODUTO pr'+
+//           ' SET pr.CLASSEABC='+QuotedStr('E')+
+//           ' WHERE ((pr.principalfor NOT IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
+//           '         OR'+
+//           '        (pr.codaplicacao Not in (''0015'',''0016'',''0017'')))'+
+//           ' AND   pr.CLASSEABC<>'+QuotedStr('E');
+//    IBQ_MPMS.Close;
+//    IBQ_MPMS.SQL.Clear;
+//    IBQ_MPMS.SQL.Add(MySql);
+//    IBQ_MPMS.ExecSQL;
+//
+//    // Atualiza BelShop
+//    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//
+//    MySql:=' SELECT ca.cod_produto, ca.ind_curva'+
+//           ' FROM ES_FINAN_CURVA_ABC ca'+
+//           ' WHERE ca.cod_loja='+QuotedStr('99')+
+//           ' AND   ca.ind_curva<>'+QuotedStr('E')+
+//           ' ORDER BY ca.cod_produto';
+//     DMMovtosEmpresas.CDS_Busca.Close;
+//     DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
+//     DMMovtosEmpresas.CDS_Busca.Open;
+//     While Not DMMovtosEmpresas.CDS_Busca.Eof do
+//     Begin
+//       // Atualiza SIDICOM CD
+//       MySql:=' UPDATE PRODUTO pr'+
+//              ' SET pr.CLASSEABC='+QuotedStr(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Curva').AsString)+
+//              ' WHERE pr.codproduto='+QuotedStr(DMMovtosEmpresas.CDS_Busca.FieldByName('Cod_Produto').AsString);
+//       IBQ_MPMS.Close;
+//       IBQ_MPMS.SQL.Clear;
+//       IBQ_MPMS.SQL.Add(MySql);
+//       IBQ_MPMS.ExecSQL;
+//
+//       // Atualiza BelShop
+//       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//
+//       DMMovtosEmpresas.CDS_Busca.Next;
+//     End; // While Not DMMovtosEmpresas.CDS_Busca.Eof do
+//     DMMovtosEmpresas.CDS_Busca.Close;
+//
+//    // Commita Transação ------------------------------------------
+//    DMMovtosEmpresas.SQLC.Commit(TD);
+//
+//    b:=False;
+//    While Not b do
+//    Begin
+//      b:=IBTransacao('C', 'IBT_99');
+//    End; // While Not b do
+//  Except
+//    on e : Exception do
+//    Begin
+//      // Rollback Transacao -----------------------------------------
+//      DMMovtosEmpresas.SQLC.Rollback(TD);
+//
+//      b:=False;
+//      While Not b do
+//      Begin
+//        b:=IBTransacao('R', 'IBT_99');
+//      End; // While Not b do
+//    End; // on e : Exception do
+//  End;
+//
+//  DateSeparator:='/';
+//  DecimalSeparator:=',';
+//
+//  // Fecha Conexão =============================================================
+//  ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+//End; // Atualiza Curva ABC no CD - SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Calcula Curva ABC de Valores/Quantidades >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmCurvasDemandas.CalculaCurvas;
@@ -386,9 +448,9 @@ Begin
   //============================================================================
   // Calculo Curva de Valores ==================================================
   //============================================================================
-  MySql:=' SELECT f.cod_produto, f.per_participacao'+
+  MySql:=' SELECT f.cod_prod_linx, f.per_participacao'+
          ' FROM ES_FINAN_CURVA_ABC f'+
-         ' WHERE f.cod_loja='+QuotedStr(sgCodLoja)+
+         ' WHERE f.cod_linx='+sgCodLjLinx+
          ' ORDER BY f.per_participacao desc';
   DMMovtosEmpresas.CDS_Busca.Close;
   DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
@@ -450,8 +512,8 @@ Begin
        MySql:=' UPDATE ES_FINAN_CURVA_ABC f'+
               ' SET f.Ind_Curva='+QuotedStr(sCurva)+
               ',    f.Num_Dias_Estocagem='+QuotedStr(sDiasEstocagen)+
-              ' WHERE f.Cod_Loja='+QuotedStr(sgCodLoja)+
-              ' AND   f.Cod_Produto='+QuotedStr(DMMovtosEmpresas.CDS_Busca.FieldByName('Cod_Produto').AsString);
+              ' WHERE f.Cod_Linx='+sgCodLjLinx+
+              ' AND   f.Cod_Prod_Linx='+QuotedStr(DMMovtosEmpresas.CDS_Busca.FieldByName('cod_prod_linx').AsString);
        DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
      End
     Else
@@ -459,7 +521,6 @@ Begin
        Break;
      End; // If sCurva<>'E' Then
 
-     
     DMMovtosEmpresas.CDS_Busca.Next;
   End; // While Not DMMovtosEmpresas.CDS_Busca.Eof do
   DMMovtosEmpresas.CDS_Busca.Close;
@@ -467,16 +528,16 @@ Begin
   // Acerta Num_Dias_Estocagem da Curva E ======================================
   MySql:=' UPDATE ES_FINAN_CURVA_ABC f'+
          ' SET f.Num_Dias_Estocagem='+QuotedStr(sDiasEstocagen)+
-         ' WHERE f.Cod_Loja='+QuotedStr(sgCodLoja)+
+         ' WHERE f.Cod_Linx='+sgCodLjLinx+
          ' AND   f.Ind_Curva='+QuotedStr(sCurva);
   DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
   //============================================================================
   // Calculo Curva de Quantidades ==============================================
   //============================================================================
-  MySql:=' SELECT f.Cod_Produto, f.Per_Part_Qtd'+
+  MySql:=' SELECT f.cod_prod_linx, f.per_part_qtd'+
          ' FROM ES_FINAN_CURVA_ABC f'+
-         ' WHERE f.Cod_Loja='+QuotedStr(sgCodLoja)+
+         ' WHERE f.Cod_Linx='+sgCodLjLinx+
          ' ORDER BY f.Per_Part_Qtd desc';
   DMMovtosEmpresas.CDS_Busca.Close;
   DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
@@ -522,8 +583,8 @@ Begin
      Begin
        MySql:=' UPDATE ES_FINAN_CURVA_ABC f'+
               ' SET f.Ind_Curva_Qtd='+QuotedStr(sCurva)+
-              ' WHERE f.Cod_Loja='+QuotedStr(sgCodLoja)+
-              ' AND   f.Cod_Produto='+QuotedStr(DMMovtosEmpresas.CDS_Busca.FieldByName('Cod_Produto').AsString);
+              ' WHERE f.Cod_Linx='+sgCodLjLinx+
+              ' AND   f.Cod_Prod_Linx='+QuotedStr(DMMovtosEmpresas.CDS_Busca.FieldByName('cod_prod_linx').AsString);
        DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
      End
     Else
@@ -540,10 +601,12 @@ procedure TFrmCurvasDemandas.FormCreate(Sender: TObject);
 Var
   i: Integer;
 begin
-
-  // Fechar Programa do Agendamento Anterior ===================================
-//  ApagaUltProcesso('PMovtosEmpresas.exe');
-  //============================================================================
+  tgMySqlErro:=TStringList.Create;
+  tgMySqlErro.Clear;
+  tgMySqlErro.Add('==================================');
+  tgMySqlErro.Add('Processamento INÍCIO: '+DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)));
+  tgMySqlErro.Add('==================================');
+  tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Curva_ABC_Erros.txt');
 
   // Verifica Parametro Enviado ================================================
   EdtParamStr.Clear;
@@ -579,15 +642,15 @@ end;
 procedure TFrmCurvasDemandas.Bt_AtualizarClick(Sender: TObject);
 Var
   MySql,
-  sTotQtdDemandas, sTotVlrDemandas,
+  sTotQtdDemandas, sTotVlrDemandas, // Qtd e Vlr Total de Demanda de Venda dos Ùltimos 6 Meses
   sDtaDemI, sDtaDemF, sDtaTra, sDtaProdNovo: String;
-
-  sDtaExcluir: String;
 
   wAnoH, wMesH, wDiaH: Word;
 
-  iRegNo: Integer;
+  i: Integer;
   iTotFeriados,    iTotDiasUteis   : Integer;
+
+  hHrIniLj, hHrFimLj:String;
 begin
 // =============================================================================
 // INICIO DO PROCESSO ==========================================================
@@ -672,9 +735,6 @@ begin
   sDtaDemF:=DateToStr(PrimeiroUltimoDia(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor),'P'));
   sDtaDemF:=f_Troca('/','.',f_Troca('-','.',sDtaDemF));
 
-  // Dias Uteis no Periodo =====================================================
-  iTotDiasUteis   :=DiasUteisBelShop(StrToDate(f_Troca('.','/',sDtaDemI)),StrToDate(f_Troca('.','/',sDtaDemF))-1, False, True);
-
   // Dias de Feriados no Periodo ===============================================
   MySql:=' SELECT COUNT(f.dta_feriado) Feriados'+
          ' FROM FIN_FERIADOS_ANO f'+
@@ -692,9 +752,10 @@ begin
 
   //===========================================================================
   // INICIA PROCESSO ===========================================================
-  MySql:=' SELECT e.cod_filial'+
+  MySql:=' SELECT e.cod_filial, e.cod_linx, e.ind_domingo'+
          ' FROM EMP_CONEXOES e'+
          ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
+         ' AND   e.dta_inicio_linx IS NOT NULL'+
          ' ORDER BY 1';
   DMMovtosEmpresas.CDS_Pesquisa.Close;
   DMMovtosEmpresas.SDS_Pesquisa.CommandText:=MySql;
@@ -702,228 +763,271 @@ begin
 
   While Not DMMovtosEmpresas.CDS_Pesquisa.Eof do
   Begin
+    hHrIniLj:=TimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor));
+
     // Monta Transacao =========================================================
     TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
     TD.IsolationLevel:=xilREADCOMMITTED;
     DMMovtosEmpresas.SQLC.StartTransaction(TD);
     Try
+      sgCodLjSid :=DMMovtosEmpresas.CDS_Pesquisa.FieldByName('Cod_Filial').AsString;
+      sgCodLjLinx:=DMMovtosEmpresas.CDS_Pesquisa.FieldByName('Cod_Linx').AsString;
+
+      // Dias Uteis no Periodo =====================================================
+      If DMMovtosEmpresas.CDS_Pesquisa.FieldByName('ind_domingo').AsString='N' Then
+       iTotDiasUteis:=DiasUteisBelShop(StrToDate(f_Troca('.','/',sDtaDemI)),StrToDate(f_Troca('.','/',sDtaDemF))-1, False, True)
+      Else
+       iTotDiasUteis:=DiasUteisBelShop(StrToDate(f_Troca('.','/',sDtaDemI)),StrToDate(f_Troca('.','/',sDtaDemF))-1, True, True);
+
       DateSeparator:='.';
       DecimalSeparator:='.';
-      sgCodLoja:=DMMovtosEmpresas.CDS_Pesquisa.FieldByName('COD_FILIAL').AsString;
 
       // Busca Valor e Quantidade Total de Demandas ============================
-      If sgCodLoja<>'99' Then
+      If sgCodLjLinx<>'2' Then
        Begin
          MySql:=' SELECT'+
                 ' SUM(ABS(COALESCE(mt.quant_ref,0))) Tot_Qtd_Demanda,'+
                 ' SUM(ABS(COALESCE(mt.preco,0))) Tot_Vlr_Demanda'+
 
-                ' FROM MOVTOS_EMPRESAS mt, PRODUTO pt'+
+                ' FROM MOVTOS_EMPRESAS mt, LINXPRODUTOS pt'+
 
-                ' WHERE  mt.codproduto=pt.codproduto'+
-                ' AND    mt.ind_tipo=''DM'''+
-                ' AND    mt.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' and '+QuotedStr(sDtaDemF)+
-                ' AND    COALESCE(pt.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
-                ' AND    ((pt.principalfor NOT IN (''010000'', ''000300'', ''000500'', ''001072'', ''000883''))'+
-                '          OR'+
-                '         (pt.codaplicacao Not in (''0015'',''0016'',''0017'')))'+
-
-                ' AND    mt.codfilial='+QuotedStr(sgCodLoja);
+                ' WHERE mt.cod_prod_linx=pt.cod_produto'+
+                ' AND   mt.ind_tipo=''DM'''+
+                ' AND   mt.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' and '+QuotedStr(sDtaDemF)+
+                ' AND   mt.cod_linx='+sgCodLjLinx;
        End
-      Else // If sgCodLoja<>'99' Then
+      Else // If sgCodLjLinx='2' CD
        Begin
          MySql:=' SELECT'+
-                ' SUM(f.vlr_demandas) Tot_Vlr_Demanda,'+
-                ' SUM(f.qtd_demandas) Tot_Qtd_Demanda'+
+                ' SUM(f.qtd_demandas) Tot_Qtd_Demanda,'+
+                ' SUM(f.vlr_demandas) Tot_Vlr_Demanda'+
                 ' FROM ES_FINAN_CURVA_ABC f'+
                 ' WHERE EXISTS (SELECT 1'+
                 '               FROM EMP_CONEXOES c'+
                 '               WHERE c.Ind_Ativo=''SIM'''+
-                '               AND   c.cod_filial=f.cod_loja)';
-       End; // If sgCodLoja<>'99' Then
-      DMMovtosEmpresas.SDS.Close;
-      DMMovtosEmpresas.SDS.CommandText:=MySql;
-      DMMovtosEmpresas.SDS.Open;
+                '               AND   c.cod_linx=f.cod_linx'+
+                '               AND   c.dta_inicio_linx IS NOT NULL)';
+       End; // If sgCodLjLinx<>'2' Then
+      DMMovtosEmpresas.SQLQuery1.Close;
+      DMMovtosEmpresas.SQLQuery1.SQL.Clear;;
+      DMMovtosEmpresas.SQLQuery1.SQL.Add(MySql);
+      DMMovtosEmpresas.SQLQuery1.Open;
 
-      sTotQtdDemandas:=DMMovtosEmpresas.SDS.FieldByName('Tot_Qtd_Demanda').AsString;
+      sTotQtdDemandas:=DMMovtosEmpresas.SQLQuery1.FieldByName('Tot_Qtd_Demanda').AsString;
       sTotQtdDemandas:=f_Troca(',','.',sTotQtdDemandas);
       If Pos('.',sTotQtdDemandas)=0 Then
        sTotQtdDemandas:=sTotQtdDemandas+'.00';
 
-      sTotVlrDemandas:=DMMovtosEmpresas.SDS.FieldByName('Tot_Vlr_Demanda').AsString;
+      sTotVlrDemandas:=DMMovtosEmpresas.SQLQuery1.FieldByName('Tot_Vlr_Demanda').AsString;
       sTotVlrDemandas:=f_Troca(',','.',sTotVlrDemandas);
       If Pos('.',sTotVlrDemandas)=0 Then
        sTotVlrDemandas:=sTotVlrDemandas+'.00';
 
-      DMMovtosEmpresas.SDS.Close;
+      DMMovtosEmpresas.SQLQuery1.Close;
 
-      // Data para Não Exclusão ES_FINAN_CURVA_ABC =============================
-      sDtaExcluir:=DateToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor));
-      sDtaExcluir:=f_Troca('/','.',f_Troca('-','.',sDtaExcluir));
+      // Exclui Movimento Anterior =============================================
+      MySql:=' UPDATE ES_FINAN_CURVA_ABC f'+
+             ' SET f.dta_atualizacao=CURRENT_DATE-1'+
+             ' WHERE f.dta_atualizacao=CURRENT_DATE'+
+             ' AND f.cod_linx='+sgCodLjLinx;
+      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
       // Insere ES_FINAN_CURVA_ABC =============================================
-      If sgCodLoja<>'99' Then
-       Begin
-         MySql:=' INSERT INTO ES_FINAN_CURVA_ABC'+
-                ' (COD_LOJA, COD_PRODUTO, EST_MINIMO, EST_MAXIMO, NUM_DIAS_UTEIS,'+
-                '  VLR_DEMANDAS_ANO, VLR_DEMANDAS, PER_PARTICIPACAO, IND_CURVA,'+
-                '  QTD_DEMANDAS_ANO, QTD_DEMANDAS, PER_PART_QTD, IND_CURVA_QTD,'+
-                '  NUM_DIAS_ESTOCAGEM, QTD_TRANSITO, DTA_ATUALIZACAO, HRA_ATUALIZACAO,'+
-                '  USU_ALTERA, DTA_ALTERA)'+
+      MySql:=' INSERT INTO ES_FINAN_CURVA_ABC'+
+             ' (COD_LOJA, COD_PRODUTO, EST_MINIMO, EST_MAXIMO, NUM_DIAS_UTEIS,'+
+             '  VLR_DEMANDAS_ANO, VLR_DEMANDAS, PER_PARTICIPACAO, IND_CURVA,'+
+             '  QTD_DEMANDAS_ANO, QTD_DEMANDAS, PER_PART_QTD, IND_CURVA_QTD,'+
+             '  NUM_DIAS_ESTOCAGEM, QTD_TRANSITO, DTA_ATUALIZACAO, HRA_ATUALIZACAO,'+
+             '  USU_ALTERA, DTA_ALTERA, COD_PROD_LINX, COD_LINX)'+
 
-                ' SELECT '+
-                QuotedStr(sgCodLoja)+' COD_LOJA,'+
-                ' pr.codproduto COD_PRODUTO,'+
-                ' COALESCE(fc.est_minimo,0) EST_MINIMO,'+
-                ' COALESCE(fc.est_maximo,0) EST_MAXIMO,'+
-                ' ABS(CAST(CASE'+
-                '            WHEN pr.datainclusao<CAST('+QuotedStr(sDtaDemI)+' as Date) THEN'+
-                '              '+QuotedStr(IntToStr(iTotDiasUteis))+
-                '            WHEN pr.datainclusao>cast('+QuotedStr(sDtaDemF)+' as Date) THEN'+
-                '              1'+
-                '            ELSE'+
-                '              ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))-'+
-                '               ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))/7)-'+
-                                IntToStr(iTotFeriados)+')'+
-                '          END AS INTEGER)) NUM_DIAS_UTEIS, '+
-                sTotVlrDemandas+' Vlr_DEMANDAS_ANO,'+
-                ' COALESCE(dem.VLR_DEMANDAS,0) VLR_DEMANDAS,'+
-                ' COALESCE(dem.PER_PARTICIPACAO,0) PER_PARTICIPACAO,'+
-                ' ''E'' IND_CURVA, '+
-                sTotQtdDemandas+' Qtd_DEMANDAS_ANO,'+
-                ' COALESCE(dem.QTD_DEMANDAS,0) QTD_DEMANDAS,'+
-                ' COALESCE(dem.PER_PART_QTD,0) PER_PART_QTD,'+
-                ' ''E'' IND_CURVA_QTD,'+
-                ' 0 NUM_DIAS_ESTOCAGEM,'+
-                ' COALESCE(dem.QTD_TRANSITO,0) QTD_TRANSITO,'+
-                ' CURRENT_DATE Dta_Atualizacao,'+
-                ' CURRENT_TIME Hra_Atualizacao,'+
-                ' 0 USU_ALTERA,'+
-                ' COALESCE(fc.dta_altera,CURRENT_TIMESTAMP) dta_altera'+
+             ' SELECT '+
+             QuotedStr(sgCodLjSid)+' COD_LOJA,'+
 
-                ' FROM PRODUTO pr'+
-                '        LEFT JOIN (SELECT md.codfilial,'+
-                '                          md.codproduto,'+
-                '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.preco,0),0.00)) AS NUMERIC(12,2)) VLR_DEMANDAS,'+
-                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.preco,0),0.0000)))*100)/'+sTotVlrDemandas+') AS NUMERIC(12,4)) PER_PARTICIPACAO,'+
-                '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.quant_ref,0),0)) AS INTEGER) QTD_DEMANDAS,'+
-                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.quant_ref,0),0.0000)))*100)/'+sTotQtdDemandas+') AS NUMERIC(12,4)) PER_PART_QTD,'+
-                '                          CAST(SUM(DECODE(md.ind_tipo,''TR'',COALESCE(md.quant_ref,0),0)) AS INTEGER) QTD_TRANSITO'+
-                '                   FROM MOVTOS_EMPRESAS md'+
-                '           WHERE ((md.ind_tipo=''DM'' AND md.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' AND '+
-                                                                                QuotedStr(sDtaDemF)+')'+
-                '                          OR'+
-                '                          (md.ind_tipo=''TR'' AND md.dta_ref>='+QuotedStr(sDtaTra)+'))'+
-                '                   GROUP BY 1,2) DEM  ON dem.codproduto=pr.codproduto'+
-                '                                     AND dem.codfilial='+QuotedStr(sgCodLoja)+
-                '        LEFT JOIN ES_FINAN_CURVA_ABC fc  ON fc.cod_produto=pr.codproduto'+
-                '                                        AND fc.cod_loja='+QuotedStr(sgCodLoja)+
-                '        LEFT JOIN ESTOQUE es  ON es.codproduto=pr.codproduto'+
-                '                             AND es.codfilial='+QuotedStr(sgCodLoja)+
-                ' WHERE COALESCE(pr.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
-                ' AND   ((pr.principalfor NOT IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
-                '         OR'+
-                '        (pr.codaplicacao Not in (''0015'',''0016'',''0017'')))';
-       End
-      Else // If sgCodLoja='99' Then
-       Begin
-         MySql:=' INSERT INTO ES_FINAN_CURVA_ABC'+
-                ' (COD_LOJA, COD_PRODUTO, EST_MINIMO, EST_MAXIMO, NUM_DIAS_UTEIS,'+
-                '  VLR_DEMANDAS_ANO, VLR_DEMANDAS, PER_PARTICIPACAO, IND_CURVA,'+
-                '  QTD_DEMANDAS_ANO, QTD_DEMANDAS, PER_PART_QTD, IND_CURVA_QTD,'+
-                '  NUM_DIAS_ESTOCAGEM, QTD_TRANSITO, DTA_ATUALIZACAO, HRA_ATUALIZACAO,'+
-                '  USU_ALTERA, DTA_ALTERA)'+
+             ' CASE'+
+             '    WHEN CHAR_LENGTH(TRIM(pr.cod_auxiliar))>6 THEN'+
+             '      NULL'+
+             '    ELSE'+
+             '      pr.cod_auxiliar'+
+             ' END COD_PRODUTO,'+
 
-                ' SELECT '+
-                QuotedStr(sgCodLoja)+' COD_LOJA,'+
-                ' pr.codproduto COD_PRODUTO,'+
-                ' COALESCE(fc.est_minimo,0) EST_MINIMO,'+
-                ' COALESCE(fc.est_maximo,0) EST_MAXIMO,'+
+             ' COALESCE(fc.est_minimo,0) EST_MINIMO,'+
+             ' COALESCE(fc.est_maximo,0) EST_MAXIMO,'+
 
-                ' ABS(CAST(CASE'+
-                '            WHEN pr.datainclusao<CAST('+QuotedStr(sDtaDemI)+' as Date) THEN'+
-                '              '+QuotedStr(IntToStr(iTotDiasUteis))+
-                '            WHEN pr.datainclusao>cast('+QuotedStr(sDtaDemF)+' as Date) THEN'+
-                '              1'+
-                '            ELSE'+
-                '              ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))-'+
-                '               ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))/7)-'+IntToStr(iTotFeriados)+')'+
-                '          END AS INTEGER)) NUM_DIAS_UTEIS, '+
+             ' ABS(CAST(CASE'+
+             '            WHEN pr.dt_inclusao<CAST('+QuotedStr(sDtaDemI)+' as Date) THEN'+
+             '              '+QuotedStr(IntToStr(iTotDiasUteis))+
+             '            WHEN pr.dt_inclusao>cast('+QuotedStr(sDtaDemF)+' as Date) THEN'+
+             '              1'+
+             '            ELSE'+
+             '              ((DATEDIFF(DAY FROM pr.dt_inclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))-'+
+             '               ((DATEDIFF(DAY FROM pr.dt_inclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))/7)-'+
+                              IntToStr(iTotFeriados)+')'+
+             '          END'+
+             ' AS INTEGER)) NUM_DIAS_UTEIS, '+
 
-                sTotVlrDemandas+' Vlr_DEMANDAS_ANO,'+
-                ' CAST(COALESCE(dem.VLR_DEMANDAS,0) AS NUMERIC(12,2)) VLR_DEMANDAS,'+
+             sTotVlrDemandas+' Vlr_DEMANDAS_ANO,'+
+             ' 0.00 VLR_DEMANDAS,'+
+             ' 0.0000 PER_PARTICIPACAO,'+
+             ' ''E'' IND_CURVA, '+
+             sTotQtdDemandas+' Qtd_DEMANDAS_ANO,'+
+             ' 0 QTD_DEMANDAS,'+
+             ' 0.0000 PER_PART_QTD,'+
+             ' ''E'' IND_CURVA_QTD,'+
+             ' 0 NUM_DIAS_ESTOCAGEM,'+
+             ' 0 QTD_TRANSITO,'+
+             ' CURRENT_DATE Dta_Atualizacao,'+
+             ' CURRENT_TIME Hra_Atualizacao,'+
+             ' fc.usu_altera USU_ALTERA,'+
+             ' COALESCE(fc.dta_altera,CURRENT_TIMESTAMP) dta_altera,'+
+             ' pr.cod_produto COD_PROD_LINX, '+
+             sgCodLjLinx+' COD_LINX'+
 
-                ' CAST('+
-                ' CASE'+
-                '    WHEN COALESCE(dem.VLR_DEMANDAS,0)<>0 THEN'+
-                '       ((COALESCE(dem.VLR_DEMANDAS,0)*100)/'+sTotVlrDemandas+')'+
-                '    ELSE'+
-                '       0'+
-                ' END AS NUMERIC(12,4)) PER_PARTICIPACAO,'+
-
-                ' ''E'' IND_CURVA,'+
-                sTotQtdDemandas+' Qtd_DEMANDAS_ANO,'+
-                ' CAST(COALESCE(dem.QTD_DEMANDAS,0) AS INTEGER) QTD_DEMANDAS,'+
-
-                ' CAST('+
-                ' CASE'+
-                '   WHEN COALESCE(dem.QTD_DEMANDAS,0)<>0 THEN'+
-                '    ((COALESCE(dem.QTD_DEMANDAS,0)*100)/'+sTotQtdDemandas+')'+
-                '   ELSE'+
-                '     0'+
-                ' END AS NUMERIC(12,4))PER_PART_QTD,'+
-
-                ' ''E'' IND_CURVA_QTD,'+
-                ' 0 NUM_DIAS_ESTOCAGEM,'+
-                ' CAST(COALESCE(dem.QTD_TRANSITO,0) AS INTEGER) QTD_TRANSITO,'+
-                ' CURRENT_DATE Dta_Atualizacao,'+
-                ' CURRENT_TIME Hra_Atualizacao,'+
-                ' 0 USU_ALTERA,'+
-                ' COALESCE(fc.dta_altera,CURRENT_TIMESTAMP) dta_altera'+
-
-                ' FROM produto pr'+
-                '    LEFT JOIN (SELECT f.cod_produto,'+
-                '                      CAST(SUM(f.vlr_demandas) AS NUMERIC(12,2)) vlr_demandas,'+
-                '                      CAST(SUM(f.qtd_demandas) AS NUMERIC(12,2)) qtd_demandas,'+
-                '                      CAST(SUM(f.qtd_transito) AS INTEGER) qtd_transito'+
-                '               FROM ES_FINAN_CURVA_ABC f'+
-                '               WHERE EXISTS (SELECT 1'+
-                '                             FROM EMP_CONEXOES c'+
-                '                             WHERE c.Ind_Ativo=''SIM'''+
-                '                             AND c.cod_filial=f.cod_loja)'+
-                '               GROUP BY 1) DEM ON dem.cod_produto=pr.codproduto'+
-
-                '    LEFT JOIN ESTOQUE es  ON es.codproduto=pr.codproduto'+
-                '                      AND es.codfilial='+QuotedStr(sgCodLoja)+
-                '    LEFT JOIN ES_FINAN_CURVA_ABC fc  ON fc.cod_produto=pr.codproduto'+
-                '                                    AND fc.cod_loja='+QuotedStr(sgCodLoja)+
-                ' WHERE COALESCE(pr.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
-                ' AND   ((pr.principalfor NOT IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
-                '         OR'+
-                '        (pr.codaplicacao Not in (''0015'',''0016'',''0017'')))';
-       End; // If sgCodLoja<>'99' Then
+             ' FROM ES_FINAN_CURVA_ABC fc, LINXPRODUTOS pr'+
+             ' WHERE fc.cod_prod_linx=pr.cod_produto'+
+             ' AND   fc.cod_linx='+sgCodLjLinx+
+             ' GROUP BY 2,3,4,5,18,19,20';
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
-      sgCodLojaUnica:=TimeToStr(Time);
-
-      // Exclui Movtos Anterior Pela dta_atualizacao ES_FINAN_CURVA_ABC ========
-      MySql:=' DELETE FROM ES_FINAN_CURVA_ABC ff'+
-             ' WHERE ff.cod_loja='+QuotedStr(sgCodLoja)+
-             ' AND   ff.dta_atualizacao<'+QuotedStr(sDtaExcluir);
+      // Exclui Movimento Anterior =============================================
+      MySql:=' DELETE FROM ES_FINAN_CURVA_ABC cv'+
+             ' WHERE cv.cod_linx='+sgCodLjLinx+
+             ' AND   cv.dta_atualizacao<CURRENT_DATE';
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+      // Atualiza Transacao ====================================================
+      DMMovtosEmpresas.SQLC.Commit(TD);
+
+      // Busca Demandas Lojas Não CD  ==========================================
+      If sgCodLjLinx<>'2' Then
+      Begin
+        MySql:=' SELECT md.cod_prod_linx,'+
+
+               ' CASE'+
+               '   WHEN CAST(SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.preco,0),0.00)) AS NUMERIC(12,2))>0 THEN'+
+               '     CAST(SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.preco,0),0.00)) AS NUMERIC(12,2))'+
+               '   ELSE'+
+               '     0.00'+
+               ' END VLR_DEMANDAS,'+
+
+               ' CASE'+
+               '   WHEN CAST(SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.preco,0),0.00)) AS NUMERIC(12,2))>0 THEN'+
+               '     CAST((((SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.preco,0),0.0000)))*100)/'+sTotVlrDemandas+') AS NUMERIC(12,4))'+
+               '   ELSE'+
+               '     0.0000'+
+               ' END PER_PARTICIPACAO,'+
+
+               ' CASE'+
+               '   WHEN CAST(SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.quant_ref,0),0)) AS INTEGER)>0 THEN'+
+               '     CAST(SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.quant_ref,0),0)) AS INTEGER)'+
+               '   ELSE'+
+               '     0'+
+               ' END QTD_DEMANDAS,'+
+
+               ' CASE'+
+               '   WHEN CAST(SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.quant_ref,0),0)) AS INTEGER)>0 THEN'+
+               '     CAST((((SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.quant_ref,0),0.0000)))*100)/'+sTotQtdDemandas+') AS NUMERIC(12,4))'+
+               '   ELSE'+
+               '     0'+
+               ' END PER_PART_QTD,'+
+
+               ' CAST(SUM(DECODE(md.ind_tipo,''TR'',COALESCE(md.quant_ref,0),0)) AS INTEGER) QTD_TRANSITO'+
+
+               ' FROM MOVTOS_EMPRESAS md'+
+               ' WHERE ((md.ind_tipo=''DM'' AND md.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' AND '+QuotedStr(sDtaDemF)+')'+
+               '        OR'+
+               '        (md.ind_tipo=''TR'' AND md.dta_ref>='+QuotedStr(sDtaTra)+'))'+
+               ' AND   md.cod_prod_linx is not null'+
+               ' AND   md.cod_linx='+sgCodLjLinx+
+               ' GROUP BY 1';
+      End; // If sgCodLjLinx<>'2' Then
+
+      // Busca Demandas CD  ====================================================
+      If sgCodLjLinx='2' Then
+      Begin
+        MySql:=' SELECT fc.cod_prod_linx,'+
+
+               ' SUM(fc.vlr_demandas) VLR_DEMANDAS,'+
+
+               ' CASE'+
+               '   WHEN SUM(fc.vlr_demandas)>0 THEN'+
+               '     CAST(((CAST(SUM(fc.vlr_demandas)  AS NUMERIC(12,4)) * 100) / '+sTotVlrDemandas+') AS NUMERIC(12,4))'+
+               '   ELSE'+
+               '     0.0000'+
+               ' END PER_PARTICIPACAO,'+
+
+               ' SUM(fc.qtd_demandas) QTD_DEMANDAS,'+
+
+               ' CASE'+
+               '   WHEN SUM(fc.qtd_demandas)>0 THEN'+
+               '     CAST(((CAST(SUM(fc.qtd_demandas) AS NUMERIC(12,4)) * 100) / '+sTotQtdDemandas+') AS NUMERIC(12,4))'+
+               '   ELSE'+
+               '     0'+
+               ' END PER_PART_QTD,'+
+
+               ' SUM(fc.qtd_transito) QTD_TRANSITO'+
+
+               ' FROM ES_FINAN_CURVA_ABC fc'+
+               ' WHERE fc.dta_atualizacao=CURRENT_DATE'+
+               ' AND   fc.cod_prod_linx IS NOT NULL'+
+               ' AND   EXISTS (SELECT 1'+
+               '               FROM EMP_CONEXOES c'+
+               '               WHERE c.Ind_Ativo=''SIM'''+
+               '               AND   c.cod_linx=fc.cod_linx'+
+               '               AND   c.dta_inicio_linx IS NOT NULL)'+
+               ' GROUP BY 1';
+      End; // If sgCodLjLinx='2' Then
+      DMMovtosEmpresas.SQLQuery1.Close;
+      DMMovtosEmpresas.SQLQuery1.SQL.Clear;;
+      DMMovtosEmpresas.SQLQuery1.SQL.Add(MySql);
+      DMMovtosEmpresas.SQLQuery1.Open;
+
+      // Atualiza Demandas =====================================================
+      TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMMovtosEmpresas.SQLC.StartTransaction(TD);
+
+      DMMovtosEmpresas.SQLQuery1.DisableControls;
+      While Not DMMovtosEmpresas.SQLQuery1.Eof do
+      Begin
+        MySql:=' UPDATE ES_FINAN_CURVA_ABC cv'+
+               ' SET cv.vlr_demandas='+QuotedStr(DMMovtosEmpresas.SQLQuery1.FieldByName('VLR_DEMANDAS').AsString)+
+               ',    cv.per_participacao='+QuotedStr(DMMovtosEmpresas.SQLQuery1.FieldByName('PER_PARTICIPACAO').AsString)+
+               ',    cv.qtd_demandas='+QuotedStr(DMMovtosEmpresas.SQLQuery1.FieldByName('QTD_DEMANDAS').AsString)+
+               ',    cv.per_part_qtd='+QuotedStr(DMMovtosEmpresas.SQLQuery1.FieldByName('PER_PART_QTD').AsString)+
+               ',    cv.qtd_transito='+QuotedStr(DMMovtosEmpresas.SQLQuery1.FieldByName('QTD_TRANSITO').AsString)+
+               ' WHERE cv.cod_linx='+sgCodLjLinx+
+               ' AND   cv.cod_prod_linx='+DMMovtosEmpresas.SQLQuery1.FieldByName('cod_prod_linx').AsString+
+               ' AND   cv.dta_atualizacao=CURRENT_DATE';
+        DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+        DMMovtosEmpresas.SQLQuery1.Next;
+      End; // While Not DMMovtosEmpresas.SQLQuery1.Eof do
+      DMMovtosEmpresas.SQLQuery1.EnableControls;
+      DMMovtosEmpresas.SQLQuery1.Close;
+
+      DMMovtosEmpresas.SQLC.Commit(TD);
 
       // Calcula Curvas de Valores e Quantidades ===============================
+      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMMovtosEmpresas.SQLC.StartTransaction(TD);
+
       CalculaCurvas;
+
+      DMMovtosEmpresas.SQLC.Commit(TD);
 
       // Coloca Pprodutos Novos (Até 6 Meses de Cadastro) ======================
       // da Curva "E" para Curva "C" ===========================================
+      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMMovtosEmpresas.SQLC.StartTransaction(TD);
+
       sDtaProdNovo:=DateToStr(IncMonth(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor),-6));
 
       MySql:=' UPDATE ES_FINAN_CURVA_ABC cv'+
              ' SET cv.ind_curva=''C'''+
              ' WHERE EXISTS (SELECT 1'+
              '               FROM LINXPRODUTOS pl'+
-             '               WHERE pl.cod_auxiliar=cv.cod_produto'+
+             '               WHERE pl.cod_produto=cv.cod_prod_linx'+
              '               AND   CAST(pl.dt_inclusao AS DATE)>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaProdNovo)))+')'+
              ' AND cv.ind_curva=''E''';
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
@@ -933,11 +1037,21 @@ begin
 
       DateSeparator:='/';
       DecimalSeparator:=',';
+
+      hHrFimLj:=TimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor));
+      tgMySqlErro.Add('Linx: '+sgCodLjLinx+' Sid: '+sgCodLjSid+' - Inicio: '+hHrIniLj+' Fim: '+hHrFimLj+' - TEMPO: '+TimeToStr(StrToTime(hHrFimLj)-StrToTime(hHrIniLj)));
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Curva_ABC_Erros.txt');
     Except
       on e : Exception do
       Begin
         // Abandona Transacao ==================================================
         DMMovtosEmpresas.SQLC.Rollback(TD);
+
+        tgMySqlErro.Add('==================================');
+        tgMySqlErro.Add('ERRO ==>> Linx: '+sgCodLjLinx+' Sid: '+sgCodLjSid);
+        tgMySqlErro.Add(MySql);
+        tgMySqlErro.Add('==================================');
+        tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Curva_ABC_Erros.txt');
 
         DateSeparator:='/';
         DecimalSeparator:=',';
@@ -945,11 +1059,23 @@ begin
     End; // Try
 
     DMMovtosEmpresas.CDS_Pesquisa.Next;
-  End; // If Lbx_EmpresasProcessar.Items.Count=0 Then
+  End; // While Not DMMovtosEmpresas.CDS_Pesquisa.Eof do
   DMMovtosEmpresas.CDS_Pesquisa.Close;
 
-  // Atualiza Curva ABC no CD - SIDICOM
-  AtualizaCurvaCD;
+  tgMySqlErro.Add('==================================');
+  tgMySqlErro.Add('Processamento FIM: '+DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)));
+  tgMySqlErro.Add('==================================');
+  tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Curva_ABC_Erros.txt');
+
+  FreeAndNil(tgMySqlErro);
+
+// OdirApagar - SIDICOM - 22/06/2019
+//  // Atualiza Curva ABC no CD - SIDICOM
+//  AtualizaCurvaCD;
+
+// OdirApagar - SIDICOM - 22/06/2019
+//  // Atualiza Codigos Linx para Produtos Sem Codigo
+//  Es_Finan_Curva_ABC_CodLinx;
 
   Application.Terminate;
   Exit;
@@ -962,7 +1088,6 @@ end; // Atualiza Curvas e Demandas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmCurvasDemandas.FormClose(Sender: TObject;var Action: TCloseAction);
 begin
-
   Try
     Application.Terminate;
     Exit;
@@ -973,6 +1098,8 @@ end;
 procedure TFrmCurvasDemandas.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
+  FreeAndNil(tgMySqlErro);
+
   Try
     Application.Terminate;
     Exit;

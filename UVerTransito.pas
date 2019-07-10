@@ -73,16 +73,8 @@ begin
   if not (gdSelected in State) Then
   Begin
     // OC Aberta - Pendente no Fornecedor ======================================
-    If sgCodLojaUnica='' Then
-     Begin
-       if DMBelShop.CDS_VerTransitoCOD_SITUACAO.AsInteger=1 Then
-        Dbg_VerTransitoOCs.Canvas.Brush.Color:=$00D7FFD7;
-     End
-    Else
-     Begin
-       if FrmBelShop.IBQ_ConsultaMatriz.FieldByName('COD_SITUACAO').AsInteger=1 Then
-        Dbg_VerTransitoOCs.Canvas.Brush.Color:=$00D7FFD7;
-     End;
+    if DMBelShop.CDS_VerTransitoCOD_SITUACAO.AsInteger=1 Then
+     Dbg_VerTransitoOCs.Canvas.Brush.Color:=$00D7FFD7;
 
     Dbg_VerTransitoOCs.Canvas.FillRect(Rect);
     Dbg_VerTransitoOCs.DefaultDrawDataCell(Rect,Column.Field,state);

@@ -17,36 +17,72 @@ uses
   dxSkinStardust, dxSkinSummer2008, dxSkinsDefaultPainters,
   dxSkinValentine, dxSkinXmas2008Blue, cxTextEdit, cxMaskEdit,
   cxDropDownEdit, cxCalendar, StdCtrls, dxSkinsdxStatusBarPainter,
-  dxStatusBar, JvExStdCtrls, JvRadioButton;
+  dxStatusBar, JvExStdCtrls, JvRadioButton,
+  xmldom, XMLIntf, msxmldom, XMLDoc, // ==> Arqivo XML
+  FileCtrl, Mask, ToolEdit, CurrEdit;
 
 type
   TFrmDebCredST = class(TForm)
     CorCaptionForm: TJvGradientCaption;
     ApplicationEvents1: TApplicationEvents;
-    Panel3: TPanel;
-    Bt_Sair: TJvXPButton;
-    Bt_VlrBcICMSST: TJvXPButton;
-    Bt_Clipboard: TJvXPButton;
-    Bt_ProdutosForn: TJvXPButton;
-    Bt_TotaisForn: TJvXPButton;
-    Panel1: TPanel;
     PC_DebCredICMSST: TPageControl;
     Ts_FornBcICMSST: TTabSheet;
     Ts_FornTotais: TTabSheet;
     Ts_FornProdutos: TTabSheet;
     Dbg_TotaisForn: TDBGrid;
     Dbg_ProdutosForn: TDBGrid;
-    OdirPanApres: TPanel;
+    Dbg_VlrBcICMSST: TDBGrid;
+    Ts_XMLsAnalisa: TTabSheet;
+    Pan_Solicitacoes: TPanel;
+    Panel3: TPanel;
+    Bt_Sair: TJvXPButton;
+    Bt_VlrBcICMSST: TJvXPButton;
+    Bt_Clipboard: TJvXPButton;
+    Bt_ProdutosForn: TJvXPButton;
+    Bt_TotaisForn: TJvXPButton;
+    Panel2: TPanel;
     Gb_Periodo: TGroupBox;
     Label85: TLabel;
     DtEdtDtaInicio: TcxDateEdit;
     DtEdtDtaFim: TcxDateEdit;
-    Dbg_VlrBcICMSST: TDBGrid;
-    dxStatusBar2: TdxStatusBar;
     Gb_NFeCompras: TGroupBox;
     Rb_NFeAmbas: TJvRadioButton;
     Rb_NFeSem: TJvRadioButton;
     Rb_NFeCom: TJvRadioButton;
+    dxStatusBar2: TdxStatusBar;
+    Pan_XMLslBottom: TPanel;
+    Bt_XMLsSair: TJvXPButton;
+    Gb_XMLsSolicitacao: TGroupBox;
+    Bt_XMLsPasta: TJvXPButton;
+    EdtXMLsPasta: TEdit;
+    Bt_XMLsAnaliza: TJvXPButton;
+    Dbg_XMLs: TDBGrid;
+    OdirPanApres: TPanel;
+    Label1: TLabel;
+    DtEdtXMLsDownLoad: TcxDateEdit;
+    Shape1: TShape;
+    Label2: TLabel;
+    EdtXMLsEncontrados: TCurrencyEdit;
+    Label3: TLabel;
+    EdtXMLsProcessados: TCurrencyEdit;
+    Bt_XMLsSalvar: TJvXPButton;
+    Label11: TLabel;
+    EdtXMLsSelecionados: TCurrencyEdit;
+    Gb_XMLsFiltros: TGroupBox;
+    Label6: TLabel;
+    Cbx_XMLsCST: TComboBox;
+    Label7: TLabel;
+    Cbx_XMLsvST: TComboBox;
+    Label8: TLabel;
+    Cbx_XMLsVlrvST: TComboBox;
+    Label9: TLabel;
+    Cbx_XMLsvFCPSTRet: TComboBox;
+    Label10: TLabel;
+    Cbx_XMLsVlrvFCPSTRet: TComboBox;
+    Label5: TLabel;
+    Cbx_XMLsUFEmit: TComboBox;
+    Label12: TLabel;
+    Cbx_XMLsUFDest: TComboBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -58,13 +94,25 @@ type
     procedure Bt_TotaisFornClick(Sender: TObject);
     procedure Bt_ProdutosFornClick(Sender: TObject);
 
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     Procedure TabSheetLibera(sNomeTab: String);
 
     Function  PeriodoApropriacao: Boolean;
 
     Procedure SqlProdutos;
+
+
+    // ANALISE DE XMLs =========================================================
+    Procedure XMLsAnalisaInicializa;
+    Function  XMLsAnalisaBuscaXMLs: Boolean;
+    Procedure XMLsAnalisaXMLs;
+    //==========================================================================
+
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     procedure Dbg_VlrBcICMSSTColEnter(Sender: TObject);
     procedure Dbg_VlrBcICMSSTKeyDown(Sender: TObject; var Key: Word;
@@ -89,6 +137,15 @@ type
     procedure Rb_NFeSemClick(Sender: TObject);
     procedure Rb_NFeSemKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure Bt_XMLsPastaClick(Sender: TObject);
+    procedure Bt_XMLsAnalizaClick(Sender: TObject);
+    procedure Dbg_XMLsColEnter(Sender: TObject);
+    procedure Dbg_XMLsKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_XMLsDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DtEdtXMLsDownLoadPropertiesChange(Sender: TObject);
+    procedure Cbx_XMLsUFEmitChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -104,12 +161,473 @@ var
 
 implementation
 
-uses DK_Procs1, UDMDebCredST, UFrmBelShop;
+uses DK_Procs1, UDMDebCredST, UFrmBelShop, SysConst, DB;
 
 {$R *.dfm}
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// ANALISE DE XMLs - Inicializa Client e ComboBox >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmDebCredST.XMLsAnalisaInicializa;
+Begin
+  EdtXMLsEncontrados.AsInteger :=0;
+  EdtXMLsProcessados.AsInteger :=0;
+  EdtXMLsSelecionados.AsInteger:=0;
+
+  // Iniciliza Client ==========================================================
+  If DMDebCredST.CDS_V_XMLsAnalisa.Active Then
+   DMDebCredST.CDS_V_XMLsAnalisa.Close;
+
+  DMDebCredST.CDS_V_XMLsAnalisa.CreateDataSet;
+  DMDebCredST.CDS_V_XMLsAnalisa.Filtered:=False;
+  DMDebCredST.CDS_V_XMLsAnalisa.Filter:='';
+  DMDebCredST.CDS_V_XMLsAnalisa.IndexFieldNames:='NOME';
+  DMDebCredST.CDS_V_XMLsAnalisa.Open;
+
+  // Iniciliza ComboBox ========================================================
+  Cbx_XMLsUFEmit.Items.Clear;
+  Cbx_XMLsUFEmit.Items.Add('Todos');
+  Cbx_XMLsUFEmit.ItemIndex:=0;
+
+  Cbx_XMLsUFDest.Items.Clear;
+  Cbx_XMLsUFDest.Items.Add('Todos');
+  Cbx_XMLsUFDest.ItemIndex:=0;
+
+  Cbx_XMLsCST.Items.Clear;
+  Cbx_XMLsCST.Items.Add('Todos');
+  Cbx_XMLsCST.ItemIndex:=0;
+
+  Cbx_XMLsvST.ItemIndex:=2;
+  Cbx_XMLsVlrvST.ItemIndex:=2;
+
+  Cbx_XMLsvFCPSTRet.ItemIndex:=2;
+  Cbx_XMLsVlrvFCPSTRet.ItemIndex:=2;
+
+  Gb_XMLsFiltros.Enabled:=False;
+End; // ANALISE DE XMLs - Inicializa Client e ComboBox >>>>>>>>>>>>>>>>>>>>>>>>>
+
+// ANALISE DE XMLs - Analiza os Arquivos XMLs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmDebCredST.XMLsAnalisaXMLs;
+Var
+  DOC:IXMLDocument;
+  NodeChild: IXMLNode;
+
+  i, ii, iii: Integer;
+
+  sEncontrado, // Campo Encontrado
+  sNome, sCNPJ, sUFEmit, sUFDest, sFone, // Dados do Emitente
+  svST, sValorST, svFCPSTRet, sValorFCPSTRet // Valores para LOCATE
+  : String;
+
+  bvST,          // Se Encontrou Tag vST
+  bValorST,      // Se Consta Valor do ICMS ST
+  bvFCPSTRet,    // Se Encontrou Tag vFCPSTRet - Valor Fundo de Combate a Pobreza Retido Anteriormente por Substituição Tributária
+  bValorFCPSTRet // Se Consta Valor Fundo de Combate a Pobreza Retido Anteriormente por Substituição Tributária
+  : Boolean;
+begin
+{
+=======================================================
+Empresas NÃO optante pelo Simples Nacional
+=======================================================
+ICMS10 - Grupo de Tributação do ICMS = 10
+X.10
+
+ICMS30 - Grupo de Tributação do ICMS = 30
+X.30
+
+ICMS60 - Grupo de Tributação do ICMS = 60
+X.60
+
+ICMS70 - Grupo de Tributação do ICMS = 70
+X.70
+
+=======================================================
+Empresas Optantes pelo Simples Nacional
+=======================================================
+ICMSSN201 - Grupo CRT=1 ? Simples Nacional e CSOSN=201
+X.201
+
+ICMSSN202 - Grupo CRT=1 ? Simples Nacional e CSOSN=202 ou 203
+X.202
+X.203
+
+ICMSSN500 - Grupo CRT=1 ? Simples Nacional e CSOSN = 500
+X.500
+
+ICMSSN900 - TAG de Grupo CRT=1 ? Simples Nacional e CSOSN=900
+X.900
+}
+  OdirPanApres.Caption:='AGUARDE !! Analizando Arquivos XMLs...';
+  Refresh;
+
+  EdtXMLsEncontrados.AsInteger:=mMemoForn.Lines.Count;
+
+  FrmBelShop.MontaProgressBar(True, FrmDebCredST);
+  pgProgBar.Properties.Max:=mMemoForn.Lines.Count;
+  pgProgBar.Position:=0;
+
+  //============================================================================
+  // Loop dos Arquivos XMLs ====================================================
+  //============================================================================
+  For iii:=0 to mMemoForn.Lines.Count-1 do
+  Begin
+    Application.ProcessMessages;
+
+    If Trim(mMemoForn.Lines[iii])='' Then
+    Begin
+      Break;
+      Exit;
+    End;
+
+    // Le Arquivo XML ==========================================================
+    DOC:=LoadXMLDocument(EdtXMLsPasta.Text+Trim(mMemoForn.Lines[iii]));
+
+    // Inicializa Variaveis ====================================================
+    sEncontrado:=''; // Campo Encontrado
+    // Dados do Emitente
+    sNome:='';
+    sCNPJ:='';
+    sUFEmit:='';
+    sUFDest:='';
+    sFone:='';
+    // Valores para LOCATE
+    svST:='';
+    sValorST:='';
+    svFCPSTRet:='';
+    sValorFCPSTRet:='';
+    // Booleanas
+    bvST:=False;           // Se Encontrou Valor do ICMS ST
+    bValorST:=False;       // Se Consta Valor do ICMS ST
+    bvFCPSTRet:=False;     // Se Encontrou Valor Fundo de Combate a Pobreza Retido Anteriormente por Substituição Tributária
+    bValorFCPSTRet:=False; // Se Consta Valor Fundo de Combate a Pobreza Retido Anteriormente por Substituição Tributária
+
+    // Le Dados dos Produtos ===================================================
+    For i:=0 to DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].
+                                                ChildNodes.Nodes['infNFe'].
+                                                ChildNodes.Count-1 do
+    Begin
+      NodeChild:=DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].
+                                                 ChildNodes.Nodes['infNFe'].
+                                                 ChildNodes[i];
+
+      //========================================================================
+      // Analisa os Produtos ===================================================
+      //========================================================================
+      If (NodeChild.NodeName='det') And (sEncontrado='') Then
+      Begin
+        For ii:=0 to DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].
+                                                     ChildNodes.Nodes['infNFe'].
+                                                     ChildNodes[i].
+                                                     ChildNodes.Nodes['imposto'].
+                                                     ChildNodes.Nodes['ICMS'].ChildNodes.Count-1 do
+        Begin
+          NodeChild:=DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].
+                                                     ChildNodes.Nodes['infNFe'].
+                                                     ChildNodes[i].
+                                                     ChildNodes.Nodes['imposto'].
+                                                     ChildNodes.Nodes['ICMS'].ChildNodes[ii];
+
+          // ICMS10 - Grupo de Tributação do ICMS = 10 =========================
+          If NodeChild.NodeName='ICMS10' Then
+          Begin
+            sEncontrado:='ICMS10';
+            Break;
+          End; // If ChildNodes1.NodeName='ICMS10' Then
+
+          // ICMS30 - Grupo de Tributação do ICMS = 30 =========================
+          If NodeChild.NodeName='ICMS30' Then
+          Begin
+            sEncontrado:='ICMS30';
+            Break;
+          End; // If ChildNodes1.NodeName='ICMS30' Then
+
+          // ICMS60 - Grupo de Tributação do ICMS = 60 =========================
+          If NodeChild.NodeName='ICMS60' Then
+          Begin
+            sEncontrado:='ICMS60';
+            Break;
+          End; // If ChildNodes1.NodeName='ICMS60' Then
+
+          // ICMS70 - Grupo de Tributação do ICMS = 70 =========================
+          If NodeChild.NodeName='ICMS70' Then
+          Begin
+            sEncontrado:='ICMS70';
+            Break;
+          End; // If ChildNodes1.NodeName='ICMS70' Then
+
+          // ICMSSN201 - Grupo CRT=1 ? Simples Nacional e CSOSN=201 ============
+          If NodeChild.NodeName='ICMSSN201' Then
+          Begin
+            sEncontrado:='ICMSSN201';
+            Break;
+          End; // If ChildNodes1.NodeName='ICMSSN201' Then
+
+          // ICMSSN202 - Grupo CRT=1 ? Simples Nacional e CSOSN=202 ou 203 =====
+          If NodeChild.NodeName='ICMSSN202' Then
+          Begin
+            sEncontrado:='ICMSSN202';
+            Break;
+          End; // If ChildNodes1.NodeName='ICMSSN202' Then
+
+          // ICMSSN500 - Grupo CRT=1 ? Simples Nacional e CSOSN = 500 ==========
+          If NodeChild.NodeName='ICMSSN500' Then
+          Begin
+            sEncontrado:='ICMSSN500';
+            Break;
+          End; // If ChildNodes1.NodeName='ICMSSN500' Then
+
+          // ICMSSN900 - TAG de Grupo CRT=1 ? Simples Nacional e CSOSN=900 =====
+          If NodeChild.NodeName='ICMSSN900' Then
+          Begin
+            sEncontrado:='ICMSSN900';
+            Break;
+          End; // If ChildNodes1.NodeName='ICMSSN900' Then
+        End; // For ii:=0 to DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe']....
+      End; // If NodeChild.NodeName='det' Then
+      // Analisa os Produtos ===================================================
+      //========================================================================
+
+      //========================================================================
+      // Analisa Totais de ICMS ================================================
+      //========================================================================
+      If (NodeChild.NodeName='total') And (sEncontrado<>'') Then
+      Begin
+        For ii:=0 to DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].
+                                                     ChildNodes.Nodes['infNFe'].
+                                                     ChildNodes[i].
+                                                     ChildNodes.Nodes['ICMSTot'].ChildNodes.Count-1 do
+        Begin
+          NodeChild:=DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].
+                                                     ChildNodes.Nodes['infNFe'].
+                                                     ChildNodes[i].
+                                                     ChildNodes.Nodes['ICMSTot'].ChildNodes[ii];
+
+          // Se Encontrou Valor do ICMS ST =====================================
+          If NodeChild.NodeName='vST' Then
+          Begin
+            bvST:=True;
+
+            // Se Consta Valor do ICMS ST
+            If DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].ChildNodes.Nodes['infNFe'].
+                                                     ChildNodes[i].ChildNodes.Nodes['ICMSTot'].ChildNodes[ii].NodeValue<>0 Then
+             bValorST:=True;
+          End; // If NodeChild.NodeName='vST' Then
+
+          // Se Encontrou Valor Fundo de Combate a Pobreza Retido Anteriormente por Substituição Tributária
+          If NodeChild.NodeName='vFCPSTRet' Then
+          Begin
+            bvFCPSTRet:=True;
+
+            // Se Consta Valor Fundo de Combate a Pobreza Retido Anteriormente por Substituição Tributária
+            If DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].ChildNodes.Nodes['infNFe'].
+                                                     ChildNodes[i].ChildNodes.Nodes['ICMSTot'].ChildNodes[ii].NodeValue<>0 Then
+             bValorFCPSTRet:=True;
+          End; // If NodeChild.NodeName='vST' Then
+
+        End; // For ii:=0 to DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe']...
+      End; // If (NodeChild.NodeName='total') And (sEncontrado<>'') Then
+
+    End; // For i:=0 to DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe']....
+
+    //==========================================================================
+    // Se Encontrou ICMS CST ===================================================
+    //==========================================================================
+    If (sEncontrado<>'') And ((Not bvST) Or (Not bValorST) Or (Not bvFCPSTRet) Or (Not bValorFCPSTRet)) Then
+    Begin
+      svST          :='NAO'; If bvST           Then svST          :='SIM';
+      sValorST      :='NAO'; If bValorST       Then sValorST      :='SIM';
+      svFCPSTRet    :='NAO'; If bvFCPSTRet     Then svFCPSTRet    :='SIM';
+      sValorFCPSTRet:='NAO'; If bValorFCPSTRet Then sValorFCPSTRet:='SIM';
+
+      //========================================================================
+      // Dados do Emitente =====================================================
+      //========================================================================
+      sNome  :=Trim(DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].
+                                                    ChildNodes.Nodes['infNFe'].
+                                                    ChildNodes.Nodes['emit'].
+                                                    ChildNodes.Nodes['xNome'].Text);
+      sCNPJ  :=Trim(DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].
+                                                    ChildNodes.Nodes['infNFe'].
+                                                    ChildNodes.Nodes['emit'].
+                                                    ChildNodes.Nodes['CNPJ'].Text);
+      sUFEmit:=Trim(DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].
+                                                    ChildNodes.Nodes['infNFe'].
+                                                    ChildNodes.Nodes['emit'].
+                                                    ChildNodes.Nodes['enderEmit'].
+                                                    ChildNodes.Nodes['UF'].Text);
+
+      sFone  :=Trim(DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].
+                                                    ChildNodes.Nodes['infNFe'].
+                                                    ChildNodes.Nodes['emit'].
+                                                    ChildNodes.Nodes['enderEmit'].
+                                                    ChildNodes.Nodes['fone'].Text);
+      // Dados do Emitente =====================================================
+      //========================================================================
+
+      //========================================================================
+      // Dados do Destinatario =================================================
+      //========================================================================
+      sUFDest:=Trim(DOC.ChildNodes.Nodes['nfeProc'].ChildNodes.Nodes['NFe'].
+                                                    ChildNodes.Nodes['infNFe'].
+                                                    ChildNodes.Nodes['dest'].
+                                                    ChildNodes.Nodes['enderDest'].
+                                                    ChildNodes.Nodes['UF'].Text);
+      // Dados do Destinatario =================================================
+      //========================================================================
+
+      //========================================================================
+      // Verifica se Emitente Já Cadastrado ====================================
+      //========================================================================
+       If Not DMDebCredST.CDS_V_XMLsAnalisa.Locate('CNPJ; CST; TAG_VST; VALOR_ST; TAG_VFCPSTRET; VALOR_VFCPSTRET',
+                                       VarArrayOf([sCNPJ, sEncontrado, svST, sValorST, svFCPSTRet, sValorFCPSTRet]),[]) Then
+       Begin
+         //=====================================================================
+         // Insere UF Emitente =================================================
+         //=====================================================================
+         bgSiga:=True;
+         For i:=0 to Cbx_XMLsUFEmit.Items.Count-1 do
+         Begin
+           If Cbx_XMLsUFEmit.Items[i]=sUFEmit Then
+           Begin
+             bgSiga:=False;
+             Break;
+           End; // If Cbx_XMLsUFEmit.Items[i]=sUFEmit Then
+         End; // For i:=0 to Cbx_XMLsUFEmit.Items.Count-1 do
+
+         If bgSiga Then
+          Cbx_XMLsUFEmit.Items.Add(sUFEmit);
+         // Insere UF Emitente =================================================
+         //=====================================================================
+
+         //=====================================================================
+         // Insere UF Destinatario =============================================
+         //=====================================================================
+         bgSiga:=True;
+         For i:=0 to Cbx_XMLsUFDest.Items.Count-1 do
+         Begin
+           If Cbx_XMLsUFDest.Items[i]=sUFDest Then
+           Begin
+             bgSiga:=False;
+             Break;
+           End; // If Cbx_XMLsUFDest.Items[i]=sUFDest Then
+         End; // For i:=0 to Cbx_XMLsUFDest.Items.Count-1 do
+
+         If bgSiga Then
+          Cbx_XMLsUFDest.Items.Add(sUFDest);
+         // Insere UF Destinatario =============================================
+         //=====================================================================
+
+         //=====================================================================
+         // Insere CST =========================================================
+         //=====================================================================
+         bgSiga:=True;
+         For i:=0 to Cbx_XMLsCST.Items.Count-1 do
+         Begin
+           If Cbx_XMLsCST.Items[i]=sEncontrado Then
+           Begin
+             bgSiga:=False;
+             Break;
+           End; // If Cbx_XMLsCST.Items[i]=sEncontrado Then
+         End; // For i:=0 to Cbx_XMLsCST.Items.Count-1 do
+
+         If bgSiga Then
+          Cbx_XMLsCST.Items.Add(sEncontrado);
+         // Insere CST =========================================================
+         //=====================================================================
+
+         //=====================================================================
+         // Insere Fornecedor ==================================================
+         //=====================================================================
+         DMDebCredST.CDS_V_XMLsAnalisa.Insert;
+         DMDebCredST.CDS_V_XMLsAnalisaNOME.AsString           :=sNome;
+         DMDebCredST.CDS_V_XMLsAnalisaCNPJ.AsString           :=sCNPJ;
+         DMDebCredST.CDS_V_XMLsAnalisaFONE.AsString           :=sFone;
+         DMDebCredST.CDS_V_XMLsAnalisaUF_EMIT.AsString        :=sUFEmit;
+         DMDebCredST.CDS_V_XMLsAnalisaUF_DEST.AsString        :=sUFDest;
+         DMDebCredST.CDS_V_XMLsAnalisaCST.AsString            :=sEncontrado;
+         DMDebCredST.CDS_V_XMLsAnalisaTAG_VST.AsString        :=svST;
+         DMDebCredST.CDS_V_XMLsAnalisaVALOR_ST.AsString       :=sValorST;
+         DMDebCredST.CDS_V_XMLsAnalisaTAG_VFCPSTRET.AsString  :=svFCPSTRet;
+         DMDebCredST.CDS_V_XMLsAnalisaVALOR_VFCPSTRET.AsString:=sValorFCPSTRet;
+         DMDebCredST.CDS_V_XMLsAnalisa.Post;
+         // Insere Fornecedor ==================================================
+         //=====================================================================
+       End; // If Not DMDebCredST.CDS_V_XMLsAnalisa.Locate('CNPJ; TAG_VST; VALOR_ST; TAG_VFCPSTRET; VALOR_VFCPSTRET',...
+      // Verifica se Emitente Já Cadastrado ====================================
+      //========================================================================
+    End; // If (sEncontrado<>'') And ((Not bvST) Or (Not bValorST) Or (Not bvFCPSTRet) Or (Not bValorFCPSTRet)) Then
+    // Se Encontrou ICMS CST ===================================================
+    //==========================================================================
+
+    pgProgBar.Position:=iii+1;
+    EdtXMLsProcessados.AsInteger:=iii+1;
+
+  End; // For iii:=0 to mMemoForn.Lines.Count-1 do
+  FrmBelShop.MontaProgressBar(False, FrmDebCredST);
+  mMemoForn.Lines.Clear;
+  mMemoForn.Width:=500;
+
+  Dbg_XMLs.SetFocus;
+
+  If DMDebCredST.CDS_V_XMLsAnalisa.IsEmpty Then
+  Begin
+    msg('Sem XML Analisado com Problema !!','A');
+  End;
+  // Loop dos Arquivos XMLs ====================================================
+  //============================================================================
+
+  //============================================================================
+  // Libera Painel de Filtros ==================================================
+  //============================================================================
+  If Not DMDebCredST.CDS_V_XMLsAnalisa.IsEmpty Then
+  Begin
+    Gb_XMLsFiltros.Enabled:=True;
+    EdtXMLsSelecionados.AsInteger:=DMDebCredST.CDS_V_XMLsAnalisa.RecordCount;
+
+    msg('Analise de XMLs'+cr+cr+'Efetuada com SUCESSO !!','A');
+   End; // If Not DMDebCredST.CDS_V_XMLsAnalisa.IsEmpty Then
+  // Libera Painel de Filtros ==================================================
+  //============================================================================
+
+End; // ANALISE DE XMLs - Analiza os Arquivos XMLs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// ANALISE DE XMLs - Busca Arquivos XMLs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmDebCredST.XMLsAnalisaBuscaXMLs: Boolean;
+Var
+  SR: TSearchRec;
+  i: Integer;
+  dDtaCiacao: TDate;
+Begin
+  Result:=True;
+
+  // Monta Memo para Nome de Arquivos XMLs =====================================
+  mMemoForn.Width:=1000;
+  mMemoForn.Lines.Clear;
+
+  i := FindFirst(IncludeTrailingPathDelimiter(EdtXMLsPasta.Text)+'*.xml', faAnyFile, SR);
+  While i = 0 do
+  Begin
+    Application.ProcessMessages;
+
+    If (SR.Attr and faDirectory) <> faDirectory then
+    Begin
+      dDtaCiacao:=StrToDate(DateToStr(FileDateToDateTime(FileAgeCreate(EdtXMLsPasta.Text+SR.Name))));
+      If dDtaCiacao=DtEdtXMLsDownLoad.Date Then
+      Begin
+        mMemoForn.Lines.Add(SR.Name);
+      End;
+    End; // If (SR.Attr and faDirectory) <> faDirectory then
+    i := FindNext(SR);
+  End; // while i = 0 do
+
+  // Verifica se Encontrou XML's ===============================================
+  If mMemoForn.Lines.Count<1 Then
+  Begin
+    Result:=False;
+    msg('XML NÃO Encontrado na'+cr+cr+'Pasta Selecionada !!','A');
+  End; // If mMemoForn.Lines.Count<1 Then
+End; // ANALISE DE XMLs - Busca Arquivos XMLs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Monta Sql de Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmDebCredST.SqlProdutos;
@@ -532,6 +1050,11 @@ begin
   mMemoForn.Width:=500;
   mMemoForn.Lines.Clear;
 
+  // Acderta Data de Download dos Arquivos XML's de NFE de Entrada
+  DtEdtXMLsDownLoad.Date:=StrToDate(DateToStr(DataHoraServidorFI(DMDebCredST.SQLQuery1)-1));
+
+  PC_DebCredICMSSTChange(Self);
+
 end;
 
 procedure TFrmDebCredST.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
@@ -541,8 +1064,9 @@ begin
   // primeiramente verificamos se é o evento a ser tratado...
   If Msg.message = WM_MOUSEWHEEL then
   Begin
-//    If ActiveControl is TDBGrid then // If Somente DBGRID *** Testa se Classe é TDBGRID
-//    Begin
+    // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    If (ActiveControl is TDBGrid) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
       Msg.message := WM_KEYDOWN;
       Msg.lParam := 0;
       Sentido := HiWord(Msg.wParam);
@@ -550,15 +1074,19 @@ begin
        Msg.wParam := VK_UP
       else
        Msg.wParam := VK_DOWN;
-//    End; // If ActiveControl is TDBGrid then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   End; // if Msg.message = WM_MOUSEWHEEL then
 end;
 
 procedure TFrmDebCredST.Bt_SairClick(Sender: TObject);
 begin
+  {
+   Usado em:
+   Bt_XmlsSair
+  }
+
   bgSairDC:=True;
   Close;
-
 end;
 
 procedure TFrmDebCredST.Bt_VlrBcICMSSTClick(Sender: TObject);
@@ -654,7 +1182,8 @@ begin
   PC_DebCredICMSSTChange(Self);
 
   DMDebCredST.CDS_ProdutoForn.Close;
-  If (f_Troca('.','/',sgDtaInicio)<>DtEdtDtaInicio.Text) Or (f_Troca('.','/',sgDtaFim)<>DtEdtDtaFim.Text) Then
+  If (f_Troca('.','/',sgDtaInicio)<>DtEdtDtaInicio.Text) Or (f_Troca('.','/',sgDtaFim)<>DtEdtDtaFim.Text) Or
+     (Trim(sgDtaInicio)<>'') Or (Trim(sgDtaInicio)<>'/  /')Then
   Begin
     If Not PeriodoApropriacao Then
      Exit;
@@ -706,7 +1235,21 @@ end;
 
 procedure TFrmDebCredST.PC_DebCredICMSSTChange(Sender: TObject);
 begin
+
+  If (Not Ts_FornBcICMSST.TabVisible) And (Not Ts_FornTotais.TabVisible) And
+     (Not Ts_FornProdutos.TabVisible) And (Not Ts_XMLsAnalisa.TabVisible) Then
+  Begin
+    Exit;
+  End;
+
   CorSelecaoTabSheet(PC_DebCredICMSST);
+  Pan_Solicitacoes.Visible:=True;
+
+  If (PC_DebCredICMSST.ActivePage=Ts_XMLsAnalisa) And (Ts_XMLsAnalisa.CanFocus) Then
+  Begin
+    Pan_Solicitacoes.Visible:=False;
+    Bt_XMLsPasta.SetFocus;
+  End; // If (PC_DebCredICMSST.ActivePage=Ts_XmlAnalisa) And (Ts_XmlAnalisa.CanFocus) Then
 
   If (PC_DebCredICMSST.ActivePage=Ts_FornBcICMSST) And (Ts_FornBcICMSST.CanFocus) Then
   Begin
@@ -1067,6 +1610,20 @@ end;
 
 procedure TFrmDebCredST.Bt_ClipboardClick(Sender: TObject);
 begin
+  {
+   Usado em:
+   Bt_XMLsSalvar
+  }
+  If (PC_DebCredICMSST.ActivePage=Ts_XMLsAnalisa) And (Ts_XMLsAnalisa.CanFocus) Then
+  Begin
+    Dbg_XMLs.Setfocus;
+
+    If Not DMDebCredST.CDS_V_XMLsAnalisa.IsEmpty Then
+    Begin
+      DBGridClipboard(Dbg_XMLs);
+    End;
+  End; // If (PC_DebCredICMSST.ActivePage=Ts_XMLsAnalisa) And (Ts_XMLsAnalisa.CanFocus) Then
+
   If (PC_DebCredICMSST.ActivePage=Ts_FornBcICMSST) And (Ts_FornBcICMSST.CanFocus) Then
   Begin
     Dbg_VlrBcICMSST.Setfocus;
@@ -1115,6 +1672,263 @@ end;
 procedure TFrmDebCredST.Rb_NFeSemKeyUp(Sender: TObject; var Key: Word;Shift: TShiftState);
 begin
   Rb_NFeSemClick(Self);
+end;
+
+procedure TFrmDebCredST.Bt_XMLsPastaClick(Sender: TObject);
+var
+  sDir: string;
+begin
+  // Inicializa Client e ComboBox ==============================================
+  XMLsAnalisaInicializa;
+
+  EdtXmlsPasta.Clear;
+
+  If SelectDirectory('Selecione a Pasta dos XMLs', '', sDir) Then
+   EdtXMLsPasta.Text := sDir;
+end;
+
+procedure TFrmDebCredST.Bt_XMLsAnalizaClick(Sender: TObject);
+begin
+  Dbg_XMLs.SetFocus;
+
+  If Trim(EdtXMLsPasta.Text)='' Then
+  Begin
+    msg('Favor Informar a Pasta dos XMLs !!','A');
+    Bt_XMLsPastaClick(Self);
+    Exit;
+  End; // If Trim(EdtXMLsPasta.Text)='' Then
+  EdtXMLsPasta.Text:=IncludeTrailingPathDelimiter(EdtXMLsPasta.Text);
+
+  bgSiga:=True;
+
+  // Inicializa Client e ComboBox ==============================================
+  XMLsAnalisaInicializa;
+
+  OdirPanApres.Caption:='AGUARDE !! Localizando Arquivos XMLs...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmDebCredST.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmDebCredST.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmDebCredST;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+  Screen.Cursor:=crAppStart;
+
+  //============================================================================
+  // Busca Arquivos XMLs =======================================================
+  //============================================================================
+  If Not XMLsAnalisaBuscaXMLs Then
+  Begin
+    bgSiga:=False;
+  End;
+  // Busca Arquivos XMLs =======================================================
+  //============================================================================
+
+  If bgSiga Then
+  Begin
+    //==========================================================================
+    // Analiza os XMLs =========================================================
+    //==========================================================================
+    XMLsAnalisaXMLs;
+    // Analiza os XMLs =========================================================
+    //==========================================================================
+  End; // If bgSiga Then
+  Screen.Cursor:=crDefault;
+  OdirPanApres.Visible:=False;
+end;
+
+procedure TFrmDebCredST.Dbg_XMLsColEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_XMLsColEnter; // Nome do Evento do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+
+end;
+
+procedure TFrmDebCredST.Dbg_XMLsKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  // BLOQUEAR TECLA Ctrl+Del ===================================================
+  if (Shift=[ssCtrl]) and (Key=46) then
+    Key:=0;
+
+end;
+
+procedure TFrmDebCredST.Dbg_XMLsDrawColumnCell(Sender: TObject;
+         const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If (Column.FieldName='TAG_VST') Then // Este comando altera cor da Celula
+  Begin
+    Dbg_XMLs.Canvas.Font.Style:=[fsBold];
+    Dbg_XMLs.Canvas.Font.Color:=clBlue; // Cor da Fonte
+
+    If DMDebCredST.CDS_V_XMLsAnalisaTAG_VST.AsString='NAO' Then
+    Begin
+      Dbg_XMLs.Canvas.Font.Style:=[fsBold];
+      Dbg_XMLs.Canvas.Font.Color:=clRed; // Cor da Fonte
+    End;
+  End; // If (Column.FieldName='TAG_VST') Then // Este comando altera cor da Celula
+
+  If (Column.FieldName='VALOR_ST') Then // Este comando altera cor da Celula
+  Begin
+    Dbg_XMLs.Canvas.Font.Style:=[fsBold];
+    Dbg_XMLs.Canvas.Font.Color:=clBlue; // Cor da Fonte
+
+    If DMDebCredST.CDS_V_XMLsAnalisaVALOR_ST.AsString='NAO' Then
+    Begin
+      Dbg_XMLs.Canvas.Font.Style:=[fsBold];
+      Dbg_XMLs.Canvas.Font.Color:=clRed; // Cor da Fonte
+    End;
+  End; // If (Column.FieldName='VALOR_ST') Then // Este comando altera cor da Celula
+
+  If (Column.FieldName='TAG_VFCPSTRET') Then // Este comando altera cor da Celula
+  Begin
+    Dbg_XMLs.Canvas.Font.Style:=[fsBold];
+    Dbg_XMLs.Canvas.Font.Color:=clBlue; // Cor da Fonte
+
+    If DMDebCredST.CDS_V_XMLsAnalisaTAG_VFCPSTRET.AsString='NAO' Then
+    Begin
+      Dbg_XMLs.Canvas.Font.Style:=[fsBold];
+      Dbg_XMLs.Canvas.Font.Color:=clRed; // Cor da Fonte
+    End;
+  End; // If (Column.FieldName='TAG_VFCPSTRET') Then // Este comando altera cor da Celula
+
+  If (Column.FieldName='VALOR_VFCPSTRET') Then // Este comando altera cor da Celula
+  Begin
+    Dbg_XMLs.Canvas.Font.Style:=[fsBold];
+    Dbg_XMLs.Canvas.Font.Color:=clBlue; // Cor da Fonte
+
+    If DMDebCredST.CDS_V_XMLsAnalisaVALOR_VFCPSTRET.AsString='NAO' Then
+    Begin
+      Dbg_XMLs.Canvas.Font.Style:=[fsBold];
+      Dbg_XMLs.Canvas.Font.Color:=clRed; // Cor da Fonte
+    End;
+  End; // If (Column.FieldName='VALOR_VFCPSTRET') Then // Este comando altera cor da Celula
+
+  // Funciona Somente com Isto
+  Dbg_XMLs.Canvas.FillRect(Rect);
+  Dbg_XMLs.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamento
+  DMDebCredST.CDS_V_XMLsAnalisaCNPJ.Alignment:=taCenter;
+  DMDebCredST.CDS_V_XMLsAnalisaFONE.Alignment:=taCenter;
+  DMDebCredST.CDS_V_XMLsAnalisaUF_EMIT.Alignment:=taCenter;
+  DMDebCredST.CDS_V_XMLsAnalisaUF_DEST.Alignment:=taCenter;
+  DMDebCredST.CDS_V_XMLsAnalisaCST.Alignment:=taCenter;
+  DMDebCredST.CDS_V_XMLsAnalisaTAG_VST.Alignment:=taCenter;
+  DMDebCredST.CDS_V_XMLsAnalisaVALOR_ST.Alignment:=taCenter;
+  DMDebCredST.CDS_V_XMLsAnalisaTAG_VFCPSTRET.Alignment:=taCenter;
+  DMDebCredST.CDS_V_XMLsAnalisaVALOR_VFCPSTRET.Alignment:=taCenter;
+
+end;
+
+procedure TFrmDebCredST.DtEdtXMLsDownLoadPropertiesChange(Sender: TObject);
+begin
+  // Inicializa Client e ComboBox ==============================================
+  XMLsAnalisaInicializa;
+
+end;
+
+procedure TFrmDebCredST.Cbx_XMLsUFEmitChange(Sender: TObject);
+Var
+  sCST, sUFEmit, sUFDest, svST, sValorST,
+  svFCPSTRet, sValorFCPSTRet,
+  sFiltro
+  : String;
+begin
+  sUFEmit:='';
+  sUFDest:='';
+  sCST:='';
+  svST:='';
+  sValorST:='';
+  svFCPSTRet:='';
+  sValorFCPSTRet:='';
+  sFiltro:='';
+
+  sUFEmit:=Cbx_XMLsUFEmit.Items[Cbx_XMLsUFEmit.ItemIndex];
+  sUFDest:=Cbx_XMLsUFDest.Items[Cbx_XMLsUFDest.ItemIndex];
+  sCST:=Cbx_XMLsCST.Items[Cbx_XMLsCST.ItemIndex];
+  svST:=Cbx_XMLsvST.Items[Cbx_XMLsvST.ItemIndex];
+  sValorST:=Cbx_XMLsVlrvST.Items[Cbx_XMLsVlrvST.ItemIndex];
+  svFCPSTRet:=Cbx_XMLsvFCPSTRet.Items[Cbx_XMLsvFCPSTRet.ItemIndex];
+  sValorFCPSTRet:=Cbx_XMLsVlrvFCPSTRet.Items[Cbx_XMLsVlrvFCPSTRet.ItemIndex];
+
+  // Filtro UF Emitente ========================================================
+  If (Trim(sUFEmit)<>'') And (Trim(sUFEmit)<>'Todos') Then
+  Begin
+    If Trim(sFiltro)='' Then
+     sFiltro:='UF_EMIT='+QuotedStr(sUFEmit)
+    Else
+     sFiltro:=sFiltro+' AND UF_EMIT='+QuotedStr(sUFEmit);
+  End; // If (Trim(sUFEmit)<>'') And (Trim(sUFEmit)<>'Todos') Then
+
+  // Filtro UF Emitente ========================================================
+  If (Trim(sUFDest)<>'') And (Trim(sUFDest)<>'Todos') Then
+  Begin
+    If Trim(sFiltro)='' Then
+     sFiltro:='UF_DEST='+QuotedStr(sUFDest)
+    Else
+     sFiltro:=sFiltro+' AND UF_DEST='+QuotedStr(sUFDest);
+  End; // If (Trim(sUFDest)<>'') And (Trim(sUFDest)<>'Todos') Then
+
+  // Filtro CST ================================================================
+  If (Trim(sCST)<>'') And (Trim(sCST)<>'Todos') Then
+  Begin
+    If Trim(sFiltro)='' Then
+     sFiltro:='CST='+QuotedStr(sCST)
+    Else
+     sFiltro:=sFiltro+' AND CST='+QuotedStr(sCST);
+  End; // If (Trim(sCST)<>'') And (Trim(sCST)<>'Todos') Then
+
+  // Filtro vST ================================================================
+  If (Trim(svST)<>'') And (Trim(svST)<>'Ambos') Then
+  Begin
+    If Trim(sFiltro)='' Then
+     sFiltro:='TAG_VST='+QuotedStr(svST)
+    Else
+     sFiltro:=sFiltro+' AND TAG_VST='+QuotedStr(svST);
+  End; // If (Trim(svST)<>'') And (Trim(svST)<>'Ambos') Then
+
+  // Filtro ValorST ============================================================
+  If (Trim(sValorST)<>'') And (Trim(sValorST)<>'Ambos') Then
+  Begin
+    If Trim(sFiltro)='' Then
+     sFiltro:='VALOR_ST='+QuotedStr(sValorST)
+    Else
+     sFiltro:=sFiltro+' AND VALOR_ST='+QuotedStr(sValorST);
+  End; // If (Trim(sValorST)<>'') And (Trim(sValorST)<>'Ambos') Then
+
+  // Filtro vFCPSTRet ==========================================================
+  If (Trim(svFCPSTRet)<>'') And (Trim(svFCPSTRet)<>'Ambos') Then
+  Begin
+    If Trim(sFiltro)='' Then
+     sFiltro:='TAG_VFCPSTRET='+QuotedStr(svFCPSTRet)
+    Else
+     sFiltro:=sFiltro+' AND TAG_VFCPSTRET='+QuotedStr(svFCPSTRet);
+  End; // If (Trim(svFCPSTRet)<>'') And (Trim(svFCPSTRet)<>'Ambos') Then
+
+  // Filtro ValorFCPSTRet ======================================================
+  If (Trim(sValorFCPSTRet)<>'') And (Trim(sValorFCPSTRet)<>'Ambos') Then
+  Begin
+    If Trim(sFiltro)='' Then
+     sFiltro:='VALOR_VFCPSTRET='+QuotedStr(sValorFCPSTRet)
+    Else
+     sFiltro:=sFiltro+' AND VALOR_VFCPSTRET='+QuotedStr(sValorFCPSTRet);
+  End; // If (Trim(sValorFCPSTRet)<>'') And (Trim(sValorFCPSTRet)<>'Ambos') Then
+
+  DMDebCredST.CDS_V_XMLsAnalisa.Filtered:=False;
+  DMDebCredST.CDS_V_XMLsAnalisa.Filter:='';
+
+  If Trim(sFiltro)<>'' Then
+  Begin
+    DMDebCredST.CDS_V_XMLsAnalisa.Filter:=sFiltro;
+    DMDebCredST.CDS_V_XMLsAnalisa.Filtered:=True;
+  End; // If Trim(sFiltro)<>'' Then
+  EdtXMLsSelecionados.AsInteger:=DMDebCredST.CDS_V_XMLsAnalisa.RecordCount;
+
 end;
 
 end.

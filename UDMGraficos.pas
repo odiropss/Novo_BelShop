@@ -61,7 +61,7 @@ var
   sgPath_Local, // Somente a Pasta do Executável
   sgPastaExecServer, // Somente a Pasta do Executável no Servidor
   sgPastaWebService, // Pasta WebService
-  sgTpConexao, sgNomeServidor, sgCodLojaUnica: String;
+  sgTpConexao, sgNomeServidor: String;
 
   sgCompMaster, sgComServer: String; // Dados dos Servidores, Computador Local
   sgFTPUsar, // Se Utiliza Transmissão por FTP
@@ -122,7 +122,6 @@ Begin
     { Realiza um loop em toda a lista }
     s:='';
     sgNomeServidor:='';
-    sgCodLojaUnica:='';
     sgTpConexao   :='';
     For i := 0 to tsArquivo.Count - 1 do
     Begin
@@ -131,7 +130,7 @@ Begin
       If Trim(s)<>'' Then
       Begin
         If i=0 Then sgNomeServidor:=Trim(s);
-        If i=1 Then sgCodLojaUnica:=Trim(s);
+        // If i=1 Then sgCodLojaUnica:=Trim(s);
         If i=2 Then sgTpConexao:=Trim(s);
       End;
     End; // For i := 0 to tsArquivo.Count - 1 do

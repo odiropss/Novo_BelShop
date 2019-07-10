@@ -156,6 +156,7 @@ type
     EdtDtCaixaDoc: TcxDateEdit;
     EdtDtOrigemDoc: TcxDateEdit;
     Pan_Datas: TPanel;
+    dxStatusBar1: TdxStatusBar;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -282,6 +283,9 @@ type
     procedure Dbg_FornAcrescCampanhasKeyDown(Sender: TObject;
       var Key: Word; Shift: TShiftState);
     procedure Dbg_FornAcrescCampanhasDblClick(Sender: TObject);
+    procedure EdtValorDocKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_FluFornCaixaDblClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -2304,6 +2308,8 @@ begin
     Bt_FluFornFechar.Tag:=90;
     Bt_FluFornFechar.Glyph:=Nil;
 
+    Pan_Datas.Enabled:=False;
+
     If (sgDMLMovto='I') Or (sgDMLMovto='A') Then
      Begin
        If Not bgSoObs Then
@@ -3031,8 +3037,8 @@ begin
   // primeiramente verificamos se é o evento a ser tratado...
   If Msg.message = WM_MOUSEWHEEL then
   Begin
-//    If ActiveControl is TDBGrid then // If Somente DBGRID *** Testa se Classe é TDBGRID
-//    Begin
+    If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    Begin
       Msg.message := WM_KEYDOWN;
       Msg.lParam := 0;
       Sentido := HiWord(Msg.wParam);
@@ -3040,7 +3046,7 @@ begin
        Msg.wParam := VK_UP
       else
        Msg.wParam := VK_DOWN;
-//    End; // If ActiveControl is TDBGrid then // If Somente DBGRID *** Testa se Classe é TDBGRID
+    End; // If (ActiveControl is TDBGrid) Or (ActiveControl is TDBGridJul) then // If Somente DBGRID *** Testa se Classe é TDBGRID
   End; // if Msg.message = WM_MOUSEWHEEL then
 
 end;
@@ -6003,6 +6009,31 @@ begin
   EdtFornAcrescCampDescForn.Text    :=DMBelShop.CDS_Join.FieldByName('Nome_Fornecedor').AsString;
   EdtFornAcrescCampOBS.Text         :=DMBelShop.CDS_Join.FieldByName('Txt_Obs').AsString;
   EdtFornAcrescCampPercentual.SetFocus;
+end;
+
+procedure TFrmFluxoFornecedor.EdtValorDocKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  If (Shift = [ssAlt, ssShift]) and (Key = 77) Then // Alt + Shift + m 
+  Begin
+    If Pan_Datas.Enabled Then
+     Pan_Datas.Enabled:=False
+    Else
+     Pan_Datas.Enabled:=True;
+  End; // If (Shift = [ssAlt, ssShift]) and (Key = 80) Then
+  EdtValorDoc.SetFocus;
+end;
+
+procedure TFrmFluxoFornecedor.Dbg_FluFornCaixaDblClick(Sender: TObject);
+begin
+
+  If Trim(DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString)<>'' Then
+   Application.MessageBox(pChar('Empresa: '+DMBelShop.CDS_FluxoFornecedorRAZAO_SOCIAL.AsString+cr+
+                                'Docto  : '+DMBelShop.CDS_FluxoFornecedorNUM_DOCUMENTO.AsString+cr+
+                                'Data   : '+DMBelShop.CDS_FluxoFornecedorDATA.AsString+cr+cr+
+                                'OBSERVAÇÃO:'+cr+
+                                DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString), 'OBSERVAÇÃO', 64);
+
 end;
 
 end.

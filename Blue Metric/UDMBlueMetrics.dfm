@@ -11,8 +11,8 @@ object DMBlueMetrics: TDMBlueMetrics
       'reSQL35W'
     LoginPrompt = False
     Provider = 'MSDASQL.1'
-    Left = 672
-    Top = 56
+    Left = 144
+    Top = 8
   end
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
@@ -114,7 +114,7 @@ object DMBlueMetrics: TDMBlueMetrics
         'WHERE ((c.tipo_cadastro='#39'C'#39') OR (c.tipo_cadastro IS NULL) OR(c.t' +
         'ipo_cadastro='#39'A'#39'))')
     SQLConnection = SQLC
-    Left = 336
+    Left = 280
     Top = 24
     object SQLQ_ClientesCELULAR: TStringField
       FieldName = 'CELULAR'
@@ -191,21 +191,21 @@ object DMBlueMetrics: TDMBlueMetrics
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 80
-    Top = 121
+    Left = 16
+    Top = 169
   end
   object DSP_Lojas: TDataSetProvider
     DataSet = SDS_Lojas
     Options = [poRetainServerOrder]
-    Left = 130
-    Top = 134
+    Left = 66
+    Top = 182
   end
   object CDS_Lojas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Lojas'
-    Left = 181
-    Top = 120
+    Left = 117
+    Top = 168
     object CDS_LojasCOD_FILIAL: TStringField
       FieldName = 'COD_FILIAL'
       Required = True
@@ -229,8 +229,8 @@ object DMBlueMetrics: TDMBlueMetrics
   end
   object DS_Lojas: TDataSource
     DataSet = CDS_Lojas
-    Left = 232
-    Top = 136
+    Left = 168
+    Top = 184
   end
   object SQLQ_Empresas: TSQLQuery
     MaxBlobSize = -1
@@ -310,7 +310,7 @@ object DMBlueMetrics: TDMBlueMetrics
       ''
       'FROM LINXLOJAS l')
     SQLConnection = SQLC
-    Left = 336
+    Left = 280
     Top = 72
     object SQLQ_EmpresasAREA_LOJA: TIntegerField
       FieldName = 'AREA_LOJA'
@@ -471,7 +471,7 @@ object DMBlueMetrics: TDMBlueMetrics
       ''
       'WHERE ((fo.tipo_cadastro='#39'F'#39') OR (fo.tipo_cadastro='#39'A'#39'))')
     SQLConnection = SQLC
-    Left = 336
+    Left = 280
     Top = 121
     object SQLQ_FornecedoresCIDADE: TStringField
       FieldName = 'CIDADE'
@@ -528,7 +528,7 @@ object DMBlueMetrics: TDMBlueMetrics
       ''
       '')
     SQLConnection = SQLC
-    Left = 336
+    Left = 280
     Top = 175
     object SQLQ_ProdutosCODIGO: TFMTBCDField
       FieldName = 'CODIGO'
@@ -619,9 +619,10 @@ object DMBlueMetrics: TDMBlueMetrics
       'v.end_vend_uf UF'
       ''
       'FROM LINXVENDEDORES v'
+      ''
       'WHERE v.tipo_vendedor in ('#39'V'#39','#39'A'#39')')
     SQLConnection = SQLC
-    Left = 336
+    Left = 280
     Top = 231
     object SQLQ_VendedoresCIDADE: TStringField
       FieldName = 'CIDADE'
@@ -679,7 +680,7 @@ object DMBlueMetrics: TDMBlueMetrics
       ''
       'FROM LINXPRODUTOSDETALHES d')
     SQLConnection = SQLC
-    Left = 336
+    Left = 280
     Top = 287
     object SQLQ_EstoquesCODIGO_EMPRESA: TIntegerField
       FieldName = 'CODIGO_EMPRESA'
@@ -714,8 +715,8 @@ object DMBlueMetrics: TDMBlueMetrics
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 128
-    Top = 63
+    Left = 64
+    Top = 111
   end
   object SQLQ_EstoquesEntradas: TSQLQuery
     MaxBlobSize = -1
@@ -733,16 +734,19 @@ object DMBlueMetrics: TDMBlueMetrics
       
         'MIN(me.data_lancamento) Primeria, MAX(me.data_lancamento) Ultima' +
         '--, '#39'E'#39' Tipo'
+      ''
       'FROM LINXMOVIMENTO me'
+      ''
       'WHERE me.operacao='#39'E'#39
       
         'AND ((COALESCE(me.tipo_transacao,'#39#39')='#39#39') OR (me.tipo_transacao='#39 +
         'E'#39')) -- Entradas de Mercadorias'
       'AND   me.cancelado='#39'N'#39
       'AND   me.excluido='#39'N'#39
+      ''
       'GROUP BY 1,2')
     SQLConnection = SQLC
-    Left = 443
+    Left = 387
     Top = 287
     object SQLQ_EstoquesEntradasEMPRESA: TIntegerField
       FieldName = 'EMPRESA'
@@ -775,18 +779,21 @@ object DMBlueMetrics: TDMBlueMetrics
       
         'MIN(mv.data_lancamento) Primeria, MAX(mv.data_lancamento) Ultima' +
         '--, '#39'V'#39' Tipo'
+      ''
       'FROM LINXMOVIMENTO mv'
+      ''
       'WHERE mv.operacao='#39'S'#39
       
         'AND (((mv.tipo_transacao='#39'V'#39') OR (COALESCE(mv.tipo_transacao,'#39#39')' +
         '='#39#39'))) -- Vendas'
       'AND   mv.cancelado='#39'N'#39
       'AND   mv.excluido='#39'N'#39
+      ''
       'GROUP BY 1,2'
       ''
       '')
     SQLConnection = SQLC
-    Left = 568
+    Left = 512
     Top = 287
     object SQLQ_EstoquesVendasEMPRESA: TIntegerField
       FieldName = 'EMPRESA'
@@ -810,13 +817,13 @@ object DMBlueMetrics: TDMBlueMetrics
         DataType = ftString
         Name = 'DtaI'
         ParamType = ptInput
-        Value = '10/10/2018'
+        Value = '06/03/2019'
       end
       item
         DataType = ftString
         Name = 'DtaF'
         ParamType = ptInput
-        Value = '10/10/2018'
+        Value = '06/03/2019'
       end>
     SQL.Strings = (
       
@@ -860,9 +867,9 @@ object DMBlueMetrics: TDMBlueMetrics
         'CAST(COALESCE((SELECT  SUM(COALESCE(tr.valor_vale,0.00)) valor_v' +
         'ale'
       '               FROM linxmovimentotrocas tr'
-      '               WHERE tr.doc_venda=mv.documento'
-      '               AND tr.serie_venda=mv.serie'
-      '),0.00) as NUMERIC(12,2))  VALOR_TROCA_TOTAL -- 16'
+      '               where tr.identificador=mv.identificador'
+      '),0.00) AS NUMERIC(12,2))  VALOR_TROCA_TOTAL, -- 16'
+      'mv.identificador -- 17'
       ''
       'FROM LINXMOVIMENTO mv'
       ''
@@ -870,15 +877,14 @@ object DMBlueMetrics: TDMBlueMetrics
       
         'AND  (((mv.tipo_transacao='#39'V'#39') OR (COALESCE(mv.tipo_transacao,'#39#39 +
         ')='#39#39'))) -- Vendas'
-      ''
       'AND   mv.cancelado = '#39'N'#39
       'AND   mv.excluido = '#39'N'#39
-      'AND   mv.data_lancamento between :DtaI and :DtaF'
+      'AND   mv.data_lancamento BETWEEN :DtaI AND :DtaF'
       ''
-      'GROUP BY 1,2,3,4,7,13'
+      'GROUP BY 1,2,3,4,7,13,17'
       '')
     SQLConnection = SQLC
-    Left = 336
+    Left = 280
     Top = 343
     object SQLQ_VendasCODIGO_EMPRESA: TIntegerField
       FieldName = 'CODIGO_EMPRESA'
@@ -945,6 +951,10 @@ object DMBlueMetrics: TDMBlueMetrics
       Precision = 15
       Size = 2
     end
+    object SQLQ_VendasIDENTIFICADOR: TStringField
+      FieldName = 'IDENTIFICADOR'
+      Size = 100
+    end
   end
   object SQLQ_VendasTrocas: TSQLQuery
     MaxBlobSize = -1
@@ -970,7 +980,9 @@ object DMBlueMetrics: TDMBlueMetrics
         '----------------------------------------------------------------' +
         '----------------'
       'SELECT '
-      'mv.empresa, md.nota_origem, mv.cod_vendedor,'
+      
+        'mv.empresa, md.nota_origem, mv.cod_vendedor, mv.codigo_cliente, ' +
+        'mv.serie,'
       ''
       
         'CAST(SUM(dv.quantidade * dv.preco_unitario) AS NUMERIC(12,2)) CU' +
@@ -978,31 +990,31 @@ object DMBlueMetrics: TDMBlueMetrics
       'CAST(SUM(dv.quantidade) AS INTEGER) QTDE_TROCA_TOTAL,'
       'CAST(SUM(dv.valor_total) AS NUMERIC(12,2)) VALOR_TROCA_TOTAL'
       ''
-      
-        'FROM LINXMOVIMENTO mv, LINXMOVIMENTOORIGEMDEVOLUCOES md, LINXMOV' +
-        'IMENTO dv'
+      'FROM LINXMOVIMENTOORIGEMDEVOLUCOES md, LINXMOVIMENTO dv'
       ''
-      'WHERE mv.empresa=md.empresa'
-      'AND   mv.documento=md.nota_origem'
-      'AND   mv.ecf=md.ecf_origem'
-      'AND   mv.data_documento=md.data_origem'
-      'AND   mv.serie=md.serie_origem'
-      'AND   dv.identificador=md.identificador'
-      'AND   mv.cod_produto=dv.cod_produto'
+      'WHERE md.identificador=dv.identificador'
+      'AND   md.empresa=dv.empresa'
+      'AND   dv.data_documento BETWEEN :DtaI AND :DtaF'
       ''
-      'AND   mv.data_documento BETWEEN :DtaI AND :DtaF'
-      'GROUP BY 1,2,3'
+      'GROUP BY 1,2,3,4,5'
       ''
       ''
       '')
     SQLConnection = SQLC
-    Left = 443
+    Left = 387
     Top = 343
     object SQLQ_VendasTrocasEMPRESA: TIntegerField
       FieldName = 'EMPRESA'
     end
     object SQLQ_VendasTrocasNOTA_ORIGEM: TIntegerField
       FieldName = 'NOTA_ORIGEM'
+    end
+    object SQLQ_VendasTrocasSERIE: TStringField
+      FieldName = 'SERIE'
+      Size = 10
+    end
+    object SQLQ_VendasTrocasCODIGO_CLIENTE: TIntegerField
+      FieldName = 'CODIGO_CLIENTE'
     end
     object SQLQ_VendasTrocasCOD_VENDEDOR: TIntegerField
       FieldName = 'COD_VENDEDOR'
@@ -1071,10 +1083,13 @@ object DMBlueMetrics: TDMBlueMetrics
         '='#39#39'))) -- Vendas'
       'AND   mv.cancelado='#39'N'#39
       'AND   mv.excluido='#39'N'#39
-      'AND   mv.data_lancamento between :DtaI and :DtaF')
+      'AND   mv.data_lancamento between :DtaI and :DtaF'
+      ''
+      ''
+      '')
     SQLConnection = SQLC
-    Left = 336
-    Top = 399
+    Left = 664
+    Top = 31
     object SQLQ_ItensVendasCODIGO_EMPRESA: TIntegerField
       FieldName = 'CODIGO_EMPRESA'
     end
@@ -1138,11 +1153,11 @@ object DMBlueMetrics: TDMBlueMetrics
         '----------------------------------------------------------------' +
         '----------------'
       'SELECT'
-      'mv.empresa CODIGO_EMPRESA,'
-      'mv.documento CODIGO_VENDA,'
-      'mv.serie SERIE,'
-      'dv.documento CODIGO_TROCA,'
-      'mv.cod_produto CODIGO_PRODUTO,'
+      'md.empresa CODIGO_EMPRESA,'
+      'md.nota_origem CODIGO_VENDA,'
+      'dv.serie SERIE,'
+      'md.nota_origem CODIGO_TROCA,'
+      'dv.cod_produto CODIGO_PRODUTO,'
       
         'CAST((dv.quantidade * COALESCE(dv.preco_unitario, 0.00)) AS NUME' +
         'RIC(12,2)) CUSTO_TROCA_ITENS,'
@@ -1152,21 +1167,14 @@ object DMBlueMetrics: TDMBlueMetrics
         'CAST((dv.valor_total + COALESCE(dv.desconto_total_item,0.00)) AS' +
         ' NUMERIC(12,2)) VALOR_TROCA_ITENS'
       ''
-      
-        'from LINXMOVIMENTO mv, LINXMOVIMENTOORIGEMDEVOLUCOES md, LINXMOV' +
-        'IMENTO dv'
-      ''
-      'WHERE mv.empresa=md.empresa'
-      'AND   mv.documento=md.nota_origem'
-      'AND   mv.ecf=md.ecf_origem'
-      'AND   mv.data_documento=md.data_origem'
-      'AND   mv.serie=md.serie_origem'
-      'AND  dv.identificador=md.identificador'
-      'AND   mv.cod_produto=dv.cod_produto'
-      'AND   mv.data_documento BETWEEN :DtaI AND :DtaF')
+      'from LINXMOVIMENTOORIGEMDEVOLUCOES md, LINXMOVIMENTO dv'
+      'WHERE md.identificador=dv.identificador'
+      'AND   md.empresa=dv.empresa'
+      'AND   dv.data_documento BETWEEN :DtaI AND :DtaF'
+      '')
     SQLConnection = SQLC
-    Left = 336
-    Top = 455
+    Left = 664
+    Top = 87
     object SQLQ_ItensTrocasCODIGO_EMPRESA: TIntegerField
       FieldName = 'CODIGO_EMPRESA'
     end
@@ -1276,8 +1284,8 @@ object DMBlueMetrics: TDMBlueMetrics
       'AND   mp.identificador=vd.identificador'
       'AND   vd.data_documento BETWEEN :DtaI AND :DtaF')
     SQLConnection = SQLC
-    Left = 336
-    Top = 511
+    Left = 664
+    Top = 143
     object SQLQ_PagamentosADMINISTRADORA: TStringField
       FieldName = 'ADMINISTRADORA'
       Size = 30
@@ -1319,6 +1327,532 @@ object DMBlueMetrics: TDMBlueMetrics
       FieldName = 'VALOR'
       Precision = 15
       Size = 4
+    end
+  end
+  object SQLQ_ContasApagar: TSQLQuery
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftString
+        Name = 'Dta'
+        ParamType = ptInput
+        Value = '03.04.2019'
+      end>
+    SQL.Strings = (
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      '-- CONTAS A PAGAR'
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      ''
+      'SELECT'
+      'fa.empresa CODIGO_EMPRESA,'
+      'fa.codigo_fatura NUM_FATURA,'
+      'CAST(fa.data_emissao as date) DATA_EMISSAO,'
+      'CAST(fa.data_vencimento as date) DATA_VENCIMENTO,'
+      'CAST(fa.data_baixa as date) DATA_BAIXA,'
+      'COALESCE(fa.valor_fatura, 0.00) VALOR_FATURA,'
+      'COALESCE(fa.valor_juros, 0.00) VALOR_JUROS,'
+      'COALESCE(fa.valor_desconto, 0.00) VALOR_DESCONTO,'
+      'COALESCE(fa.valor_pago, 0.00) VALOR_PAGO,'
+      'fa.cod_cliente COD_FORNECEDOR,'
+      'COALESCE(fa.documento, 0) DOC_ORIGEM,'
+      'fa.serie SERIE_ORIGEM,'
+      'fa.ecf ECF_ORIGEM,'
+      'fa.qtde_parcelas,'
+      'fa.ordem_parcela,'
+      'fa.vendedor COD_VENDEDOR,'
+      'fa.excluido DOC_EXCLUIDO,'
+      'fa.cancelado DOC_CANCELADO,'
+      'fa.conta_credito, -- Descricao'
+      'fa.conta_debito,  -- Descricao'
+      'fa.conta_fluxo,   -- Descricao'
+      'fa.cod_historico, -- Descricao'
+      'COALESCE(pl.cod_forma_pgto, 0) COD_FORMA_PGTO,'
+      'fa.forma_pgto,'
+      'COALESCE(fa.ordem_cartao, 0) ORDEM_CARTAO,'
+      'COALESCE(fa.banco_codigo, 0) BANCO_CODIGO,'
+      'COALESCE(fa.banco_agencia, 0) BANCO_AGENCIA,'
+      'fa.banco_conta,'
+      'fa.banco_autorizacao_garantidora,'
+      'COALESCE(fa.numero_bilhete_seguro, 0) NUMERO_BILHETE_SEGURO,'
+      'COALESCE(fa.plano, 0) COD_PLANO,'
+      'pl.desc_plano,'
+      'pl.tipo_plano,'
+      'COALESCE(pl.indice_plano, 0.00) INDICE_PLANO,'
+      'COALESCE(pl.conta_central, 0) CONTA_CENTRAL,-- Descricao'
+      'pl.tipo_transacao,'
+      'COALESCE(pl.taxa_financeira, 0.00) TAXA_FINANCEIRA,'
+      'fa.observacao'
+      ''
+      'FROM LINXFATURAS fa'
+      '    LEFT JOIN LINXPLANOS pl       ON pl.plano=fa.plano'
+      ''
+      'WHERE fa.data_vencimento >= :Dta'
+      'AND   fa.receber_pagar='#39'P'#39
+      '')
+    SQLConnection = SQLC
+    Left = 664
+    Top = 215
+    object SQLQ_ContasApagarCODIGO_EMPRESA: TIntegerField
+      FieldName = 'CODIGO_EMPRESA'
+    end
+    object SQLQ_ContasApagarNUM_FATURA: TFMTBCDField
+      FieldName = 'NUM_FATURA'
+      Precision = 15
+      Size = 0
+    end
+    object SQLQ_ContasApagarDATA_EMISSAO: TDateField
+      FieldName = 'DATA_EMISSAO'
+    end
+    object SQLQ_ContasApagarDATA_VENCIMENTO: TDateField
+      FieldName = 'DATA_VENCIMENTO'
+    end
+    object SQLQ_ContasApagarDATA_BAIXA: TDateField
+      FieldName = 'DATA_BAIXA'
+    end
+    object SQLQ_ContasApagarVALOR_FATURA: TFMTBCDField
+      FieldName = 'VALOR_FATURA'
+      Precision = 15
+      Size = 4
+    end
+    object SQLQ_ContasApagarVALOR_JUROS: TFMTBCDField
+      FieldName = 'VALOR_JUROS'
+      Precision = 15
+      Size = 4
+    end
+    object SQLQ_ContasApagarVALOR_DESCONTO: TFMTBCDField
+      FieldName = 'VALOR_DESCONTO'
+      Precision = 15
+      Size = 4
+    end
+    object SQLQ_ContasApagarVALOR_PAGO: TFMTBCDField
+      FieldName = 'VALOR_PAGO'
+      Precision = 15
+      Size = 4
+    end
+    object SQLQ_ContasApagarCOD_FORNECEDOR: TIntegerField
+      FieldName = 'COD_FORNECEDOR'
+    end
+    object SQLQ_ContasApagarDOC_ORIGEM: TIntegerField
+      FieldName = 'DOC_ORIGEM'
+    end
+    object SQLQ_ContasApagarSERIE_ORIGEM: TStringField
+      FieldName = 'SERIE_ORIGEM'
+      Size = 10
+    end
+    object SQLQ_ContasApagarECF_ORIGEM: TIntegerField
+      FieldName = 'ECF_ORIGEM'
+    end
+    object SQLQ_ContasApagarQTDE_PARCELAS: TIntegerField
+      FieldName = 'QTDE_PARCELAS'
+    end
+    object SQLQ_ContasApagarORDEM_PARCELA: TIntegerField
+      FieldName = 'ORDEM_PARCELA'
+    end
+    object SQLQ_ContasApagarCOD_VENDEDOR: TIntegerField
+      FieldName = 'COD_VENDEDOR'
+    end
+    object SQLQ_ContasApagarDOC_EXCLUIDO: TStringField
+      FieldName = 'DOC_EXCLUIDO'
+      FixedChar = True
+      Size = 1
+    end
+    object SQLQ_ContasApagarDOC_CANCELADO: TStringField
+      FieldName = 'DOC_CANCELADO'
+      FixedChar = True
+      Size = 1
+    end
+    object SQLQ_ContasApagarCONTA_CREDITO: TIntegerField
+      FieldName = 'CONTA_CREDITO'
+    end
+    object SQLQ_ContasApagarCONTA_DEBITO: TIntegerField
+      FieldName = 'CONTA_DEBITO'
+    end
+    object SQLQ_ContasApagarCONTA_FLUXO: TIntegerField
+      FieldName = 'CONTA_FLUXO'
+    end
+    object SQLQ_ContasApagarCOD_HISTORICO: TIntegerField
+      FieldName = 'COD_HISTORICO'
+    end
+    object SQLQ_ContasApagarCOD_FORMA_PGTO: TIntegerField
+      FieldName = 'COD_FORMA_PGTO'
+    end
+    object SQLQ_ContasApagarFORMA_PGTO: TStringField
+      FieldName = 'FORMA_PGTO'
+      Size = 50
+    end
+    object SQLQ_ContasApagarORDEM_CARTAO: TIntegerField
+      FieldName = 'ORDEM_CARTAO'
+    end
+    object SQLQ_ContasApagarBANCO_CODIGO: TIntegerField
+      FieldName = 'BANCO_CODIGO'
+    end
+    object SQLQ_ContasApagarBANCO_AGENCIA: TIntegerField
+      FieldName = 'BANCO_AGENCIA'
+    end
+    object SQLQ_ContasApagarBANCO_CONTA: TStringField
+      FieldName = 'BANCO_CONTA'
+      Size = 30
+    end
+    object SQLQ_ContasApagarBANCO_AUTORIZACAO_GARANTIDORA: TStringField
+      FieldName = 'BANCO_AUTORIZACAO_GARANTIDORA'
+      Size = 50
+    end
+    object SQLQ_ContasApagarNUMERO_BILHETE_SEGURO: TIntegerField
+      FieldName = 'NUMERO_BILHETE_SEGURO'
+    end
+    object SQLQ_ContasApagarCOD_PLANO: TIntegerField
+      FieldName = 'COD_PLANO'
+    end
+    object SQLQ_ContasApagarDESC_PLANO: TStringField
+      FieldName = 'DESC_PLANO'
+      Size = 50
+    end
+    object SQLQ_ContasApagarTIPO_PLANO: TStringField
+      FieldName = 'TIPO_PLANO'
+      FixedChar = True
+      Size = 1
+    end
+    object SQLQ_ContasApagarINDICE_PLANO: TFMTBCDField
+      FieldName = 'INDICE_PLANO'
+      Precision = 15
+      Size = 4
+    end
+    object SQLQ_ContasApagarCONTA_CENTRAL: TIntegerField
+      FieldName = 'CONTA_CENTRAL'
+    end
+    object SQLQ_ContasApagarTIPO_TRANSACAO: TStringField
+      FieldName = 'TIPO_TRANSACAO'
+      FixedChar = True
+      Size = 1
+    end
+    object SQLQ_ContasApagarTAXA_FINANCEIRA: TFMTBCDField
+      FieldName = 'TAXA_FINANCEIRA'
+      Precision = 15
+      Size = 4
+    end
+    object SQLQ_ContasApagarOBSERVACAO: TStringField
+      FieldName = 'OBSERVACAO'
+      Size = 2000
+    end
+  end
+  object SQLQ_VendasTrocas_ANTERIOR: TSQLQuery
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftString
+        Name = 'DtaI'
+        ParamType = ptInput
+        Value = '01.11.2018'
+      end
+      item
+        DataType = ftString
+        Name = 'DtaF'
+        ParamType = ptInput
+        Value = '02.11.2018'
+      end>
+    SQL.Strings = (
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      '-- VENDAS - Buscar Totais de Devolu'#231#227'o do Vendedor no Periodo'
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      'SELECT '
+      
+        'mv.empresa, md.nota_origem, mv.cod_vendedor, mv.codigo_cliente, ' +
+        'mv.serie,'
+      ''
+      
+        'CAST(SUM(dv.quantidade * dv.preco_unitario) AS NUMERIC(12,2)) CU' +
+        'STO_TROCA_TOTAL,'
+      'CAST(SUM(dv.quantidade) AS INTEGER) QTDE_TROCA_TOTAL,'
+      'CAST(SUM(dv.valor_total) AS NUMERIC(12,2)) VALOR_TROCA_TOTAL'
+      ''
+      
+        'FROM LINXMOVIMENTO mv, LINXMOVIMENTOORIGEMDEVOLUCOES md, LINXMOV' +
+        'IMENTO dv'
+      ''
+      'WHERE mv.empresa=md.empresa'
+      'AND   mv.documento=md.nota_origem'
+      'AND   mv.ecf=md.ecf_origem'
+      'AND   mv.data_documento=md.data_origem'
+      'AND   mv.serie=md.serie_origem'
+      'AND   dv.identificador=md.identificador'
+      'AND   mv.cod_produto=dv.cod_produto'
+      'AND   mv.data_documento BETWEEN :DtaI AND :DtaF'
+      ''
+      'GROUP BY 1,2,3,4,5'
+      ''
+      ''
+      '')
+    SQLConnection = SQLC
+    Left = 387
+    Top = 423
+    object IntegerField1: TIntegerField
+      FieldName = 'EMPRESA'
+    end
+    object IntegerField2: TIntegerField
+      FieldName = 'NOTA_ORIGEM'
+    end
+    object StringField1: TStringField
+      FieldName = 'SERIE'
+      Size = 10
+    end
+    object IntegerField3: TIntegerField
+      FieldName = 'CODIGO_CLIENTE'
+    end
+    object IntegerField4: TIntegerField
+      FieldName = 'COD_VENDEDOR'
+    end
+    object FMTBCDField1: TFMTBCDField
+      FieldName = 'CUSTO_TROCA_TOTAL'
+      Precision = 15
+      Size = 2
+    end
+    object IntegerField5: TIntegerField
+      FieldName = 'QTDE_TROCA_TOTAL'
+    end
+    object FMTBCDField2: TFMTBCDField
+      FieldName = 'VALOR_TROCA_TOTAL'
+      Precision = 15
+      Size = 2
+    end
+  end
+  object SQLQ_Vendas_ANTERIOR: TSQLQuery
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftString
+        Name = 'DtaI'
+        ParamType = ptInput
+        Value = '06/03/2019'
+      end
+      item
+        DataType = ftString
+        Name = 'DtaF'
+        ParamType = ptInput
+        Value = '06/03/2019'
+      end>
+    SQL.Strings = (
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      '-- VENDAS'
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      'SELECT'
+      'mv.empresa CODIGO_EMPRESA, -- 1'
+      'mv.documento CODIGO_VENDA, -- 2'
+      'mv.codigo_cliente CODIGO_CLIENTE, -- 3'
+      'mv.cod_vendedor CODIGO_VENDEDOR, -- 4'
+      
+        'CAST(SUM(COALESCE(mv.preco_custo, 0.00) * mv.quantidade) AS NUME' +
+        'RIC(12,2)) CUSTO_VENDA_TOTAL, -- 5'
+      '0.00 CUSTO_TROCA_TOTAL, -- 6'
+      'mv.data_documento DATA_VENDA, -- 7'
+      
+        'CAST(SUM(COALESCE(mv.desconto_total_item, 0.00)) AS NUMERIC(12,2' +
+        ')) DESCONTO_TOTAL, -- 8'
+      'CAST(SUM(COALESCE(mv.frete,0.00)) AS NUMERIC(12,2)) FRETE, -- 9'
+      '0 QTDE_TROCA_TOTAL, -- 10'
+      
+        'CAST(SUM(mv.quantidade) AS INTEGER) QTDE_VENDA_BRUTA_TOTAL, -- 1' +
+        '1'
+      
+        'CAST(SUM(mv.quantidade) AS INTEGER) QTDE_VENDA_LIQUIDA_TOTAL, --' +
+        ' 12'
+      'mv.serie SERIE, -- 13'
+      
+        'CAST(SUM((mv.valor_total + COALESCE(mv.desconto_total_item, 0.00' +
+        ') + COALESCE(mv.frete, 0.00))) AS NUMERIC(12,2)) VALOR_VENDA_BRU' +
+        'TA_TOTAL, -- 14'
+      
+        'CAST(SUM(mv.valor_total) AS NUMERIC(12,2)) VALOR_VENDA_LIQUIDA_T' +
+        'OTAL, -- 15'
+      ''
+      
+        'CAST(COALESCE((SELECT  SUM(COALESCE(tr.valor_vale,0.00)) valor_v' +
+        'ale'
+      '               FROM linxmovimentotrocas tr'
+      '               WHERE tr.doc_venda=mv.documento'
+      '               AND tr.serie_venda=mv.serie'
+      '),0.00) AS NUMERIC(12,2))  VALOR_TROCA_TOTAL -- 16'
+      ''
+      'FROM LINXMOVIMENTO mv'
+      ''
+      'WHERE mv.operacao='#39'S'#39
+      
+        'AND  (((mv.tipo_transacao='#39'V'#39') OR (COALESCE(mv.tipo_transacao,'#39#39 +
+        ')='#39#39'))) -- Vendas'
+      'AND   mv.cancelado = '#39'N'#39
+      'AND   mv.excluido = '#39'N'#39
+      'AND   mv.data_lancamento BETWEEN :DtaI AND :DtaF'
+      ''
+      'GROUP BY 1,2,3,4,7,13'
+      '')
+    SQLConnection = SQLC
+    Left = 272
+    Top = 415
+    object IntegerField6: TIntegerField
+      FieldName = 'CODIGO_EMPRESA'
+    end
+    object IntegerField7: TIntegerField
+      FieldName = 'CODIGO_VENDA'
+    end
+    object IntegerField8: TIntegerField
+      FieldName = 'CODIGO_CLIENTE'
+    end
+    object IntegerField9: TIntegerField
+      FieldName = 'CODIGO_VENDEDOR'
+    end
+    object FMTBCDField3: TFMTBCDField
+      FieldName = 'CUSTO_VENDA_TOTAL'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField4: TFMTBCDField
+      FieldName = 'CUSTO_TROCA_TOTAL'
+      Required = True
+      Precision = 15
+      Size = 2
+    end
+    object SQLTimeStampField1: TSQLTimeStampField
+      FieldName = 'DATA_VENDA'
+    end
+    object FMTBCDField5: TFMTBCDField
+      FieldName = 'DESCONTO_TOTAL'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField6: TFMTBCDField
+      FieldName = 'FRETE'
+      Precision = 15
+      Size = 2
+    end
+    object IntegerField10: TIntegerField
+      FieldName = 'QTDE_TROCA_TOTAL'
+      Required = True
+    end
+    object IntegerField11: TIntegerField
+      FieldName = 'QTDE_VENDA_BRUTA_TOTAL'
+    end
+    object IntegerField12: TIntegerField
+      FieldName = 'QTDE_VENDA_LIQUIDA_TOTAL'
+    end
+    object StringField2: TStringField
+      FieldName = 'SERIE'
+      Size = 10
+    end
+    object FMTBCDField7: TFMTBCDField
+      FieldName = 'VALOR_VENDA_BRUTA_TOTAL'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField8: TFMTBCDField
+      FieldName = 'VALOR_VENDA_LIQUIDA_TOTAL'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField9: TFMTBCDField
+      FieldName = 'VALOR_TROCA_TOTAL'
+      Precision = 15
+      Size = 2
+    end
+  end
+  object SQLQ_ItensTrocas_ANTERIOR: TSQLQuery
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftString
+        Name = 'DtaI'
+        ParamType = ptInput
+        Value = '01.11.2018'
+      end
+      item
+        DataType = ftString
+        Name = 'DtaF'
+        ParamType = ptInput
+        Value = '02.11.2018'
+      end>
+    SQL.Strings = (
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      '-- ITENS_TROCAS'
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      'SELECT'
+      'mv.empresa CODIGO_EMPRESA,'
+      'mv.documento CODIGO_VENDA,'
+      'mv.serie SERIE,'
+      'dv.documento CODIGO_TROCA,'
+      'mv.cod_produto CODIGO_PRODUTO,'
+      
+        'CAST((dv.quantidade * COALESCE(dv.preco_unitario, 0.00)) AS NUME' +
+        'RIC(12,2)) CUSTO_TROCA_ITENS,'
+      'dv.data_documento DATA,'
+      'CAST(dv.quantidade AS NUMERIC(12,2)) QUANTIDADE_TROCA_ITENS,'
+      
+        'CAST((dv.valor_total + COALESCE(dv.desconto_total_item,0.00)) AS' +
+        ' NUMERIC(12,2)) VALOR_TROCA_ITENS'
+      ''
+      
+        'from LINXMOVIMENTO mv, LINXMOVIMENTOORIGEMDEVOLUCOES md, LINXMOV' +
+        'IMENTO dv'
+      ''
+      'WHERE mv.empresa=md.empresa'
+      'AND   mv.documento=md.nota_origem'
+      'AND   mv.ecf=md.ecf_origem'
+      'AND   mv.data_documento=md.data_origem'
+      'AND   mv.serie=md.serie_origem'
+      'AND   dv.identificador=md.identificador'
+      'AND   mv.cod_produto=dv.cod_produto'
+      'AND   mv.data_documento BETWEEN :DtaI AND :DtaF')
+    SQLConnection = SQLC
+    Left = 512
+    Top = 87
+    object IntegerField13: TIntegerField
+      FieldName = 'CODIGO_EMPRESA'
+    end
+    object IntegerField14: TIntegerField
+      FieldName = 'CODIGO_VENDA'
+    end
+    object StringField3: TStringField
+      FieldName = 'SERIE'
+      Size = 10
+    end
+    object IntegerField15: TIntegerField
+      FieldName = 'CODIGO_TROCA'
+    end
+    object FMTBCDField10: TFMTBCDField
+      FieldName = 'CODIGO_PRODUTO'
+      Precision = 15
+      Size = 0
+    end
+    object FMTBCDField11: TFMTBCDField
+      FieldName = 'CUSTO_TROCA_ITENS'
+      Precision = 15
+      Size = 2
+    end
+    object SQLTimeStampField2: TSQLTimeStampField
+      FieldName = 'DATA'
+    end
+    object FMTBCDField12: TFMTBCDField
+      FieldName = 'QUANTIDADE_TROCA_ITENS'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField13: TFMTBCDField
+      FieldName = 'VALOR_TROCA_ITENS'
+      Precision = 15
+      Size = 2
     end
   end
 end

@@ -60,4 +60,11 @@ object DMAtualizaSaldos: TDMAtualizaSaldos
     Left = 143
     Top = 35
   end
+  object SQLQuery1: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 48
+    Top = 192
+  end
 end

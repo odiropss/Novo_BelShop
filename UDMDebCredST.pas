@@ -59,6 +59,19 @@ type
     CDS_ProdutoFornVLR_ICMS_ST_VENDA: TFMTBCDField;
     CDS_ProdutoFornVLR_ICMS_ST_COMPRA: TFMTBCDField;
     CDS_ProdutoFornVLR_DEB_CRED_ICMS_ST: TFMTBCDField;
+    DS_V_XMLsAnalisa: TDataSource;
+    SQLQuery1: TSQLQuery;
+    CDS_V_XMLsAnalisa: TClientDataSet;
+    CDS_V_XMLsAnalisaCNPJ: TStringField;
+    CDS_V_XMLsAnalisaNOME: TStringField;
+    CDS_V_XMLsAnalisaFONE: TStringField;
+    CDS_V_XMLsAnalisaUF_EMIT: TStringField;
+    CDS_V_XMLsAnalisaUF_DEST: TStringField;
+    CDS_V_XMLsAnalisaCST: TStringField;
+    CDS_V_XMLsAnalisaTAG_VST: TStringField;
+    CDS_V_XMLsAnalisaVALOR_ST: TStringField;
+    CDS_V_XMLsAnalisaTAG_VFCPSTRET: TStringField;
+    CDS_V_XMLsAnalisaVALOR_VFCPSTRET: TStringField;
   private
     { Private declarations }
   public

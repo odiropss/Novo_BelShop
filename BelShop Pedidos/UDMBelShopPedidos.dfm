@@ -1,10 +1,10 @@
 object DMBelShopPedidos: TDMBelShopPedidos
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 242
-  Top = 123
-  Height = 571
-  Width = 848
+  Left = 237
+  Top = 112
+  Height = 614
+  Width = 1096
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
     DriverName = 'Interbase'
@@ -58,40 +58,40 @@ object DMBelShopPedidos: TDMBelShopPedidos
   object DSP_Pesquisa: TDataSetProvider
     DataSet = SQLQ_Pesquisa
     Options = [poRetainServerOrder]
-    Left = 81
-    Top = 299
+    Left = 361
+    Top = 107
   end
   object CDS_Pesquisa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Pesquisa'
-    Left = 121
-    Top = 279
+    Left = 401
+    Top = 87
   end
   object DS_Pesquisa: TDataSource
     DataSet = CDS_Pesquisa
-    Left = 165
-    Top = 299
+    Left = 445
+    Top = 107
   end
   object SQLQ_Pesquisa: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 44
-    Top = 272
+    Left = 324
+    Top = 80
   end
   object DSP_Solicitacao: TDataSetProvider
     DataSet = SQLQ_Solicitacao
     Options = [poRetainServerOrder]
     Left = 89
-    Top = 379
+    Top = 307
   end
   object CDS_Solicitacao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Solicitacao'
     Left = 129
-    Top = 359
+    Top = 287
     object CDS_SolicitacaoDTA_SOLICITACAO: TDateField
       DisplayLabel = 'Data'
       FieldName = 'DTA_SOLICITACAO'
@@ -125,7 +125,7 @@ object DMBelShopPedidos: TDMBelShopPedidos
   object DS_Solicitacao: TDataSource
     DataSet = CDS_Solicitacao
     Left = 173
-    Top = 379
+    Top = 307
   end
   object SQLQ_Solicitacao: TSQLQuery
     MaxBlobSize = -1
@@ -142,13 +142,13 @@ object DMBelShopPedidos: TDMBelShopPedidos
       'ORDER BY pr.nome')
     SQLConnection = SQLC
     Left = 52
-    Top = 352
+    Top = 280
   end
   object Timer1: TTimer
     Interval = 1800000
     OnTimer = Timer1Timer
     Left = 432
-    Top = 64
+    Top = 32
   end
   object SDS_DtaHoraServidor: TSQLDataSet
     CommandText = 
@@ -158,20 +158,20 @@ object DMBelShopPedidos: TDMBelShopPedidos
     Params = <>
     SQLConnection = SQLC
     Left = 356
-    Top = 62
+    Top = 30
   end
   object DSP_Verifica: TDataSetProvider
     DataSet = SQLQ_Verifica
     Options = [poRetainServerOrder]
     Left = 89
-    Top = 459
+    Top = 387
   end
   object CDS_Verifica: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Verifica'
     Left = 129
-    Top = 439
+    Top = 375
     object CDS_VerificaDTA_SOLICITACAO: TDateField
       DisplayLabel = 'Dta Solicita'#231#227'o'
       FieldName = 'DTA_SOLICITACAO'
@@ -246,16 +246,15 @@ object DMBelShopPedidos: TDMBelShopPedidos
   object DS_Verifica: TDataSource
     DataSet = CDS_Verifica
     Left = 173
-    Top = 459
+    Top = 387
   end
   object SQLQ_Verifica: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQL.Strings = (
       'SELECT'
-      'so.num_solicitacao,'
       'so.dta_solicitacao,'
-      'so.cod_prod_sidi, so.cod_prod_linx, pl.nome,'
+      'pl.nome,'
       ''
       'CASE'
       '  WHEN so.doc_gerado=0 THEN'
@@ -274,9 +273,29 @@ object DMBelShopPedidos: TDMBelShopPedidos
       'el.qtd_transf Qtd_De_Transf,'
       'el.qtd_a_transf,'
       ''
-      'el.obs_docto,'
+      'so.cod_prod_sidi, so.cod_prod_linx, --'
       'so.dta_processamento,'
-      'so.doc_gerado'
+      'so.doc_gerado,'
+      ''
+      ''
+      'CASE'
+      
+        '  WHEN (COALESCE(el.obs_docto,'#39#39')='#39#39') and (COALESCE(so.obs_texto' +
+        ','#39#39')<>'#39#39') THEN'
+      '    so.obs_texto'
+      
+        '  WHEN (COALESCE(el.obs_docto,'#39#39')<>'#39#39') and (COALESCE(so.obs_text' +
+        'o,'#39#39')='#39#39') THEN'
+      '    el.obs_docto'
+      
+        '  WHEN (COALESCE(el.obs_docto,'#39#39')<>'#39#39') and (COALESCE(so.obs_text' +
+        'o,'#39#39')<>'#39#39') THEN'
+      '    so.obs_texto||'#39' - '#39'||el.obs_docto'
+      '  Else'
+      '     null'
+      'END obs_docto,'
+      ''
+      'so.num_solicitacao'
       ''
       'FROM SOL_TRANSFERENCIA_CD so'
       
@@ -295,13 +314,14 @@ object DMBelShopPedidos: TDMBelShopPedidos
         '                                  AND el.cod_loja   =so.cod_loja' +
         '_sidi'
       ''
-      'WHERE so.dta_solicitacao BETWEEN '#39'20.09.2017'#39' AND '#39'28.09.2017'#39
-      'ORDER BY 4'
+      'WHERE so.dta_solicitacao BETWEEN '#39'21.05.2019'#39' AND '#39'21.05.2019'#39' '
       ''
-      '')
+      'AND   so.cod_loja_linx=9'
+      ''
+      'ORDER BY 2, 1')
     SQLConnection = SQLC
     Left = 52
-    Top = 432
+    Top = 360
   end
   object SQLQ_BuscaRapida: TSQLQuery
     MaxBlobSize = -1
@@ -333,15 +353,15 @@ object DMBelShopPedidos: TDMBelShopPedidos
   object DSP_OCItensCheck: TDataSetProvider
     DataSet = SQLQ_OCItensCheck
     Options = [poRetainServerOrder]
-    Left = 369
-    Top = 195
+    Left = 337
+    Top = 251
   end
   object CDS_OCItensCheck: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_OCItensCheck'
-    Left = 409
-    Top = 175
+    Left = 377
+    Top = 231
     object CDS_OCItensCheckNUM_SEQ_OC: TIntegerField
       FieldName = 'NUM_SEQ_OC'
     end
@@ -416,8 +436,8 @@ object DMBelShopPedidos: TDMBelShopPedidos
   end
   object DS_OCItensCheck: TDataSource
     DataSet = CDS_OCItensCheck
-    Left = 453
-    Top = 195
+    Left = 421
+    Top = 251
   end
   object SQLQ_OCItensCheck: TSQLQuery
     MaxBlobSize = -1
@@ -467,8 +487,8 @@ object DMBelShopPedidos: TDMBelShopPedidos
       'WHERE oi.num_seq_oc in (372)'
       'ORDER BY oi.des_produto')
     SQLConnection = SQLC
-    Left = 332
-    Top = 176
+    Left = 300
+    Top = 232
   end
   object SQLQuery2: TSQLQuery
     MaxBlobSize = -1
@@ -539,15 +559,15 @@ object DMBelShopPedidos: TDMBelShopPedidos
   object DSP_ProdNegativos: TDataSetProvider
     DataSet = SQLQ_ProdNegativos
     Options = [poRetainServerOrder]
-    Left = 369
-    Top = 275
+    Left = 337
+    Top = 331
   end
   object CDS_ProdNegativos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ProdNegativos'
-    Left = 409
-    Top = 255
+    Left = 377
+    Top = 311
     object CDS_ProdNegativosCOD_PRODUTO: TFMTBCDField
       DisplayLabel = 'C'#243'd Linx'
       FieldName = 'COD_PRODUTO'
@@ -575,8 +595,8 @@ object DMBelShopPedidos: TDMBelShopPedidos
   end
   object DS_ProdNegativos: TDataSource
     DataSet = CDS_ProdNegativos
-    Left = 453
-    Top = 275
+    Left = 421
+    Top = 331
   end
   object SQLQ_ProdNegativos: TSQLQuery
     MaxBlobSize = -1
@@ -596,7 +616,32 @@ object DMBelShopPedidos: TDMBelShopPedidos
       ''
       'ORDER BY 2')
     SQLConnection = SQLC
-    Left = 332
-    Top = 256
+    Left = 300
+    Top = 312
+  end
+  object IBDB_BelShop: TIBDatabase
+    DatabaseName = 'localhost:C:\Projetos\BelShop\Dados\BelShop.FDB'
+    Params.Strings = (
+      'user_name=SYSDBA'
+      'password=masterkey')
+    LoginPrompt = False
+    DefaultTransaction = IBT_BelShop
+    IdleTimer = 0
+    SQLDialect = 3
+    TraceFlags = []
+    Left = 711
+    Top = 16
+  end
+  object IBT_BelShop: TIBTransaction
+    Active = False
+    DefaultDatabase = IBDB_BelShop
+    DefaultAction = TACommitRetaining
+    Params.Strings = (
+      'read_committed'
+      'rec_version'
+      'nowait')
+    AutoStopAction = saNone
+    Left = 751
+    Top = 29
   end
 end
